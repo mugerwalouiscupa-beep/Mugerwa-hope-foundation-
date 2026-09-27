@@ -482,7 +482,7 @@ function startDonation(method){
   if(method === 'bank'){
     showPaymentModal(labels.bank,
       '<b>Bank Transfer</b><br><br>' +
-      'The foundation's verified bank-account details have not been published in this website yet.<br><br>' +
+      "The foundation's verified bank-account details have not been published in this website yet.<br><br>" +
       '<a class="btn primary" href="mailto:mugerwalouiscupa@gmail.com?subject=Verified%20Bank%20Donation%20Details">Request bank details by email</a> ' +
       '<a class="btn" href="https://wa.me/256747064373?text=Hello%20Mugerwa%20Hope%20Foundation%2C%20please%20send%20me%20the%20verified%20bank%20details%20for%20a%20donation." target="_blank" rel="noopener">Request on WhatsApp</a><br><br>' +
       '<b>Safety:</b> Only use bank details confirmed by the foundation.');
@@ -491,7 +491,7 @@ function startDonation(method){
 
   showPaymentModal(labels.card,
     '<b>Secure card donation</b><br><br>' +
-    'The Mastercard/Visa checkout is ready to be connected to the foundation's verified payment-provider account.<br><br>' +
+    "The Mastercard/Visa checkout is ready to be connected to the foundation's verified payment-provider account.<br><br>" +
     '<a class="btn primary" href="mailto:mugerwalouiscupa@gmail.com?subject=Online%20Card%20Donation">Request online donation link</a> ' +
     '<a class="btn" href="https://wa.me/256747064373?text=Hello%20Mugerwa%20Hope%20Foundation%2C%20I%20would%20like%20to%20donate%20by%20Mastercard%20or%20Visa." target="_blank" rel="noopener">Ask on WhatsApp</a><br><br>' +
     '<b>Important:</b> Never enter a card PIN, CVV or full card number into this website.');
@@ -540,7 +540,8 @@ async function adminLogin(e){
   showAdminPanel('overview');
 }
 function passwordResetRedirectUrl(){
-  return window.location.origin + window.location.pathname + '#password-reset';
+  // Use the clean GitHub Pages URL so Supabase can match the allowed redirect URL.
+  return window.location.origin + window.location.pathname;
 }
 
 async function resetAdminPassword(){
@@ -588,14 +589,40 @@ async function completeAdminPasswordReset(e){
 
 async function handlePasswordRecovery(){
   if(!initSupabase()) return;
+
+  // Supabase can return either an access-token hash or a PKCE ?code= parameter.
+  // Handle both so the reset link reliably opens the new-password form.
   supabaseClient.auth.onAuthStateChange((event)=>{
     if(event==='PASSWORD_RECOVERY') openPasswordReset();
   });
-  if(window.location.hash.includes('access_token=') || window.location.hash==='#password-reset'){
-    setTimeout(async()=>{
+
+  try{
+    const params=new URLSearchParams(window.location.search);
+    const code=params.get('code');
+    if(code){
+      const {data,error}=await supabaseClient.auth.exchangeCodeForSession(code);
+      if(error) console.error('Password recovery code exchange failed:',error);
+      else if(data?.session) openPasswordReset();
+      if(window.history?.replaceState){
+        window.history.replaceState(null,'',window.location.pathname+'#password-reset');
+      }
+      return;
+    }
+
+    if(window.location.hash.includes('access_token=')){
+      setTimeout(async()=>{
+        const {data:{session}}=await supabaseClient.auth.getSession();
+        if(session) openPasswordReset();
+      },500);
+      return;
+    }
+
+    if(window.location.hash==='#password-reset'){
       const {data:{session}}=await supabaseClient.auth.getSession();
       if(session) openPasswordReset();
-    },300);
+    }
+  }catch(err){
+    console.error('Password recovery handling failed:',err);
   }
 }
 async function openAdminDashboard(){
