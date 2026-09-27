@@ -1,76 +1,1234 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mugerwa Hope Foundation</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mugerwa Hope Foundation | Hope • Dignity • Opportunity</title>
+<meta name="description" content="Mugerwa Hope Foundation — supporting vulnerable communities in Uganda through dignity, practical assistance, opportunity, partnerships and transparent community action.">
 <style>
-body{font-family:Arial,sans-serif;margin:0;background:#f5f7f9;color:#222}
-header{background:#14532d;color:white;padding:28px 18px;text-align:center}
-nav{background:#0f3d23;padding:12px;text-align:center;position:sticky;top:0}
-nav a{color:white;text-decoration:none;margin:0 10px;font-weight:bold}
-main{max-width:1050px;margin:auto;padding:20px}
-.card{background:white;border-radius:12px;padding:22px;margin:16px 0;box-shadow:0 2px 10px #0001}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
-.btn{display:inline-block;padding:12px 16px;background:#166534;color:white;border-radius:8px;text-decoration:none;margin:5px}
-.btn.alt{background:#2563eb}.btn.gold{background:#b45309}
-footer{background:#0f3d23;color:white;text-align:center;padding:25px;margin-top:30px}
-.small{color:#555}
+:root{--g:#08734f;--d:#103b30;--gold:#e6ad39;--bg:#f5faf7;--mut:#60756d}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Arial,sans-serif;color:var(--d);background:var(--bg);line-height:1.6}a{text-decoration:none}.nav{position:sticky;top:0;z-index:5;background:#fff;box-shadow:0 2px 15px #0001}.navin{max-width:1100px;margin:auto;padding:14px 20px;display:flex;justify-content:space-between;align-items:center}.brand{font-weight:800;font-size:18px;color:var(--d)}nav a{margin-left:20px;color:#34564c;font-weight:700;font-size:14px}.btn{display:inline-block;padding:12px 18px;border-radius:10px;font-weight:800}.primary{background:var(--g);color:#fff}.gold{background:var(--gold);color:#17281f}.hero{background:linear-gradient(120deg,#08734f,#123c31);color:#fff}.hero-in{max-width:1100px;margin:auto;padding:75px 20px;display:grid;grid-template-columns:1.3fr .7fr;gap:40px;align-items:center}.tag{font-size:13px;text-transform:uppercase;letter-spacing:1.4px;font-weight:800;color:#f3d47e}.hero h1{font-size:clamp(42px,7vw,70px);line-height:1.02;margin:12px 0 20px}.hero p{font-size:19px;color:#e5f4ee;max-width:700px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:25px}.hero-card,.card,.panel{background:#fff;border-radius:20px;padding:27px;box-shadow:0 12px 35px #12352c18}.hero-card{color:var(--d)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#eef7f2;border-radius:10px;text-align:center;padding:12px}.stat b{display:block;font-size:23px;color:var(--g)}section{padding:70px 20px}.container{max-width:1100px;margin:auto}.head{max-width:720px;margin-bottom:30px}.head .tag{color:var(--g)}h2{font-size:clamp(30px,5vw,45px);line-height:1.1;margin:10px 0}.muted{color:var(--mut)}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.icon{font-size:30px;background:#e9f6f0;width:52px;height:52px;display:grid;place-items:center;border-radius:14px}.card h3{margin:15px 0 6px}.split{display:grid;grid-template-columns:1fr 1fr;gap:35px;align-items:center}.checks{padding:0;list-style:none}.checks li{margin:13px 0}.checks li:before{content:"✓";display:inline-grid;place-items:center;width:25px;height:25px;background:#dff2e9;border-radius:50%;color:var(--g);font-weight:900;margin-right:9px}.dark{background:var(--d);color:#fff}.dark .muted{color:#c6ddd5}.project{display:grid;grid-template-columns:.7fr 1.3fr;background:#fff;color:var(--d);border-radius:20px;overflow:hidden}.visual{display:grid;place-items:center;font-size:80px;background:linear-gradient(135deg,#08734f,#4aaa83);color:#fff}.project div:last-child{padding:30px}.contact{display:grid;grid-template-columns:1fr 1fr;gap:20px}.contactbox{background:#fff;padding:25px;border-radius:18px;box-shadow:0 10px 30px #0000000d}input,textarea{width:100%;padding:13px;margin:6px 0;border:1px solid #d7e4de;border-radius:9px;font:inherit}textarea{min-height:120px}.cta{text-align:center;background:linear-gradient(120deg,#08734f,#0e8b60);color:#fff}.cta p{max-width:680px;margin:0 auto 22px;color:#e4f5ee}footer{background:#092820;color:#b8d0c8;padding:40px 20px}.foot{max-width:1100px;margin:auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px}.foot h3{color:#fff}.foot a{color:#b8d0c8}.small{font-size:12px;border-top:1px solid #ffffff1c;margin-top:25px;padding-top:15px}@media(max-width:850px){nav{display:none}.hero-in,.split,.contact,.project{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}.foot{grid-template-columns:1fr 1fr}}@media(max-width:520px){.grid{grid-template-columns:1fr}.foot{grid-template-columns:1fr}.hero-in{padding:55px 20px}}
+
+.paygrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0}.paycard{background:#fff;border:1px solid #e4e8e5;border-radius:16px;padding:20px;box-shadow:0 8px 25px rgba(0,0,0,.04)}.payicon{font-size:30px;margin-bottom:8px}.paycard h3{margin:7px 0}.status{display:inline-block;margin-top:8px;padding:6px 10px;border-radius:999px;background:#eef5ef;color:#205d35;font-size:12px;font-weight:700}.notice{margin:18px 0;padding:16px 18px;border-left:4px solid #d3aa32;background:#fff8df;border-radius:10px;color:#4d452b}.support-contact{padding-top:8px}.support-contact p{margin:7px 0}@media(max-width:800px){.paygrid{grid-template-columns:1fr}}
+
+.media-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}
+.media-card{background:#fff;border:1px solid #dfe9e4;border-radius:16px;overflow:hidden;box-shadow:0 8px 24px #0000000a}
+.media-placeholder{height:180px;display:flex;align-items:center;justify-content:center;background:#eaf5ef;font-size:52px}
+.media-body{padding:18px}.media-body h3{margin:10px 0 6px}
+.media-publish{margin-top:24px}
+@media(max-width:800px){.media-grid{grid-template-columns:1fr}}
+
+/* ADMIN / CLIENT CHAT */
+.admin-link{margin-left:20px;color:#08734f;font-weight:800;font-size:14px}
+.admin-gate{display:none;position:fixed;inset:0;background:#092820ee;z-index:1000;align-items:center;justify-content:center;padding:20px}
+.admin-box{background:#fff;width:min(430px,100%);border-radius:20px;padding:28px;box-shadow:0 20px 70px #0006}
+.admin-box h2{font-size:30px}
+.admin-dashboard{display:none;position:fixed;inset:0;background:#f3f8f5;z-index:999;overflow:auto}
+.admin-top{background:#103b30;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:3}
+.admin-layout{max-width:1200px;margin:auto;padding:25px;display:grid;grid-template-columns:220px 1fr;gap:20px}
+.admin-side{background:#fff;border-radius:16px;padding:15px;height:max-content}
+.admin-side button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:12px;border-radius:9px;font-weight:700;color:#34564c;cursor:pointer}
+.admin-side button:hover{background:#eaf5ef}
+.admin-main{min-width:0}
+.admin-panel{display:none;background:#fff;border-radius:18px;padding:24px;box-shadow:0 8px 25px #0000000b}
+.admin-panel.active{display:block}
+.admin-table{width:100%;border-collapse:collapse}
+.admin-table th,.admin-table td{padding:11px;border-bottom:1px solid #e3ebe7;text-align:left}
+.chat-wrap{display:grid;grid-template-columns:280px 1fr;gap:15px}
+.chat-users{border:1px solid #dce8e2;border-radius:12px;padding:10px}
+.chat-user{padding:12px;border-radius:9px;cursor:pointer}
+.chat-user:hover,.chat-user.active{background:#eaf5ef}
+.chat-window{border:1px solid #dce8e2;border-radius:12px;display:flex;flex-direction:column;min-height:430px}
+.chat-messages{flex:1;padding:15px;overflow:auto;background:#f7faf8}
+.chat-bubble{max-width:78%;padding:10px 13px;border-radius:13px;margin:7px 0}
+.chat-client{background:#fff;border:1px solid #dce8e2}
+.chat-admin{background:#08734f;color:#fff;margin-left:auto}
+.chat-form{display:flex;gap:8px;padding:10px;border-top:1px solid #dce8e2}
+.chat-form input{margin:0}
+.admin-note{background:#fff8df;border-left:4px solid #d3aa32;padding:12px;margin-bottom:18px;border-radius:8px}
+@media(max-width:800px){.admin-layout{grid-template-columns:1fr}.chat-wrap{grid-template-columns:1fr}}
+
+.resource-row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid #e3ebe7}
+.resource-meta{min-width:0}.resource-meta b{display:block}.resource-meta small{color:#60756d}
+.resource-actions{display:flex;gap:7px;flex-wrap:wrap}
+@media(max-width:650px){.resource-row{align-items:flex-start;flex-direction:column}.resource-actions{width:100%}}
+
+
+/* ===== SUPPORTER-FIRST PROFESSIONAL REDESIGN ===== */
+:root{
+  --g:#08734f;--g2:#0b9367;--d:#103b30;--gold:#e6ad39;
+  --cream:#fbfdfb;--mut:#60756d;--line:#dfeae4;--shadow:0 18px 55px rgba(16,59,48,.10)
+}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#f7faf8}
+.nav{backdrop-filter:blur(12px);background:rgba(255,255,255,.94);border-bottom:1px solid #e9f0ec}
+.brand{display:flex;align-items:center;gap:9px;font-size:17px;letter-spacing:-.2px}
+.brand-mark{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--g),#18a875);color:#fff;box-shadow:0 8px 20px rgba(8,115,79,.22)}
+nav a{transition:.2s}nav a:hover{color:var(--g)}
+.hero{position:relative;overflow:hidden;background:
+ radial-gradient(circle at 88% 18%,rgba(230,173,57,.20),transparent 28%),
+ radial-gradient(circle at 10% 85%,rgba(40,180,128,.18),transparent 30%),
+ linear-gradient(125deg,#082f26 0%,#08734f 55%,#0b8a61 100%)}
+.hero:after{content:"";position:absolute;inset:auto -10% -55% 35%;height:430px;background:rgba(255,255,255,.06);border-radius:50%;transform:rotate(-9deg)}
+.hero-in{position:relative;z-index:1;padding:92px 20px 88px;grid-template-columns:1.15fr .85fr}
+.hero h1{letter-spacing:-2.5px;text-wrap:balance}
+.hero p{line-height:1.7}
+.hero-card{border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.94);box-shadow:0 25px 70px rgba(0,0,0,.18)}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.18);font-size:13px;font-weight:800}
+.btn{transition:transform .18s,box-shadow .18s,background .18s}.btn:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(0,0,0,.10)}
+.primary{background:linear-gradient(135deg,var(--g),var(--g2))}
+.gold{box-shadow:0 10px 25px rgba(230,173,57,.22)}
+.trust-strip{background:#fff;border-bottom:1px solid var(--line)}
+.trust-grid{max-width:1100px;margin:auto;padding:18px 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.trust-item{display:flex;gap:10px;align-items:center;color:#35554b;font-size:13px;font-weight:750}
+.trust-item span:first-child{width:34px;height:34px;border-radius:10px;background:#eaf6f0;display:grid;place-items:center}
+section{padding:82px 20px}.head h2{letter-spacing:-1.2px}.head p{font-size:16px}
+.card,.panel,.contactbox,.paycard{border:1px solid var(--line);box-shadow:var(--shadow)}
+.card{transition:transform .2s,box-shadow .2s}.card:hover{transform:translateY(-4px);box-shadow:0 24px 60px rgba(16,59,48,.13)}
+.icon{background:linear-gradient(135deg,#e9f6f0,#f5fbf8)}
+.section-kicker{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:1.4px;color:var(--g)}
+.section-kicker:before{content:"";width:24px;height:3px;border-radius:5px;background:var(--gold)}
+.feature-band{background:#eef7f2}
+.feature-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:stretch}
+.feature-box{background:#fff;border:1px solid var(--line);border-radius:22px;padding:30px;box-shadow:var(--shadow)}
+.check-card{display:flex;gap:13px;padding:14px 0;border-bottom:1px solid #edf2ef}.check-card:last-child{border-bottom:0}
+.check-dot{flex:0 0 30px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#dff2e9;color:var(--g);font-weight:900}
+.support-banner{background:linear-gradient(135deg,#0a3b30,#08734f);color:#fff;border-radius:28px;padding:38px;display:grid;grid-template-columns:1fr auto;gap:25px;align-items:center;box-shadow:0 24px 60px rgba(8,115,79,.22)}
+.support-banner h2{margin:0 0 8px}.support-banner p{margin:0;color:#dff2eb}
+.media-card{transition:transform .2s,box-shadow .2s}.media-card:hover{transform:translateY(-3px);box-shadow:0 18px 45px rgba(16,59,48,.12)}
+.media-placeholder{background:linear-gradient(135deg,#eaf5ef,#dcefe7)}
+footer{background:#071f19}
+.footer-cta{display:inline-block;margin-top:12px}
+.float-support{position:fixed;right:18px;bottom:18px;z-index:20;background:#25d366;color:#fff;padding:12px 16px;border-radius:999px;font-weight:900;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.float-support:hover{color:#fff}
+@media(max-width:850px){.trust-grid{grid-template-columns:repeat(2,1fr)}.feature-grid{grid-template-columns:1fr}.support-banner{grid-template-columns:1fr}}
+@media(max-width:520px){.trust-grid{grid-template-columns:1fr}.hero h1{letter-spacing:-1.6px}.support-banner{padding:27px 22px}}
+
 </style>
+<meta name="theme-color" content="#08734f">
 </head>
 <body>
-<header>
-<h1>Mugerwa Hope Foundation</h1>
-<p>Supporting vulnerable communities with dignity, hope and opportunity.</p>
-</header>
-<nav>
-<a href="#about">About</a><a href="#projects">Projects</a><a href="#stories">Stories</a>
-<a href="#media">Photos & Documentaries</a><a href="#support">Support Us</a><a href="#admin">Administrator</a>
-</nav>
+<header class="nav"><div class="navin"><a class="brand" href="#home"><span class="brand-mark">❤</span><span>Mugerwa Hope Foundation</span></a><nav><a href="#about">About Us</a><a href="#programs">Projects</a><a href="#stories">Stories</a><a href="#photos">Photos</a><a href="#documentaries">Documentaries</a><a href="#support">Support Us</a><a href="#contact">Contact</a><a class="admin-link" href="#" onclick="openAdminLogin(event)">Administrator</a></nav></div></header>
+
 <main>
-<section id="about" class="card">
-<h2>About Us</h2>
-<p>Mugerwa Hope Foundation works to support orphans, older people, people with disabilities and other vulnerable communities.</p>
-<p>We welcome responsible partnerships, donations and community support.</p>
-</section>
-<section id="projects" class="card">
-<h2>Projects & Transparency</h2>
-<div class="grid">
-<div><h3>Community Support</h3><p>Support for vulnerable families and individuals.</p></div>
-<div><h3>Education</h3><p>Initiatives aimed at improving opportunities for children and young people.</p></div>
-<div><h3>Disability & Elderly Support</h3><p>Practical assistance and inclusion for people who need it most.</p></div>
-<div><h3>Reports & Budgets</h3><p>Project proposals, budgets, registration documents and impact reports can be published by the administrator.</p></div>
+<section class="hero" id="home"><div class="hero-in"><div><div class="hero-badge">🇺🇬 Uganda • Community-centered action</div><h1>Hope. Dignity. Opportunity.</h1><p>We are building a compassionate foundation supporting people with disabilities, older people, orphans and other vulnerable communities with practical help and long-term opportunities.</p><div class="actions"><a class="btn gold" href="#support">Support Our Mission</a><a class="btn" style="border:2px solid #fff;color:#fff" href="#about">Learn About Us</a></div></div><div class="hero-card"><div class="section-kicker">For supporters & partners</div><h2 style="font-size:27px">Be part of the change</h2><p class="muted">Individuals, businesses, foundations and international partners can help turn compassion into measurable community impact.</p><div class="stats"><div class="stat"><b>01</b><span>Community first</span></div><div class="stat"><b>04</b><span>Core programs</span></div><div class="stat"><b>∞</b><span>Possibilities</span></div></div></div></div></section>
+<div class="trust-strip">
+  <div class="trust-grid">
+    <div class="trust-item"><span>🔎</span><span>Transparency-focused</span></div>
+    <div class="trust-item"><span>🤝</span><span>Open to partnerships</span></div>
+    <div class="trust-item"><span>📷</span><span>Real stories & media</span></div>
+    <div class="trust-item"><span>💚</span><span>Community-centered</span></div>
+  </div>
 </div>
+
+<section id="about"><div class="container split"><div><div class="head"><div class="tag">Who we are</div><h2>A foundation built around human dignity.</h2><p class="muted">Mugerwa Hope Foundation is being developed in Uganda to create practical and compassionate support for vulnerable people and communities.</p></div><ul class="checks"><li>Respect and dignity for every person</li><li>Support based on real community needs</li><li>Sustainable partnerships and opportunities</li><li>Transparency and responsible use of resources</li></ul></div><div class="panel"><h3>Our vision</h3><p class="muted">A society where vulnerable people are treated with dignity and have access to support, opportunity and hope.</p><h3>Our mission</h3><p class="muted">To mobilize people and resources to support vulnerable communities through humanitarian assistance, education, health, inclusion and livelihood initiatives.</p></div></div></section>
+
+<section id="programs"><div class="container"><div class="head"><div class="tag">Our programs</div><h2>Where we want to make a difference</h2><p class="muted">Our programs will address immediate needs while helping people and communities become more resilient.</p></div><div class="grid"><div class="card"><div class="icon">♿</div><h3>Disability Support</h3><p class="muted">Essential assistance, inclusion, skills and opportunities for people with disabilities.</p></div><div class="card"><div class="icon">🤝</div><h3>Older People</h3><p class="muted">Practical assistance, companionship and community support for older people.</p></div><div class="card"><div class="icon">👧</div><h3>Children & Orphans</h3><p class="muted">Education, basic needs, protection and positive development for vulnerable children.</p></div><div class="card"><div class="icon">🌱</div><h3>Livelihoods</h3><p class="muted">Skills and small-enterprise initiatives designed to create sustainable opportunities.</p></div></div></div></section>
+
+<section class="feature-band">
+  <div class="container">
+    <div class="feature-grid">
+      <div class="feature-box">
+        <div class="section-kicker">Why supporters matter</div>
+        <h2>Help turn compassion into practical action.</h2>
+        <p class="muted">Support can help the foundation develop programs, strengthen community partnerships and respond to real needs as projects become active.</p>
+        <div class="check-card"><div class="check-dot">✓</div><div><b>Clear purpose</b><br><span class="muted">Support is connected to defined humanitarian and community-development goals.</span></div></div>
+        <div class="check-card"><div class="check-dot">✓</div><div><b>Visible progress</b><br><span class="muted">Project updates, photographs, videos and reports can keep supporters informed.</span></div></div>
+        <div class="check-card"><div class="check-dot">✓</div><div><b>Responsible stewardship</b><br><span class="muted">Financial and organizational information can be published as it becomes verified and available.</span></div></div>
+      </div>
+      <div class="feature-box">
+        <div class="section-kicker">Ways to participate</div>
+        <h3>Support • Partner • Share</h3>
+        <p class="muted">Individuals, businesses, community groups, foundations and international partners can contribute in different ways.</p>
+        <div class="actions">
+          <a class="btn primary" href="#support">Donate</a>
+          <a class="btn" style="border:2px solid var(--g);color:var(--g)" href="#partner">Partner with us</a>
+        </div>
+        <p class="muted" style="font-size:13px;margin-top:18px">Every public claim, project figure and beneficiary story should be supported by appropriate records and consent.</p>
+      </div>
+    </div>
+  </div>
 </section>
-<section id="stories" class="card">
-<h2>Beneficiary Stories</h2>
-<p>Stories and updates from our activities will be published here.</p>
+
+<section id="impact" class="dark"><div class="container"><div class="head"><div class="tag">Our approach</div><h2>From compassion to measurable impact</h2><p class="muted">As projects grow, we will publish verified activities, beneficiaries and financial reporting so supporters can understand how resources are used.</p></div><div class="project"><div class="visual">❤</div><div><h3>Community Support Initiative</h3><p class="muted">A planned program combining essential assistance with education, skills and livelihood support for vulnerable households.</p><p><b>Current stage:</b> Organization development, registration, partnerships and fundraising.</p><a class="btn primary" href="#partner">Become a partner</a></div></div></div></section>
+
+
+<section id="stories"><div class="container"><div class="head"><div class="tag">Stories</div><h2>Beneficiary Stories</h2><p class="muted">Stories approved by the foundation administrator will appear here. For privacy and dignity, sensitive personal information is not published without appropriate consent.</p><div id="publicStories" class="media-grid"><p class="muted">No stories published yet.</p></div></div></div></section>
+
+<section id="media">
+  <div class="container">
+    <div class="head">
+      <div class="tag">Media & Stories</div>
+      <h2>See our work in pictures, videos and documentaries.</h2>
+      <p class="muted">
+        This is where Mugerwa Hope Foundation will share verified field activities,
+        project updates, beneficiary stories, photographs, videos and documentaries
+        so supporters and the public can follow our work.
+      </p>
+    </div>
+
+    <div class="actions" style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn primary" href="#photos">📷 Photos</a>
+      <a class="btn primary" href="#videos">▶️ Videos</a>
+      <a class="btn primary" href="#documentaries">🎬 Documentaries</a>
+    </div>
+    <div id="publicMediaArea" style="margin-top:24px">
+      <div id="photos"><h3>📷 Photos</h3><div id="publicPhotos" class="media-grid"></div></div>
+      <div id="videos" style="margin-top:32px"><h3>▶️ Videos</h3><div id="publicVideos" class="media-grid"></div></div>
+      <div id="documentaries" style="margin-top:32px"><h3>🎬 Documentaries</h3><div id="publicDocumentaries" class="media-grid"></div></div>
+    </div>
+
+    <div class="panel media-publish">
+      <div class="tag">Foundation updates</div>
+      <h3>Keep supporters informed</h3>
+      <p class="muted">
+        New photos, videos and documentaries can be added here as the foundation
+        carries out activities. For videos and documentaries, we can connect this
+        section to the foundation's official YouTube channel so visitors can watch
+        them directly from the website.
+      </p>
+      <div class="actions">
+        <a class="btn primary" href="mailto:mugerwalouiscupa@gmail.com?subject=Media%20Update%20for%20Mugerwa%20Hope%20Foundation">Send a Media Update</a>
+        <a class="btn" style="border:2px solid var(--g);color:var(--g)" href="#contact">Contact Foundation</a>
+      </div>
+      <p class="muted" style="font-size:13px;margin-top:14px">
+        <b>Important:</b> Before publishing identifiable photos or videos of children,
+        vulnerable people or beneficiaries, obtain appropriate consent and avoid
+        publishing sensitive personal information.
+      </p>
+    </div>
+  </div>
 </section>
-<section id="media" class="card">
-<h2>Photos & Documentaries</h2>
-<p>Photos, videos and documentaries can be added here as the foundation's work grows.</p>
+
+
+<section id="resources">
+  <div class="container">
+    <div class="head">
+      <div class="tag">Fundraising & Transparency</div>
+      <h2>Information for donors, partners and supporters</h2>
+      <p class="muted">This section is designed to give funders the information they need to understand, verify and support Mugerwa Hope Foundation.</p>
+    </div>
+
+    <div class="grid">
+      <div class="card"><div class="icon">📜</div><h3>Registration Documents</h3><p class="muted">Upload verified registration certificates, permits and other official organizational documents here.</p><a class="btn primary" href="#" onclick="openResource(event,'registration')">View Documents</a></div>
+      <div class="card"><div class="icon">👥</div><h3>Board & Leadership</h3><p class="muted">Introduce the board members and leadership team, including their roles and responsibilities.</p><a class="btn primary" href="#" onclick="openResource(event,'leadership')">View Leadership</a></div>
+      <div class="card"><div class="icon">🎯</div><h3>Mission & Vision</h3><p class="muted">Our mission and vision guide our humanitarian and community-development work.</p><a class="btn primary" href="#" onclick="openResource(event,'mission')">Read More</a></div>
+      <div class="card"><div class="icon">📋</div><h3>Specific Projects</h3><p class="muted">Publish individual projects, objectives, target beneficiaries, locations, timelines and progress.</p><a class="btn primary" href="#" onclick="openResource(event,'projects')">View Projects</a></div>
+      <div class="card"><div class="icon">💰</div><h3>Project Budgets</h3><p class="muted">Show project budgets, funding targets and major cost categories so partners can understand what their support will fund.</p><a class="btn primary" href="#" onclick="openResource(event,'budgets')">View Budgets</a></div>
+      <div class="card"><div class="icon">📷</div><h3>Photos & Documentaries</h3><p class="muted">Share verified photographs, videos and documentaries from approved activities.</p><a class="btn primary" href="#media">View Media</a></div>
+      <div class="card"><div class="icon">❤️</div><h3>Beneficiary Stories</h3><p class="muted">Share consent-based stories showing how programs affect people and communities.</p><a class="btn primary" href="#" onclick="openResource(event,'stories')">Read Stories</a></div>
+      <div class="card"><div class="icon">📈</div><h3>Impact Reports</h3><p class="muted">Publish project results, beneficiaries reached, activities completed, lessons and future plans.</p><a class="btn primary" href="#" onclick="openResource(event,'impact')">View Reports</a></div>
+      <div class="card"><div class="icon">🔎</div><h3>Financial Transparency</h3><p class="muted">Publish appropriate financial reports, funding received, project expenditure and accountability information.</p><a class="btn primary" href="#" onclick="openResource(event,'finance')">View Information</a></div>
+      <div class="card"><div class="icon">💳</div><h3>Verified Donation Methods</h3><p class="muted">Publish only organization-controlled, verified bank, Mobile Money and online payment details.</p><a class="btn primary" href="#support">Donate / Support</a></div>
+      <div class="card"><div class="icon">📞</div><h3>Contact Information</h3><p class="muted">Keep official email, phone/WhatsApp and other public contact channels easy to find.</p><a class="btn primary" href="#contact">Contact Us</a></div>
+      <div class="card"><div class="icon">📄</div><h3>Partnership Proposal</h3><p class="muted">Provide a downloadable organizational profile and partnership proposal for funders, companies and international partners.</p><a class="btn primary" href="#" onclick="openResource(event,'proposal')">Download Profile</a></div>
+    </div>
+
+
+<div class="panel" style="margin-top:25px">
+  <div class="tag">Documents & Downloads</div>
+  <h3>Foundation resources</h3>
+  <p class="muted">Verified public documents, proposals, reports and approved photos uploaded by the foundation administrator will appear here.</p>
+  <div id="publicResourceList"><p class="muted">No public resources uploaded yet.</p></div>
+</div>
+
+    <div class="panel" style="margin-top:25px">
+      <div class="tag">Funders' Resource Center</div>
+      <h3>Build donor confidence</h3>
+      <p class="muted">Before publishing documents or financial information, replace the placeholders with verified official records. Sensitive personal information, children's identities and private financial details should not be publicly displayed.</p>
+      <div class="notice"><b>Recommended document format:</b> PDF is preferred for registration documents, annual/impact reports, project proposals and budgets. Use clear filenames such as <b>Mugerwa-Hope-Foundation-Registration.pdf</b>.</div>
+    </div>
+  </div>
 </section>
-<section id="support" class="card">
-<h2>Support Mugerwa Hope Foundation</h2>
-<p><strong>Mobile Money:</strong> +256 747 064 373</p>
-<a class="btn" href="tel:+256747064373">Mobile Money</a>
-<a class="btn alt" href="#bank">Bank Transfer</a>
-<a class="btn gold" href="#card">Mastercard / Visa</a>
-<div id="bank" class="card"><h3>Bank Transfer</h3><p>Bank account details will be displayed here after official account details are added.</p></div>
-<div id="card" class="card"><h3>Mastercard / Visa</h3><p>Secure card checkout will be connected here after the verified payment provider link is added.</p></div>
+
+<section id="partner"><div class="container split"><div class="panel"><div class="tag">Global partnerships</div><h2>Partner with us</h2><p class="muted">We welcome responsible partnerships with individuals, companies, foundations, community groups and international organizations interested in humanitarian and community-development work in Uganda.</p><ul class="checks"><li>Financial and material donations</li><li>Equipment and essential supplies</li><li>Skills, mentorship and professional support</li><li>Project partnerships</li></ul><a class="btn primary" href="mailto:mugerwalouiscupa@gmail.com?subject=Partnership%20Inquiry">Contact for Partnership</a></div><div class="panel" id="support"><div class="tag">Support our mission</div><h2>Every contribution can help.</h2><p class="muted">Choose how you would like to support Mugerwa Hope Foundation. Online payments can use a verified payment page that accepts Uganda mobile money, cards and bank transfer.</p><div class="paygrid">
+<div class="paycard">
+  <div class="payicon">📱</div>
+  <h3>Mobile Money</h3>
+  <p class="muted">Send your donation directly to the foundation's Mobile Money number.</p>
+  <p><b>Mobile Money:</b> <span style="font-size:1.15rem">0747 064 373</span></p>
+  <button class="btn primary" type="button" onclick="startDonation('mobile')">Mobile Money Instructions</button>
+  <span class="status">Airtel / MTN</span>
+</div>
+<div class="paycard">
+  <div class="payicon">🏦</div>
+  <h3>Bank Transfer</h3>
+  <p class="muted">Use the foundation's verified bank instructions or the secure hosted payment page when configured.</p>
+  <button class="btn primary" type="button" onclick="startDonation('bank')">Pay by Bank</button>
+  <span class="status">Secure payment</span>
+</div>
+<div class="paycard">
+  <div class="payicon">💳</div>
+  <h3>Mastercard / Visa</h3>
+  <p class="muted">Card payments are completed on a secure hosted checkout. No card number, CVV or PIN is stored in this website.</p>
+  <button class="btn primary" type="button" onclick="startDonation('card')">Pay securely by Card</button>
+  <span class="status">Secure hosted checkout</span>
+</div>
+</div><div class="notice"><b>Secure payments:</b> The website will never ask supporters to enter a card PIN, CVV or Mobile Money PIN into this page. Payments are completed on the verified payment provider's secure checkout.</div><div class="support-contact"><p><b>Need help with a donation?</b></p><p><b>Email:</b> mugerwalouiscupa@gmail.com</p><p><b>Phone / WhatsApp:</b> +256 747 064 373</p><a class="btn primary" href="mailto:mugerwalouiscupa@gmail.com?subject=Donation%20%2F%20Support%20Inquiry">Ask About Supporting Us</a></div></div></div></section>
+
+<section class="container" style="padding-top:30px;padding-bottom:20px">
+  <div class="support-banner">
+    <div>
+      <h2>Stand with vulnerable communities.</h2>
+      <p>Donate, partner with the foundation or share its mission with someone who may want to help.</p>
+    </div>
+    <div class="actions" style="margin:0">
+      <a class="btn gold" href="#support">Support the mission</a>
+      <a class="btn" style="border:2px solid #fff;color:#fff" href="https://wa.me/256747064373" target="_blank" rel="noopener">WhatsApp us</a>
+    </div>
+  </div>
 </section>
-<section id="admin" class="card">
-<h2>Administrator</h2>
-<p>Administrator area for publishing registration documents, board profiles, projects, budgets, photos, documentaries, beneficiary stories and impact reports.</p>
-<p><strong>Administrator email:</strong> mugerwalouiscupa@gmail.com</p>
-<p class="small">A real secure administrator login and cloud database require the project's Supabase URL/key and authentication configuration.</p>
-</section>
-<section class="card">
-<h2>Contact</h2>
-<p>Email: mugerwalouiscupa@gmail.com</p>
-<p>Phone: +256 747 064 373</p>
-</section>
+
+<section id="contact"><div class="container"><div class="head"><div class="tag">Contact</div><h2>Let's work together</h2><p class="muted">Whether you want to support a project, volunteer, partner or learn more, we would like to hear from you.</p></div><div class="contact"><div class="contactbox"><p><b>Email</b><br><span class="muted">mugerwalouiscupa@gmail.com</span></p><p><b>Phone / WhatsApp</b><br><a href="tel:+256747064373" class="muted">+256 747 064 373</a></p><p><b>Country</b><br><span class="muted">Uganda</span></p></div><div class="contactbox"><form onsubmit="sendMail(event)"><input id="name" required placeholder="Your name"><input id="email" required type="email" placeholder="Your email"><textarea id="msg" required placeholder="How would you like to help or partner with us?"></textarea><button class="btn primary" type="submit">Send Message</button></form></div></div></div></section>
+
+<section class="cta"><div class="container"><div class="tag" style="color:#f3d47e">Stand with humanity</div><h2>Together, we can create more hope.</h2><p>Help us build programs that give vulnerable people practical support, dignity and opportunities for a better future.</p><a class="btn gold" href="mailto:mugerwalouiscupa@gmail.com?subject=I%20Want%20to%20Support%20Mugerwa%20Hope%20Foundation">I Want to Support</a></div></section>
 </main>
-<footer>© 2026 Mugerwa Hope Foundation. All rights reserved.</footer>
-</body>
-</html>
+
+
+<!-- ADMINISTRATOR PORTAL -->
+<div id="paymentSetupModal" class="admin-gate" style="z-index:1100"><div class="admin-box"><h2 id="paymentMethodTitle">Secure Donation</h2><p id="paymentSetupMessage" class="muted"></p><button class="btn primary" type="button" onclick="closePaymentSetup()">Close</button></div></div>
+
+<div class="admin-gate" id="adminGate">
+  <div class="admin-box">
+    <h2>Administrator Login</h2>
+    <p class="muted">Sign in securely with the Mugerwa Hope Foundation administrator email.</p>
+    <form onsubmit="adminLogin(event)">
+      <input id="adminUser" type="email" required value="mugerwalouiscupa@gmail.com" placeholder="Administrator email">
+      <input id="adminPass" type="password" required placeholder="Administrator password">
+      <button class="btn primary" style="border:0;cursor:pointer;width:100%;margin-top:8px">Login securely</button>
+    </form>
+    <button class="btn" style="border:0;background:#eef5f0;margin-top:10px;cursor:pointer;width:100%" onclick="closeAdminLogin()">Cancel</button>
+    <button class="btn" style="border:0;background:#fff;margin-top:10px;cursor:pointer;width:100%" onclick="resetAdminPassword()">Forgot password?</button>
+    <p style="font-size:12px;color:#60756d;margin-top:15px">Administrator account: <b>mugerwalouiscupa@gmail.com</b>. The password is handled by Supabase Auth and is not stored in this HTML file.</p>
+  </div>
+</div>
+
+<div class="admin-dashboard" id="adminDashboard">
+  <div class="admin-top">
+    <b>❤ Mugerwa Hope Foundation — Administrator</b>
+    <div>
+      <button class="btn gold" onclick="closeAdminDashboard()">View Website</button>
+      <button class="btn" style="background:#fff;color:#103b30;border:0;cursor:pointer" onclick="adminLogout()">Logout</button>
+    </div>
+  </div>
+  <div class="admin-layout">
+    <aside class="admin-side">
+      <button onclick="showAdminPanel('overview')">📊 Dashboard</button>
+      <button onclick="showAdminPanel('posts')">📝 Posts & Updates</button>
+      <button onclick="showAdminPanel('mediaAdmin')">📷 Media</button>
+<button onclick="showAdminPanel('resourcesAdmin')">📁 Documents & Resources</button>
+      <button onclick="showAdminPanel('messages')">💬 Client Chat</button>
+      <button onclick="showAdminPanel('settings')">⚙️ Website Settings</button>
+    </aside>
+    <main class="admin-main">
+      <section class="admin-panel active" id="panel-overview">
+        <h2>Dashboard</h2>
+        <div class="admin-note"><b>Administrator control:</b> Use this area to prepare website updates, manage posts, review messages and control public contact information.</div>
+        <div class="grid">
+          <div class="card"><div class="icon">📝</div><h3 id="postCount">0</h3><p class="muted">Saved posts</p></div>
+          <div class="card"><div class="icon">💬</div><h3 id="messageCount">0</h3><p class="muted">Client messages</p></div>
+          <div class="card"><div class="icon">📷</div><h3 id="mediaCount">0</h3><p class="muted">Media items</p></div>
+          <div class="card"><div class="icon">👤</div><h3>Admin</h3><p class="muted">Signed in</p></div>
+        </div>
+      </section>
+
+      <section class="admin-panel" id="panel-posts">
+        <h2>Create Website Post</h2>
+        <p class="muted">Publish an update, announcement, project story or foundation news item.</p>
+        <input id="postTitle" placeholder="Post title">
+        <textarea id="postBody" placeholder="Write your update here..."></textarea>
+        <button class="btn primary" onclick="savePost()">Save Post</button>
+        <div id="postsList" style="margin-top:20px"></div>
+      </section>
+
+      <section class="admin-panel" id="panel-mediaAdmin">
+        <h2>Manage Photos, Videos & Documentaries</h2>
+        <p class="muted">Use <b>Documents & Resources</b> to upload media directly to secure cloud storage. Choose Photos, Videos or Documentaries, then Publish the item. Published media appears automatically in the public Media & Stories section.</p>
+        <div class="actions">
+          <button class="btn primary" onclick="showAdminPanel('resourcesAdmin')">Open Cloud Media Upload</button>
+        </div>
+        <div id="mediaList" style="margin-top:20px"></div>
+      </section>
+
+      <section class="admin-panel" id="panel-messages">
+        <h2>Client Chat</h2>
+        <p class="muted">Review messages submitted by visitors and reply from the administrator interface.</p>
+        <div class="chat-wrap">
+          <div class="chat-users" id="chatUsers"></div>
+          <div class="chat-window">
+            <div id="chatTitle" style="padding:13px;font-weight:800;border-bottom:1px solid #dce8e2">Select a client</div>
+            <div class="chat-messages" id="chatMessages"></div>
+            <form class="chat-form" onsubmit="sendAdminChat(event)">
+              <input id="adminChatInput" placeholder="Type your reply..." required>
+              <button class="btn primary">Send</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      
+<section class="admin-panel" id="panel-resourcesAdmin">
+<h2>Documents & Fundraising Resources</h2>
+  <p class="muted">Upload registration PDFs, board profiles, project proposals, budgets, impact reports and photos directly from the administrator dashboard.</p>
+
+  <div class="admin-note">
+    <b>Cloud media control:</b> Photos, videos, documentaries and documents uploaded here are stored in Supabase Storage and can be published, hidden, opened or deleted from this administrator dashboard.
+  </div>
+
+  <h3>Add a document or photo</h3>
+  <select id="resourceCategory" style="width:100%;padding:13px;margin:6px 0;border:1px solid #d7e4de;border-radius:9px;font:inherit">
+    <option value="registration">Registration Documents</option>
+    <option value="leadership">Board & Leadership Profiles</option>
+    <option value="projects">Project Proposals</option>
+    <option value="budgets">Project Budgets</option>
+    <option value="impact">Impact Reports</option>
+    <option value="stories">Beneficiary Stories</option>
+    <option value="finance">Financial Transparency</option>
+    <option value="profile">Partnership Proposal / Organizational Profile</option>
+    <option value="photos">Photos</option>
+    <option value="videos">Videos</option>
+    <option value="documentaries">Documentaries</option>
+  </select>
+  <input id="resourceTitleInput" placeholder="Title / description">
+  <input id="resourceFile" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.jpg,.jpeg,.png,.webp,.mp4,.webm,.mov,.m4v">
+  <button class="btn primary" onclick="uploadFoundationResource()">Upload Resource</button>
+
+  <div id="resourceUploadList" style="margin-top:20px"></div>
+</section>
+
+<section class="admin-panel" id="panel-settings">
+        <h2>Website Settings</h2>
+        <input id="settingFoundationName" placeholder="Foundation name">
+        <input id="settingEmail" placeholder="Public email">
+        <input id="settingPhone" placeholder="Public phone / WhatsApp">
+        <textarea id="settingAnnouncement" placeholder="Homepage announcement"></textarea>
+        <button class="btn primary" onclick="saveSettings()">Save Settings</button>
+        <p class="muted" style="font-size:12px;margin-top:15px">Note: Posts, media, documents and administrator access should use Supabase for the live multi-user site. Keep only the publishable key in this HTML; never put a Supabase service-role key here.</p>
+      </section>
+    </main>
+  </div>
+</div>
+
+
+<div id="resourceModal" class="admin-gate" style="z-index:1100">
+  <div class="admin-box">
+    <h2 id="resourceTitle">Fundraising Resource</h2>
+    <div id="resourceBody" class="muted"></div>
+    <div class="actions">
+      <a id="resourceLink" class="btn primary" href="#" target="_blank" rel="noopener" style="display:none">Open Resource</a>
+      <button class="btn" style="border:0;background:#eef5f0;cursor:pointer" onclick="closeResource()">Close</button>
+    </div>
+  </div>
+</div>
+
+<footer><div class="foot"><div><h3>Mugerwa Hope Foundation</h3><p>Supporting vulnerable people and communities with compassion, dignity and practical opportunities.</p></div><div><h3>Explore</h3><p><a href="#about">About Us</a><br><a href="#programs">Projects</a><br><a href="#stories">Stories</a><br><a href="#photos">Photos</a><br><a href="#documentaries">Documentaries</a><br><a href="#support">Support Us</a></p></div><div><h3>Contact</h3><p><a href="mailto:mugerwalouiscupa@gmail.com">mugerwalouiscupa@gmail.com</a><br><a href="tel:+256747064373">+256 747 064 373</a><br>Uganda</p></div></div><div class="foot small">© 2026 Mugerwa Hope Foundation. This first website is a working prototype. Official registration and donation details should be published only after verification.</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ================= DONATION PAYMENT SETUP =================
+   SECURITY:
+   - Never place a Mastercard number, CVV, PIN, bank login, or payment API secret in this HTML.
+   - Card payments should open the foundation's verified hosted checkout/payment page.
+   - For Uganda, a provider such as Pesapal can provide a hosted payment page supporting
+     Mastercard/Visa and Mobile Money. The foundation must create/verify its merchant
+     account and obtain its own payment-page URL before publishing it here.
+================================================================ */
+const PAYMENT_PAGE_URL = ''; // Add only a verified HTTPS hosted checkout URL after the foundation opens its merchant account.
+const MOBILE_MONEY_NUMBER = '0747 064 373';
+const BANK_EMAIL = 'mugerwalouiscupa@gmail.com';
+
+function showPaymentMessage(title, html){
+  document.getElementById('paymentMethodTitle').textContent=title;
+  document.getElementById('paymentSetupMessage').innerHTML=html;
+  document.getElementById('paymentSetupModal').style.display='flex';
+}
+function closePaymentSetup(){ document.getElementById('paymentSetupModal').style.display='none'; }
+
+function startDonation(method){
+  const labels={mobile:'Mobile Money donation',bank:'Bank Transfer donation',card:'Mastercard / Visa donation'};
+  if(method === 'mobile'){
+    showPaymentMessage('Mobile Money donation',
+      '<p>Send your donation to the foundation Mobile Money number:</p>'+
+      '<p><strong style="font-size:1.35rem">'+MOBILE_MONEY_NUMBER+'</strong></p>'+
+      '<p>After payment, keep the transaction confirmation. For assistance, use the buttons below.</p>'+      '<div class="actions"><a class="btn primary" href="tel:+256747064373">Call Foundation</a>'+
+      '<a class="btn primary" href="https://wa.me/256747064373" target="_blank" rel="noopener">WhatsApp</a></div>');
+    return;
+  }
+  if(PAYMENT_PAGE_URL && PAYMENT_PAGE_URL.startsWith('https://')){
+    const url=new URL(PAYMENT_PAGE_URL); url.searchParams.set('method',method);
+    window.location.href=url.toString(); return;
+  }
+  if(method === 'bank'){
+    showPaymentMessage('Bank Transfer donation',
+      '<p>The secure bank-transfer details have not yet been entered on this website.</p>'+      '<p>Request the foundation’s verified bank details directly by email or phone. Do not send money to an unverified account.</p>'+      '<div class="actions"><a class="btn primary" href="mailto:'+BANK_EMAIL+'?subject=Verified%20Bank%20Donation%20Details">Email for Bank Details</a>'+
+      '<a class="btn primary" href="tel:+256747064373">Call Foundation</a></div>');
+    return;
+  }
+  showPaymentMessage('Mastercard / Visa donation',
+    '<p>The secure card checkout has not yet been connected.</p>'+    '<p>Once the foundation has a verified payment-provider checkout URL, this button will open it. Never enter a card PIN, CVV or full card number into this website.</p>'+    '<div class="actions"><a class="btn primary" href="mailto:'+BANK_EMAIL+'?subject=Online%20Card%20Donation">Ask for Online Donation Link</a>'+
+    '<a class="btn primary" href="tel:+256747064373">Call Foundation</a></div>');
+}
+</script>
+
+<!-- CLIENT CHAT -->
+<div id="clientChat" style="position:fixed;right:18px;bottom:18px;z-index:50">
+  <button class="btn primary" onclick="toggleClientChat()">💬 Chat with Foundation</button>
+  <div id="clientChatBox" style="display:none;width:min(360px,calc(100vw - 36px));height:470px;background:#fff;border-radius:18px;box-shadow:0 15px 50px #0004;overflow:hidden;margin-bottom:10px">
+    <div style="background:#103b30;color:#fff;padding:14px;display:flex;justify-content:space-between"><b>Mugerwa Hope Foundation</b><button onclick="toggleClientChat()" style="background:none;color:#fff;border:0;font-size:20px">×</button></div>
+    <div id="clientMessages" style="height:350px;overflow:auto;padding:12px;background:#f7faf8"></div>
+    <form onsubmit="sendClientChat(event)" style="display:flex;gap:6px;padding:9px;border-top:1px solid #dce8e2">
+      <input id="clientName" required placeholder="Your name" style="width:35%;margin:0">
+      <input id="clientMessage" required placeholder="Message" style="width:45%;margin:0">
+      <button class="btn primary" style="padding:9px">Send</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function openAdminLogin(e){
+  if(e)e.preventDefault();
+  document.getElementById('adminGate').style.display='flex';
+}
+function closeAdminLogin(){
+  document.getElementById('adminGate').style.display='none';
+}
+async function adminLogin(e){
+  e.preventDefault();
+  const email=(document.getElementById('adminUser')?.value || ADMIN_EMAIL).trim().toLowerCase();
+  const password=document.getElementById('adminPass')?.value || '';
+  if(email!==ADMIN_EMAIL.toLowerCase()) return alert('Only the foundation administrator email is authorized.');
+  if(!password) return alert('Enter your administrator password.');
+  if(!initSupabase()) return alert('Supabase is not configured yet. Add the project URL and publishable key to the website first.');
+
+  const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+  if(error) return alert('Login failed: '+error.message);
+
+  closeAdminLogin();
+  document.getElementById('adminDashboard').style.display='block';
+  await renderAdminData();
+  await renderFoundationResources();
+  await renderPublicResources();
+  await renderPublicMedia();
+  await renderPublicStories();
+  showAdminPanel('overview');
+}
+async function resetAdminPassword(){
+  if(!initSupabase()) return alert('Supabase is not configured yet.');
+  const email=ADMIN_EMAIL;
+  const {error}=await supabaseClient.auth.resetPasswordForEmail(email,{
+    redirectTo:window.location.href
+  });
+  if(error) return alert('Password reset could not be sent: '+error.message);
+  alert('A password-reset email has been requested for '+email+'. Check the inbox and follow Supabase\'s reset link.');
+}
+async function openAdminDashboard(){
+  if(!initSupabase()) return;
+  const user=await getCurrentAdmin();
+  if(user){
+    document.getElementById('adminDashboard').style.display='block';
+    await renderAdminData();
+    await renderFoundationResources();
+    await renderPublicResources();
+    await renderPublicMedia();
+    showAdminPanel('overview');
+  }
+}
+function closeAdminDashboard(){ document.getElementById('adminDashboard').style.display='none'; }
+async function adminLogout(){
+  if(supabaseClient) await supabaseClient.auth.signOut();
+  closeAdminDashboard();
+}
+function showAdminPanel(name){
+  document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
+  const p=document.getElementById('panel-'+name); if(p)p.classList.add('active');
+  renderAdminData();
+}
+
+function getData(key, fallback){ try{return JSON.parse(localStorage.getItem(key)) || fallback}catch(e){return fallback} }
+function setData(key,val){localStorage.setItem(key,JSON.stringify(val));}
+
+function savePost(){
+  const title=document.getElementById('postTitle').value.trim(), body=document.getElementById('postBody').value.trim();
+  if(!title||!body)return alert('Enter a title and post content.');
+  const posts=getData('mhfPosts',[]); posts.unshift({title,body,date:new Date().toLocaleString()}); setData('mhfPosts',posts);
+  document.getElementById('postTitle').value='';document.getElementById('postBody').value='';renderAdminData();alert('Post saved.');
+}
+async function saveMedia(){
+  alert('For secure cloud media, use Administrator → Documents & Resources, choose Photos, Videos or Documentaries, then upload and Publish.');
+}
+function saveSettings(){
+  const settings={
+    name:document.getElementById('settingFoundationName').value,
+    email:document.getElementById('settingEmail').value,
+    phone:document.getElementById('settingPhone').value,
+    announcement:document.getElementById('settingAnnouncement').value
+  };setData('mhfSettings',settings);alert('Settings saved in this browser.');
+}
+
+let selectedClient='';
+function sendClientChat(e){
+  e.preventDefault();
+  const name=document.getElementById('clientName').value.trim(), message=document.getElementById('clientMessage').value.trim();
+  if(!name||!message)return;
+  const chats=getData('mhfChats',[]);
+  let c=chats.find(x=>x.name===name);
+  if(!c){c={name,messages:[]};chats.push(c)}
+  c.messages.push({from:'client',text:message,date:new Date().toLocaleString()});setData('mhfChats',chats);
+  document.getElementById('clientMessage').value='';selectedClient=name;renderClientChat();renderAdminData();
+}
+function sendAdminChat(e){
+  e.preventDefault(); if(!selectedClient)return alert('Select a client first.');
+  const input=document.getElementById('adminChatInput'), text=input.value.trim();if(!text)return;
+  const chats=getData('mhfChats',[]),c=chats.find(x=>x.name===selectedClient);if(!c)return;
+  c.messages.push({from:'admin',text,date:new Date().toLocaleString()});setData('mhfChats',chats);input.value='';renderAdminData();
+}
+function renderClientChat(){
+  const el=document.getElementById('clientMessages'); if(!el)return;
+  const chats=getData('mhfChats',[]);const c=chats.find(x=>x.name===selectedClient);
+  el.innerHTML=c?(c.messages.map(m=>'<div class="chat-bubble '+(m.from==='admin'?'chat-admin':'chat-client')+'">'+escapeHtml(m.text)+'</div>').join('')):'<p class="muted">Send us a message and the administrator can reply here.</p>';
+  el.scrollTop=el.scrollHeight;
+}
+function renderAdminData(){
+  const posts=getData('mhfPosts',[]),media=getData('mhfMedia',[]),chats=getData('mhfChats',[]);
+  const pc=document.getElementById('postCount'),mc=document.getElementById('mediaCount'),msgc=document.getElementById('messageCount');
+  if(pc)pc.textContent=posts.length;if(mc)mc.textContent=media.length;if(msgc)msgc.textContent=chats.reduce((n,c)=>n+c.messages.length,0);
+  const pl=document.getElementById('postsList');if(pl)pl.innerHTML=posts.map((p,i)=>'<div class="panel" style="margin-top:10px"><b>'+escapeHtml(p.title)+'</b><small class="muted"> '+p.date+'</small><p>'+escapeHtml(p.body)+'</p><button class="btn" onclick="deletePost('+i+')">Delete</button></div>').join('')||'<p class="muted">No posts yet.</p>';
+  const ml=document.getElementById('mediaList');if(ml)ml.innerHTML=media.map((m,i)=>'<div class="panel" style="margin-top:10px"><b>'+escapeHtml(m.type)+': '+escapeHtml(m.title)+'</b><p><a href="'+encodeURI(m.url)+'" target="_blank" rel="noopener">'+escapeHtml(m.url)+'</a></p><button class="btn" onclick="deleteMedia('+i+')">Delete</button></div>').join('')||'<p class="muted">No media yet.</p>';
+  const cu=document.getElementById('chatUsers');if(cu)cu.innerHTML=chats.map(c=>'<div class="chat-user '+(c.name===selectedClient?'active':'')+'" onclick="selectClient('+JSON.stringify(c.name)+')"><b>'+escapeHtml(c.name)+'</b><br><small>'+c.messages.length+' messages</small></div>').join('')||'<p class="muted">No client chats yet.</p>';
+  const ct=document.getElementById('chatTitle'),cm=document.getElementById('chatMessages');if(ct)ct.textContent=selectedClient||'Select a client';
+  if(cm){const c=chats.find(x=>x.name===selectedClient);cm.innerHTML=c?c.messages.map(m=>'<div class="chat-bubble '+(m.from==='admin'?'chat-admin':'chat-client')+'">'+escapeHtml(m.text)+'</div>').join(''):'<p class="muted">Choose a client to view messages.</p>';cm.scrollTop=cm.scrollHeight;}
+  const s=getData('mhfSettings',{});const a=[['settingFoundationName',s.name||'Mugerwa Hope Foundation'],['settingEmail',s.email||'mugerwalouiscupa@gmail.com'],['settingPhone',s.phone||'+256 747 064 373'],['settingAnnouncement',s.announcement||'']];a.forEach(x=>{const el=document.getElementById(x[0]);if(el&&document.activeElement!==el)el.value=x[1]});
+}
+function selectClient(name){selectedClient=name;renderAdminData();renderClientChat();}
+function deletePost(i){const p=getData('mhfPosts',[]);p.splice(i,1);setData('mhfPosts',p);renderAdminData();}
+function deleteMedia(i){const m=getData('mhfMedia',[]);m.splice(i,1);setData('mhfMedia',m);renderAdminData();}
+function toggleClientChat(){const b=document.getElementById('clientChatBox');b.style.display=b.style.display==='none'?'block':'none';renderClientChat();}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+
+window.addEventListener('load',()=>{renderAdminData(); renderFoundationResources(); renderPublicResources();});
+
+const FUNDRAISING_RESOURCES = {
+  registration:{title:'Registration Documents', body:'Upload your verified registration certificate and other official documents through the administrator area when file-upload storage is connected.'},
+  leadership:{title:'Board & Leadership', body:'Add board and leadership profiles, roles, professional backgrounds and responsibilities here.'},
+  mission:{title:'Mission & Vision', body:'Our current mission and vision are published in the About section. You can update them from the website content system when the live database is connected.'},
+  projects:{title:'Specific Projects', body:'Add project descriptions, objectives, beneficiaries, locations, timelines and progress reports here.'},
+  budgets:{title:'Project Budgets', body:'Add project budgets and funding targets here. Publish enough detail for partners to understand intended use of funds.'},
+  stories:{title:'Beneficiary Stories', body:'Add consent-based beneficiary stories. Do not publish sensitive personal information without appropriate permission.'},
+  impact:{title:'Impact Reports', body:'Upload verified impact and activity reports here.'},
+  finance:{title:'Financial Transparency', body:'Publish approved financial statements, project expenditure reports and accountability information here.'},
+  proposal:{title:'Partnership Proposal / Organizational Profile', body:'Upload a PDF organizational profile and partnership proposal here once prepared.'}
+};
+function openResource(e,key){
+  if(e)e.preventDefault();
+  const r=FUNDRAISING_RESOURCES[key]; if(!r)return;
+  document.getElementById('resourceTitle').textContent=r.title;
+  document.getElementById('resourceBody').textContent=r.body;
+  document.getElementById('resourceLink').style.display='none';
+  document.getElementById('resourceModal').style.display='flex';
+}
+function closeResource(){document.getElementById('resourceModal').style.display='none';}
+
+
+const RESOURCE_CATEGORIES = {
+  registration:'Registration Documents',
+  leadership:'Board & Leadership Profiles',
+  projects:'Project Proposals',
+  budgets:'Project Budgets',
+  impact:'Impact Reports',
+  stories:'Beneficiary Stories',
+  finance:'Financial Transparency',
+  profile:'Partnership Proposal / Organizational Profile',
+  photos:'Photos',
+  videos:'Videos',
+  documentaries:'Documentaries'
+};
+
+
+/* ================= REAL CLOUD DATABASE + STORAGE =================
+   Uses Supabase Auth + Postgres + Storage.
+   IMPORTANT: Put only the Supabase project URL and publishable key here.
+   Never put a service-role/secret key in this HTML.
+=================================================================== */
+const SUPABASE_URL = 'https://eduousfgunznsdsbbrcu.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_53ARIfW8TOQNkKXFj-FdOA_2Pd6PXpf';
+const ADMIN_EMAIL = 'mugerwalouiscupa@gmail.com';
+
+let supabaseClient = null;
+let cloudResources = [];
+
+function supabaseReady(){
+  return SUPABASE_URL.startsWith('https://') &&
+         SUPABASE_PUBLISHABLE_KEY &&
+         !SUPABASE_PUBLISHABLE_KEY.includes('PASTE_YOUR_');
+}
+
+function initSupabase(){
+  if(!supabaseReady()){
+    console.warn('Supabase is not configured yet.');
+    return false;
+  }
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  return true;
+}
+
+function adminNotice(message, type='info'){
+  const el=document.getElementById('resourceCloudStatus');
+  if(el){
+    el.textContent=message;
+    el.style.display='block';
+    el.style.background=type==='error'?'#fff1f1':'#eef7f2';
+    el.style.color=type==='error'?'#9b1c1c':'#103b30';
+  }
+}
+
+async function getCurrentAdmin(){
+  if(!supabaseClient) return null;
+  const {data:{user}}=await supabaseClient.auth.getUser();
+  if(!user) return null;
+  return user.email===ADMIN_EMAIL ? user : null;
+}
+
+async function ensureAdminSession(){
+  if(!initSupabase()) return null;
+  const user=await getCurrentAdmin();
+  if(user) return user;
+
+  // If the old prototype admin panel is still opened, do not expose cloud data.
+  adminNotice('Cloud storage is connected, but administrator authentication is required.', 'error');
+  return null;
+}
+
+async function adminLoginWithSupabase(){
+  if(!initSupabase()){
+    alert('First configure SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY in this file.');
+    return;
+  }
+  const email=(document.getElementById('adminEmail')?.value || ADMIN_EMAIL).trim();
+  const password=document.getElementById('adminPassword')?.value || '';
+  if(email!==ADMIN_EMAIL) return alert('This administrator account is not authorized.');
+  if(!password) return alert('Enter the administrator password.');
+
+  const {error}=await supabaseClient.auth.signInWithPassword({email,password});
+  if(error) return alert('Login failed: '+error.message);
+  alert('Secure administrator login successful.');
+  await loadCloudResources();
+}
+
+async function adminLogoutFromSupabase(){
+  if(supabaseClient) await supabaseClient.auth.signOut();
+  alert('Administrator signed out.');
+}
+
+async function uploadFoundationResource(){
+  const user=await ensureAdminSession();
+  if(!user) return;
+
+  const cat=document.getElementById('resourceCategory').value;
+  const title=document.getElementById('resourceTitleInput').value.trim();
+  const file=document.getElementById('resourceFile').files[0];
+  if(!title || !file) return alert('Enter a title and choose a file.');
+
+  const maxBytes=100*1024*1024;
+  if(file.size>maxBytes) return alert('Maximum file size is 100 MB.');
+
+  const allowed=[
+    'application/pdf','application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'text/csv','image/jpeg','image/png','image/webp',
+    'video/mp4','video/webm','video/quicktime','video/x-m4v'
+  ];
+  if(file.type && !allowed.includes(file.type))
+    return alert('Please upload a PDF, Word, Excel, CSV, JPG, PNG, WebP, MP4, WebM or MOV file.');
+
+  const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+  const objectPath=`${user.id}/${Date.now()}_${safeName}`;
+
+  adminNotice('Uploading to secure cloud storage…');
+  const {error:uploadError}=await supabaseClient
+    .storage.from('foundation-public')
+    .upload(objectPath,file,{contentType:file.type || 'application/octet-stream',upsert:false});
+
+  if(uploadError){
+    adminNotice('Upload failed: '+uploadError.message,'error');
+    return alert('Upload failed: '+uploadError.message);
+  }
+
+  const {data:inserted,error:dbError}=await supabaseClient
+    .from('foundation_resources')
+    .insert({
+      category:cat,
+      title:title,
+      file_name:file.name,
+      storage_path:objectPath,
+      mime_type:file.type || null,
+      file_size:file.size,
+      is_public:true,
+      uploaded_by:user.id
+    })
+    .select()
+    .single();
+
+  if(dbError){
+    await supabaseClient.storage.from('foundation-public').remove([objectPath]);
+    adminNotice('Database record failed; uploaded file was rolled back.','error');
+    return alert('Database error: '+dbError.message);
+  }
+
+  document.getElementById('resourceTitleInput').value='';
+  document.getElementById('resourceFile').value='';
+  adminNotice('Uploaded successfully to the real cloud database and storage.');
+  await loadCloudResources();
+  renderFoundationResources();
+  renderPublicResources();
+  renderPublicMedia();
+}
+
+async function loadCloudResources(){
+  if(!supabaseClient) return [];
+  const {data,error}=await supabaseClient
+    .from('foundation_resources')
+    .select('*')
+    .order('created_at',{ascending:false});
+
+  if(error){
+    adminNotice('Could not load cloud resources: '+error.message,'error');
+    return [];
+  }
+  cloudResources=data||[];
+  return cloudResources;
+}
+
+async function renderFoundationResources(){
+  const el=document.getElementById('resourceUploadList');
+  if(!el)return;
+
+  const user=await getCurrentAdmin();
+  if(!user){
+    el.innerHTML='<p class="muted">Secure administrator login required to manage cloud resources.</p>';
+    return;
+  }
+
+  const items=await loadCloudResources();
+  if(!items.length){
+    el.innerHTML='<p class="muted">No cloud resources uploaded yet.</p>';
+    return;
+  }
+
+  el.innerHTML=items.map(r=>`
+    <div class="panel resource-row">
+      <div class="resource-meta">
+        <b>${escapeHtml(RESOURCE_CATEGORIES[r.category]||r.category)} — ${escapeHtml(r.title)}</b>
+        <small>${escapeHtml(r.file_name)} · ${Math.round((r.file_size||0)/1024)} KB · ${new Date(r.created_at).toLocaleString()}</small>
+      </div>
+      <div class="resource-actions">
+        <button class="btn" onclick="openCloudResource('${r.id}')">Open</button>
+        <button class="btn" onclick="toggleResourcePublic('${r.id}')">${r.is_public?'Hide':'Publish'}</button>
+        <button class="btn" onclick="deleteFoundationResource('${r.id}')">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+async function openCloudResource(id){
+  const r=cloudResources.find(x=>x.id===id);
+  if(!r)return;
+  const {data,error}=await supabaseClient.storage.from('foundation-public').createSignedUrl(r.storage_path,300);
+  if(error)return alert('Could not create secure link: '+error.message);
+  window.open(data.signedUrl,'_blank','noopener');
+}
+
+async function renderPublicResources(){
+  const el=document.getElementById('publicResourceList');
+  if(!el)return;
+
+  if(!initSupabase()){
+    el.innerHTML='<p class="muted">Cloud resources are not configured yet.</p>';
+    return;
+  }
+
+  const {data:items,error}=await supabaseClient
+    .from('foundation_resources')
+    .select('id,category,title,file_name,storage_path,file_size,created_at')
+    .eq('is_public',true)
+    .order('created_at',{ascending:false});
+
+  if(error){
+    el.innerHTML='<p class="muted">Resources are temporarily unavailable.</p>';
+    return;
+  }
+
+  if(!items.length){
+    el.innerHTML='<p class="muted">No public resources uploaded yet.</p>';
+    return;
+  }
+
+  const rows=[];
+  for(const r of items){
+    const {data:signed}=await supabaseClient.storage
+      .from('foundation-public').createSignedUrl(r.storage_path,3600);
+    rows.push(`
+      <div class="resource-row">
+        <div class="resource-meta">
+          <b>${escapeHtml(RESOURCE_CATEGORIES[r.category]||r.category)} — ${escapeHtml(r.title)}</b>
+          <small>${escapeHtml(r.file_name)} · Published ${new Date(r.created_at).toLocaleDateString()}</small>
+        </div>
+        <div class="resource-actions">
+          ${signed?.signedUrl?`<a class="btn primary" href="${signed.signedUrl}" target="_blank" rel="noopener">Open / Download</a>`:''}
+        </div>
+      </div>`);
+  }
+  el.innerHTML=rows.join('');
+}
+
+async function toggleResourcePublic(id){
+  const user=await ensureAdminSession();
+  if(!user)return;
+  const r=cloudResources.find(x=>x.id===id);
+  if(!r)return;
+
+  const newValue=!r.is_public;
+  const {error}=await supabaseClient
+    .from('foundation_resources')
+    .update({is_public:newValue})
+    .eq('id',id);
+
+  if(error)return alert('Could not update publication status: '+error.message);
+
+  await loadCloudResources();
+  await renderFoundationResources();
+  await renderPublicResources();
+}
+
+async function deleteFoundationResource(id){
+  const user=await ensureAdminSession();
+  if(!user)return;
+  const r=cloudResources.find(x=>x.id===id);
+  if(!r)return;
+  if(!confirm('Delete this resource permanently from cloud storage and the database?'))return;
+
+  const {error:fileError}=await supabaseClient.storage
+    .from('foundation-public').remove([r.storage_path]);
+  if(fileError)return alert('File deletion failed: '+fileError.message);
+
+  const {error:dbError}=await supabaseClient
+    .from('foundation_resources').delete().eq('id',id);
+  if(dbError)return alert('Database deletion failed: '+dbError.message);
+
+  await loadCloudResources();
+  await renderFoundationResources();
+  await renderPublicResources();
+}
+
+
+async function renderPublicStories(){
+  const el=document.getElementById('publicStories'); if(!el) return;
+  if(!initSupabase()){ return; }
+  const {data:items,error}=await supabaseClient.from('foundation_resources').select('id,title,file_name,storage_path,created_at').eq('is_public',true).eq('category','stories').order('created_at',{ascending:false});
+  if(error || !items || !items.length){ el.innerHTML='<p class="muted">No stories published yet.</p>'; return; }
+  el.innerHTML=items.map(r=>'<article class="media-card"><div class="media-body"><span class="status">Beneficiary Story</span><h3>'+escapeHtml(r.title)+'</h3><p class="muted">'+escapeHtml(r.file_name||'Published story')+'</p></div></article>').join('');
+}
+
+async function renderPublicMedia(){
+  const buckets={
+    photos:document.getElementById('publicPhotos'),
+    videos:document.getElementById('publicVideos'),
+    documentaries:document.getElementById('publicDocumentaries')
+  };
+  Object.values(buckets).forEach(el=>{if(el)el.innerHTML='<p class="muted">Loading…</p>';});
+  if(!initSupabase()){
+    Object.values(buckets).forEach(el=>{if(el)el.innerHTML='<p class="muted">Media is being prepared. Cloud storage is not configured yet.</p>';});
+    return;
+  }
+
+  const {data:items,error}=await supabaseClient
+    .from('foundation_resources')
+    .select('id,category,title,file_name,storage_path,file_size,created_at')
+    .eq('is_public',true)
+    .in('category',['photos','videos','documentaries'])
+    .order('created_at',{ascending:false});
+
+  if(error){
+    Object.values(buckets).forEach(el=>{if(el)el.innerHTML='<p class="muted">Media is temporarily unavailable.</p>';});
+    return;
+  }
+
+  for(const category of Object.keys(buckets)){
+    const el=buckets[category];
+    if(!el) continue;
+    const rows=(items||[]).filter(x=>x.category===category);
+    if(!rows.length){
+      el.innerHTML='<p class="muted">No '+RESOURCE_CATEGORIES[category].toLowerCase()+' published yet.</p>';
+      continue;
+    }
+    const cards=[];
+    for(const r of rows){
+      const {data:signed,error:signedError}=await supabaseClient.storage
+        .from('foundation-public').createSignedUrl(r.storage_path,3600);
+      if(signedError || !signed?.signedUrl) continue;
+      const u=signed.signedUrl;
+      let mediaHtml='';
+      if(category==='photos'){
+        mediaHtml='<img src="'+u+'" alt="'+escapeHtml(r.title)+'" loading="lazy" style="width:100%;height:220px;object-fit:cover;display:block">';
+      }else{
+        mediaHtml='<video controls preload="metadata" style="width:100%;height:220px;object-fit:cover;display:block" src="'+u+'"></video>';
+      }
+      cards.push('<article class="media-card">'+mediaHtml+
+        '<div class="media-body"><span class="status">'+escapeHtml(RESOURCE_CATEGORIES[category])+'</span>'+
+        '<h3>'+escapeHtml(r.title)+'</h3><p class="muted">'+escapeHtml(r.file_name)+'</p>'+
+        '<a class="btn primary" href="'+u+'" target="_blank" rel="noopener">Open full '+escapeHtml(RESOURCE_CATEGORIES[category]).toLowerCase()+'</a>'+
+        '</div></article>');
+    }
+    el.innerHTML=cards.join('') || '<p class="muted">No '+RESOURCE_CATEGORIES[category].toLowerCase()+' could be displayed.</p>';
+  }
+}
+
+async function initializeCloudResources(){
+  if(!initSupabase()){
+    adminNotice('Cloud mode is not configured. Create the Supabase project, run the SQL setup, then add the project URL and publishable key to this file.','error');
+    return;
+  }
+  await renderPublicResources();
+  await renderFoundationResources();
+  await renderPublicMedia();
+}
+
+window.addEventListener('load',async ()=>{
+  await initializeCloudResources();
+  if(initSupabase()){
+    const user=await getCurrentAdmin();
+    if(user) await openAdminDashboard();
+  }
+});
+
+</script>
+<a class="float-support" href="https://wa.me/256747064373" target="_blank" rel="noopener" aria-label="Contact Mugerwa Hope Foundation on WhatsApp">💬 WhatsApp</a>
+
+<script>
+/* Mugerwa Hope Foundation — supporter button routing */
+document.addEventListener('DOMContentLoaded', function () {
+  const sectionMap = {
+    'Transparency-focused': 'resources',
+    'Open to partnerships': 'partner',
+    'Real stories & media': 'media',
+    'Community-centered': 'programs'
+  };
+
+  function findSectionId(label) {
+    const key = Object.keys(sectionMap).find(k =>
+      label.toLowerCase().includes(k.toLowerCase()) ||
+      k.toLowerCase().includes(label.toLowerCase())
+    );
+    return key ? sectionMap[key] : null;
+  }
+
+  document.querySelectorAll('button, a').forEach(function (el) {
+    const label = (el.innerText || el.textContent || '').trim();
+    if (!label) return;
+
+    const target = findSectionId(label);
+    if (target && !el.getAttribute('href') && !el.getAttribute('onclick')) {
+      el.type = 'button';
+      el.addEventListener('click', function () {
+        const section = document.getElementById(target);
+        if (section) section.scrollIntoView({behavior:'smooth', block:'start'});
+      });
+    }
+  });
+
+  // Make media category buttons route to their dedicated sections where available.
+  const mediaRoutes = {
+    'photos': 'photos',
+    'videos': 'videos',
+    'documentaries': 'documentaries',
+    'photo': 'photos',
+    'video': 'videos',
+    'documentary': 'documentaries'
+  };
+
+  document.querySelectorAll('button, a').forEach(function (el) {
+    const label = (el.innerText || el.textContent || '').trim().toLowerCase();
+    const target = mediaRoutes[label];
+    if (!target || el.getAttribute('onclick')) return;
+    const section = document.getElementById(target);
+    if (section) {
+      el.addEventListener('click', function () {
+        section.scrollIntoView({behavior:'smooth', block:'start'});
+      });
+    }
+  });
+});
+</script>
+
+
+<section id="board-management-panel" class="admin-panel" style="margin-top:24px;">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">Administrator</span>
+      <h2>Board &amp; Leadership Management</h2>
+      <p class="muted">Add and manage leadership roles such as Accounts, Procurement, Management, and other approved positions.</p>
+    </div>
+  </div>
+
+  <form id="boardMemberForm" style="display:grid;gap:12px;max-width:760px;">
+    <input type="hidden" id="boardEditId">
+    <label>Full name
+      <input id="boardName" required placeholder="e.g. John Doe">
+    </label>
+    <label>Position / Department
+      <input id="boardRole" required placeholder="e.g. Accounts / Procurement / Management">
+    </label>
+    <label>Short profile
+      <textarea id="boardBio" rows="3" placeholder="Brief leadership profile"></textarea>
+    </label>
+    <label>Photo
+      <input id="boardPhoto" type="file" accept="image/*">
+    </label>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn primary" type="submit">Save Board Member</button>
+      <button class="btn" type="button" id="boardCancelEdit">Cancel</button>
+    </div>
+    <p id="boardAdminStatus" class="muted"></p>
+  </form>
+
+  <div id="boardAdminList" style="display:grid;gap:12px;margin-top:20px;"></div>
+</section>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'mugerwa_board_members_v1';
+  const $ = id => document.getElementById(id);
+  let members = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+  function esc(v){
+    return String(v || '').replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+    }[c]));
+  }
+
+  function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(members)); render(); }
+
+  function render(){
+    const box = $('boardAdminList');
+    if(!box) return;
+    if(!members.length){
+      box.innerHTML = '<p class="muted">No board or leadership members have been added yet.</p>';
+      return;
+    }
+    box.innerHTML = members.map(m => `
+      <article style="display:flex;gap:14px;align-items:center;padding:14px;border:1px solid rgba(0,0,0,.1);border-radius:14px;">
+        ${m.photo ? `<img src="${m.photo}" alt="${esc(m.name)}" style="width:70px;height:70px;object-fit:cover;border-radius:50%;">` : '<div style="width:70px;height:70px;border-radius:50%;display:grid;place-items:center;background:#eee;font-size:28px;">👤</div>'}
+        <div style="flex:1">
+          <strong>${esc(m.name)}</strong>
+          <div>${esc(m.role)}</div>
+          <small class="muted">${esc(m.bio)}</small>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn" type="button" data-edit="${m.id}">Edit</button>
+          <button class="btn" type="button" data-delete="${m.id}">Delete</button>
+        </div>
+      </article>`).join('');
+  }
+
+  function reset(){
+    $('boardEditId').value='';
+    $('boardName').value='';
+    $('boardRole').value='';
+    $('boardBio').value='';
+    $('boardPhoto').value='';
+    $('boardAdminStatus').textContent='';
+  }
+
+  $('boardMemberForm')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const name=$('boardName').value.trim();
+    const role=$('boardRole').value.trim();
+    const bio=$('boardBio').value.trim();
+    const editId=$('boardEditId').value;
+    const file=$('boardPhoto').files[0];
+
+    let photo = '';
+    if(file){
+      if(!file.type.startsWith('image/')){
+        $('boardAdminStatus').textContent='Please select an image file.';
+        return;
+      }
+      if(file.size > 5*1024*1024){
+        $('boardAdminStatus').textContent='Please use a photo smaller than 5 MB.';
+        return;
+      }
+      photo = await new Promise(resolve=>{
+        const reader=new FileReader();
+        reader.onload=()=>resolve(reader.result);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    if(editId){
+      const i=members.findIndex(x=>x.id===editId);
+      if(i>=0){
+        members[i]={...members[i],name,role,bio, ...(photo?{photo}:{})};
+      }
+    } else {
+      members.push({id:crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),name,role,bio,photo});
+    }
+    save();
+    reset();
+    $('boardAdminStatus').textContent='Board/leadership member saved.';
+  });
+
+  $('boardAdminList')?.addEventListener('click', e=>{
+    const edit=e.target.closest('[data-edit]');
+    const del=e.target.closest('[data-delete]');
+    if(edit){
+      const m=members.find(x=>x.id===edit.dataset.edit);
+      if(!m) return;
+      $('boardEditId').value=m.id;
+      $('boardName').value=m.name;
+      $('boardRole').value=m.role;
+      $('boardBio').value=m.bio || '';
+      $('boardAdminStatus').textContent='Editing '+m.name;
+      window.scrollTo({top:$('board-management-panel').offsetTop-20,behavior:'smooth'});
+    }
+    if(del){
+      const m=members.find(x=>x.id===del.dataset.delete);
+      if(m && confirm('Remove '+m.name+' from the board/leadership list?')){
+        members=members.filter(x=>x.id!==m.id);
+        save();
+      }
+    }
+  });
+
+  $('boardCancelEdit')?.addEventListener('click', reset);
+  render();
+})();
+</script>
+
+
+<section id="public-board-leadership" style="margin-top:30px;">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">Leadership</span>
+      <h2>Board &amp; Leadership</h2>
+      <p class="muted">Meet the people responsible for guiding the foundation's work.</p>
+    </div>
+  </div>
+  <div id="publicBoardList" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;"></div>
+</section>
+<script>
+(function(){
+  const key='mugerwa_board_members_v1';
+  function esc(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+  function render(){
+    const box=document.getElementById('publicBoardList'); if(!box)return;
+    const members=JSON.parse(localStorage.getItem(key)||'[]');
+    if(!members.length){box.innerHTML='<p class="muted">Leadership profiles will appear here as they are published by the administrator.</p>';return;}
+    box.innerHTML=members.map(m=>`
+      <article class="card" style="padding:20px;">
+        ${m.photo?`<img src="${m.photo}" alt="${esc(m.name)}" style="width:100%;height:210px;object-fit:cover;border-radius:14px;">`:''}
+        <h3>${esc(m.name)}</h3><strong>${esc(m.role)}</strong>
+        <p class="muted">${esc(m.bio)}</p>
+      </article>`).join('');
+  }
+  render();
+  window.addEventListener('storage',render);
+})();
+</script>
+
+</body></html>
