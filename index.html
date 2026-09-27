@@ -540,8 +540,9 @@ async function adminLogin(e){
   showAdminPanel('overview');
 }
 function passwordResetRedirectUrl(){
-  // Use the clean GitHub Pages URL so Supabase can match the allowed redirect URL.
-  return window.location.origin + window.location.pathname;
+  // Always use the live GitHub Pages address. This prevents localhost or another
+  // development address from being placed in Supabase password-reset emails.
+  return 'https://mugerwalouiscupa-beep.github.io/Mugerwa-hope-foundation-/';
 }
 
 async function resetAdminPassword(){
@@ -590,28 +591,31 @@ async function completeAdminPasswordReset(e){
 async function handlePasswordRecovery(){
   if(!initSupabase()) return;
 
-  // Listen for Supabase's password-recovery event.
+  // Supabase sends PASSWORD_RECOVERY after the email link is verified.
+  // Register the listener immediately so the event is not missed.
   supabaseClient.auth.onAuthStateChange((event, session)=>{
     if(event === 'PASSWORD_RECOVERY' && session){
       openPasswordReset();
     }
   });
 
-  try{
-    // Give Supabase a moment to process the recovery URL when the page loads.
-    setTimeout(async()=>{
+  // Also check the URL/session after Supabase has had time to process the
+  // recovery link. This covers both hash-token and code-based recovery links.
+  setTimeout(async()=>{
+    try{
       const {data:{session}} = await supabaseClient.auth.getSession();
-      const hasRecoveryHash = window.location.hash.includes('access_token=') &&
-                              window.location.hash.includes('type=recovery');
+      const hash = window.location.hash || '';
+      const hasRecoveryHash = hash.includes('access_token=') && hash.includes('type=recovery');
       const hasRecoveryCode = new URLSearchParams(window.location.search).has('code');
+      const hasRecoveryMarker = hash.includes('type=recovery') || hash === '#password-reset';
 
-      if(session && (hasRecoveryHash || hasRecoveryCode || window.location.hash==='#password-reset')){
+      if(session && (hasRecoveryHash || hasRecoveryCode || hasRecoveryMarker)){
         openPasswordReset();
       }
-    }, 700);
-  }catch(err){
-    console.error('Password recovery handling failed:', err);
-  }
+    }catch(err){
+      console.error('Password recovery handling failed:', err);
+    }
+  }, 1200);
 }
 async function openAdminDashboard(){
   if(!initSupabase()) return;
