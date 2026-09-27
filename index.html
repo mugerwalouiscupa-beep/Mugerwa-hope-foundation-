@@ -590,39 +590,27 @@ async function completeAdminPasswordReset(e){
 async function handlePasswordRecovery(){
   if(!initSupabase()) return;
 
-  // Supabase can return either an access-token hash or a PKCE ?code= parameter.
-  // Handle both so the reset link reliably opens the new-password form.
-  supabaseClient.auth.onAuthStateChange((event)=>{
-    if(event==='PASSWORD_RECOVERY') openPasswordReset();
+  // Listen for Supabase's password-recovery event.
+  supabaseClient.auth.onAuthStateChange((event, session)=>{
+    if(event === 'PASSWORD_RECOVERY' && session){
+      openPasswordReset();
+    }
   });
 
   try{
-    const params=new URLSearchParams(window.location.search);
-    const code=params.get('code');
-    if(code){
-      const {data,error}=await supabaseClient.auth.exchangeCodeForSession(code);
-      if(error) console.error('Password recovery code exchange failed:',error);
-      else if(data?.session) openPasswordReset();
-      if(window.history?.replaceState){
-        window.history.replaceState(null,'',window.location.pathname+'#password-reset');
+    // Give Supabase a moment to process the recovery URL when the page loads.
+    setTimeout(async()=>{
+      const {data:{session}} = await supabaseClient.auth.getSession();
+      const hasRecoveryHash = window.location.hash.includes('access_token=') &&
+                              window.location.hash.includes('type=recovery');
+      const hasRecoveryCode = new URLSearchParams(window.location.search).has('code');
+
+      if(session && (hasRecoveryHash || hasRecoveryCode || window.location.hash==='#password-reset')){
+        openPasswordReset();
       }
-      return;
-    }
-
-    if(window.location.hash.includes('access_token=')){
-      setTimeout(async()=>{
-        const {data:{session}}=await supabaseClient.auth.getSession();
-        if(session) openPasswordReset();
-      },500);
-      return;
-    }
-
-    if(window.location.hash==='#password-reset'){
-      const {data:{session}}=await supabaseClient.auth.getSession();
-      if(session) openPasswordReset();
-    }
+    }, 700);
   }catch(err){
-    console.error('Password recovery handling failed:',err);
+    console.error('Password recovery handling failed:', err);
   }
 }
 async function openAdminDashboard(){
