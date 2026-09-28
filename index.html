@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="google-site-verification" content="feWXCX4TQcy4O0dlnMjz6ShQvbhOd1e5-UY1HnAP0-U" /><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Mugerwa Hope Foundation | Hope • Dignity • Opportunity</title>
 <meta name="description" content="Mugerwa Hope Foundation — supporting vulnerable communities in Uganda through dignity, practical assistance, opportunity, partnerships and transparent community action.">
 <style>
@@ -326,96 +327,110 @@ footer{background:#071f19}
 </div>
 
 <div class="admin-dashboard" id="adminDashboard">
-<style>
-.mhf-admin-v2{font-family:inherit}.mhf-admin-v2 .admin-layout{min-height:calc(100vh - 70px)}
-.mhf-admin-v2 .admin-side{max-height:none;overflow:auto}.mhf-admin-v2 .admin-side button{white-space:normal;text-align:left}
-.mhf-form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.mhf-admin-v2 input,.mhf-admin-v2 textarea,.mhf-admin-v2 select{box-sizing:border-box;width:100%;padding:11px;border:1px solid #d7e4de;border-radius:9px;font:inherit;margin:5px 0}.mhf-admin-v2 textarea{min-height:110px;resize:vertical}
-.mhf-item{border:1px solid #dce8e2;border-radius:12px;padding:14px;margin:10px 0;background:#fff}.mhf-item-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.mhf-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.mhf-small{font-size:12px;color:#60756d}.mhf-thumb{max-width:140px;max-height:100px;border-radius:8px;object-fit:cover;margin-top:8px}.mhf-status{padding:10px;border-radius:8px;background:#f1f7f3;margin:10px 0;display:none}.mhf-danger{background:#fff0f0!important;color:#a32222!important}.mhf-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}.mhf-stat{padding:18px;border:1px solid #dce8e2;border-radius:12px;background:#fff}.mhf-stat b{font-size:25px;display:block}
-</style>
-<div class="admin-top">
-  <b>❤ Mugerwa Hope Foundation — Administrator</b>
-  <div><button class="btn gold" onclick="closeAdminDashboard()">View Website</button><button class="btn" style="background:#fff;color:#103b30;border:0;cursor:pointer" onclick="adminLogout()">Logout</button></div>
+  <div class="admin-top">
+    <b>❤ Mugerwa Hope Foundation — Administrator</b>
+    <div>
+      <button class="btn gold" onclick="closeAdminDashboard()">View Website</button>
+      <button class="btn" style="background:#fff;color:#103b30;border:0;cursor:pointer" onclick="adminLogout()">Logout</button>
+    </div>
+  </div>
+  <div class="admin-layout">
+    <aside class="admin-side">
+      <button onclick="showAdminPanel('overview')">📊 Dashboard</button>
+      <button onclick="showAdminPanel('posts')">📝 Posts & Updates</button>
+      <button onclick="showAdminPanel('mediaAdmin')">📷 Media</button>
+<button onclick="showAdminPanel('resourcesAdmin')">📁 Documents & Resources</button>
+      <button onclick="showAdminPanel('messages')">💬 Client Chat</button>
+      <button onclick="showAdminPanel('settings')">⚙️ Website Settings</button>
+    </aside>
+    <main class="admin-main">
+      <section class="admin-panel active" id="panel-overview">
+        <h2>Dashboard</h2>
+        <div class="admin-note"><b>Administrator control:</b> Use this area to prepare website updates, manage posts, review messages and control public contact information.</div>
+        <div class="grid">
+          <div class="card"><div class="icon">📝</div><h3 id="postCount">0</h3><p class="muted">Saved posts</p></div>
+          <div class="card"><div class="icon">💬</div><h3 id="messageCount">0</h3><p class="muted">Client messages</p></div>
+          <div class="card"><div class="icon">📷</div><h3 id="mediaCount">0</h3><p class="muted">Media items</p></div>
+          <div class="card"><div class="icon">👤</div><h3>Admin</h3><p class="muted">Signed in</p></div>
+        </div>
+      </section>
+
+      <section class="admin-panel" id="panel-posts">
+        <h2>Create Website Post</h2>
+        <p class="muted">Publish an update, announcement, project story or foundation news item.</p>
+        <input id="postTitle" placeholder="Post title">
+        <textarea id="postBody" placeholder="Write your update here..."></textarea>
+        <button class="btn primary" onclick="savePost()">Save Post</button>
+        <div id="postsList" style="margin-top:20px"></div>
+      </section>
+
+      <section class="admin-panel" id="panel-mediaAdmin">
+        <h2>Manage Photos, Videos & Documentaries</h2>
+        <p class="muted">Use <b>Documents & Resources</b> to upload media directly to secure cloud storage. Choose Photos, Videos or Documentaries, then Publish the item. Published media appears automatically in the public Media & Stories section.</p>
+        <div class="actions">
+          <button class="btn primary" onclick="showAdminPanel('resourcesAdmin')">Open Cloud Media Upload</button>
+        </div>
+        <div id="mediaList" style="margin-top:20px"></div>
+      </section>
+
+      <section class="admin-panel" id="panel-messages">
+        <h2>Client Chat</h2>
+        <p class="muted">Review messages submitted by visitors and reply from the administrator interface.</p>
+        <div class="chat-wrap">
+          <div class="chat-users" id="chatUsers"></div>
+          <div class="chat-window">
+            <div id="chatTitle" style="padding:13px;font-weight:800;border-bottom:1px solid #dce8e2">Select a client</div>
+            <div class="chat-messages" id="chatMessages"></div>
+            <form class="chat-form" onsubmit="sendAdminChat(event)">
+              <input id="adminChatInput" placeholder="Type your reply..." required>
+              <button class="btn primary">Send</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      
+<section class="admin-panel" id="panel-resourcesAdmin">
+<h2>Documents & Fundraising Resources</h2>
+  <p class="muted">Upload registration PDFs, board profiles, project proposals, budgets, impact reports and photos directly from the administrator dashboard.</p>
+
+  <div class="admin-note">
+    <b>Cloud media control:</b> Photos, videos, documentaries and documents uploaded here are stored in Supabase Storage and can be published, hidden, opened or deleted from this administrator dashboard.
+  </div>
+
+  <h3>Add a document or photo</h3>
+  <select id="resourceCategory" style="width:100%;padding:13px;margin:6px 0;border:1px solid #d7e4de;border-radius:9px;font:inherit">
+    <option value="registration">Registration Documents</option>
+    <option value="leadership">Board & Leadership Profiles</option>
+    <option value="projects">Project Proposals</option>
+    <option value="budgets">Project Budgets</option>
+    <option value="impact">Impact Reports</option>
+    <option value="stories">Beneficiary Stories</option>
+    <option value="finance">Financial Transparency</option>
+    <option value="profile">Partnership Proposal / Organizational Profile</option>
+    <option value="photos">Photos</option>
+    <option value="videos">Videos</option>
+    <option value="documentaries">Documentaries</option>
+  </select>
+  <input id="resourceTitleInput" placeholder="Title / description">
+  <input id="resourceFile" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.jpg,.jpeg,.png,.webp,.mp4,.webm,.mov,.m4v">
+  <button class="btn primary" onclick="uploadFoundationResource()">Upload Resource</button>
+
+  <div id="resourceUploadList" style="margin-top:20px"></div>
+</section>
+
+<section class="admin-panel" id="panel-settings">
+        <h2>Website Settings</h2>
+        <input id="settingFoundationName" placeholder="Foundation name">
+        <input id="settingEmail" placeholder="Public email">
+        <input id="settingPhone" placeholder="Public phone / WhatsApp">
+        <textarea id="settingAnnouncement" placeholder="Homepage announcement"></textarea>
+        <button class="btn primary" onclick="saveSettings()">Save Settings</button>
+        <p class="muted" style="font-size:12px;margin-top:15px">Note: Posts, media, documents and administrator access should use Supabase for the live multi-user site. Keep only the publishable key in this HTML; never put a Supabase service-role key here.</p>
+      </section>
+    </main>
+  </div>
 </div>
-<div class="admin-layout mhf-admin-v2">
-<aside class="admin-side">
-<button onclick="mhfPanel('overview')">📊 Dashboard</button>
-<button onclick="mhfPanel('posts')">📝 Posts & Updates</button>
-<button onclick="mhfPanel('media')">📷 Photos & Media</button>
-<button onclick="mhfPanel('videos')">🎥 Videos & Documentaries</button>
-<button onclick="mhfPanel('leadership')">👥 Board & Leadership</button>
-<button onclick="mhfPanel('projects')">🏗️ Projects & Budgets</button>
-<button onclick="mhfPanel('stories')">❤️ Beneficiaries & Stories</button>
-<button onclick="mhfPanel('impact')">📊 Impact Reports</button>
-<button onclick="mhfPanel('finance')">💰 Financial Transparency</button>
-<button onclick="mhfPanel('partnership')">🤝 Partnership Proposal</button>
-<button onclick="mhfPanel('documents')">📁 Registration & Documents</button>
-<button onclick="mhfPanel('donations')">💳 Donations</button>
-<button onclick="mhfPanel('messages')">💬 Client Chat</button>
-<button onclick="mhfPanel('settings')">⚙️ Website Settings</button>
-</aside>
-<main class="admin-main">
-<section class="admin-panel active" id="mhf-panel-overview"><h2>Administrator Dashboard</h2><p class="muted">Everything below can be added, edited and deleted from this control panel.</p><div class="mhf-card-grid"><div class="mhf-stat">Posts<b id="mhfCountPosts">0</b></div><div class="mhf-stat">Photos<b id="mhfCountMedia">0</b></div><div class="mhf-stat">Leadership<b id="mhfCountLeadership">0</b></div><div class="mhf-stat">Projects<b id="mhfCountProjects">0</b></div><div class="mhf-stat">Stories<b id="mhfCountStories">0</b></div><div class="mhf-stat">Reports<b id="mhfCountImpact">0</b></div></div></section>
-
-<section class="admin-panel" id="mhf-panel-posts"><h2>Posts & Updates</h2><div class="mhf-form-grid"><input id="mhfPostTitle" placeholder="Post title"><input id="mhfPostDate" type="date"></div><textarea id="mhfPostBody" placeholder="Write the update..."></textarea><button class="btn primary" onclick="mhfSave('posts')">Add Post</button><button class="btn" onclick="mhfClear('posts')">Clear</button><div id="mhfListPosts"></div></section>
-
-<section class="admin-panel" id="mhf-panel-media"><h2>Photos</h2><p class="muted">Add a photo with a title. You can edit or delete it later.</p><div class="mhf-form-grid"><input id="mhfMediaTitle" placeholder="Photo title"><input id="mhfMediaFile" type="file" accept="image/*"></div><button class="btn primary" onclick="mhfSaveFile('media')">Add Photo</button><div id="mhfListMedia"></div></section>
-
-<section class="admin-panel" id="mhf-panel-videos"><h2>Videos & Documentaries</h2><p class="muted">Add a video/documentary file or a public video URL.</p><div class="mhf-form-grid"><input id="mhfVideoTitle" placeholder="Video/documentary title"><input id="mhfVideoUrl" placeholder="YouTube or video URL (optional)"><input id="mhfVideoFile" type="file" accept="video/*"></div><button class="btn primary" onclick="mhfSaveFile('videos')">Add Video / Documentary</button><div id="mhfListVideos"></div></section>
-
-<section class="admin-panel" id="mhf-panel-leadership"><h2>Board & Leadership</h2><div class="mhf-form-grid"><input id="mhfLeadName" placeholder="Full name"><input id="mhfLeadRole" placeholder="Position / role"><input id="mhfLeadPhoto" type="file" accept="image/*"></div><textarea id="mhfLeadBio" placeholder="Biography / responsibilities"></textarea><button class="btn primary" onclick="mhfSaveFile('leadership')">Add Leader</button><div id="mhfListLeadership"></div></section>
-
-<section class="admin-panel" id="mhf-panel-projects"><h2>Specific Projects & Budgets</h2><div class="mhf-form-grid"><input id="mhfProjectName" placeholder="Project name"><input id="mhfProjectLocation" placeholder="Location"><input id="mhfProjectBudget" type="number" placeholder="Budget (UGX)"><input id="mhfProjectBeneficiaries" placeholder="Number/type of beneficiaries"></div><textarea id="mhfProjectDescription" placeholder="Project description, activities and expected results"></textarea><button class="btn primary" onclick="mhfSave('projects')">Add Project</button><div id="mhfListProjects"></div></section>
-
-<section class="admin-panel" id="mhf-panel-stories"><h2>Beneficiaries & Stories</h2><div class="mhf-form-grid"><input id="mhfStoryName" placeholder="Beneficiary/story name or title"><input id="mhfStoryPhoto" type="file" accept="image/*"></div><textarea id="mhfStoryBody" placeholder="Story and impact (avoid publishing private/sensitive information without consent)"></textarea><button class="btn primary" onclick="mhfSaveFile('stories')">Add Story</button><div id="mhfListStories"></div></section>
-
-<section class="admin-panel" id="mhf-panel-impact"><h2>Impact Reports</h2><div class="mhf-form-grid"><input id="mhfImpactTitle" placeholder="Report title"><input id="mhfImpactFile" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.csv"></div><textarea id="mhfImpactSummary" placeholder="Short summary of the report"></textarea><button class="btn primary" onclick="mhfSaveFile('impact')">Add Impact Report</button><div id="mhfListImpact"></div></section>
-
-<section class="admin-panel" id="mhf-panel-finance"><h2>Financial Transparency</h2><div class="mhf-form-grid"><input id="mhfFinanceTitle" placeholder="Report/transaction title"><select id="mhfFinanceType"><option>Income</option><option>Expenditure</option><option>Financial Report</option></select><input id="mhfFinanceAmount" type="number" placeholder="Amount (UGX)"><input id="mhfFinanceDate" type="date"></div><textarea id="mhfFinanceNote" placeholder="Purpose, source, project or explanation"></textarea><button class="btn primary" onclick="mhfSave('finance')">Add Financial Record</button><div id="mhfListFinance"></div></section>
-
-<section class="admin-panel" id="mhf-panel-partnership"><h2>Partnership Proposal & Organizational Profile</h2><div class="mhf-form-grid"><input id="mhfPartnerTitle" placeholder="Document title"><input id="mhfPartnerFile" type="file" accept=".pdf,.doc,.docx"></div><textarea id="mhfPartnerNote" placeholder="Partnership description / invitation"></textarea><button class="btn primary" onclick="mhfSaveFile('partnership')">Add Partnership Resource</button><div id="mhfListPartnership"></div></section>
-
-<section class="admin-panel" id="mhf-panel-documents"><h2>Registration & Official Documents</h2><div class="mhf-form-grid"><input id="mhfDocTitle" placeholder="Document title"><select id="mhfDocType"><option>Registration</option><option>Board Profile</option><option>Project Proposal</option><option>Project Budget</option><option>Other</option></select><input id="mhfDocFile" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.csv"></div><button class="btn primary" onclick="mhfSaveFile('documents')">Add Document</button><div id="mhfListDocuments"></div></section>
-
-<section class="admin-panel" id="mhf-panel-donations"><h2>Donations</h2><div class="admin-note">Mobile Money and card payments use the secure payment service already connected to this website. The provider credentials belong in Supabase Edge Functions, never in this HTML file.</div><p class="muted">Use the public donation buttons to test the payment flow after the payment provider is configured.</p><button class="btn primary" onclick="closeAdminDashboard();document.getElementById('support')?.scrollIntoView({behavior:'smooth'})">Open Donation Section</button></section>
-
-<section class="admin-panel" id="mhf-panel-messages"><h2>Client Chat</h2><p class="muted">Existing visitor chat controls are retained below.</p><div class="chat-wrap"><div class="chat-users" id="chatUsers"></div><div class="chat-window"><div id="chatTitle" style="padding:13px;font-weight:800;border-bottom:1px solid #dce8e2">Select a client</div><div class="chat-messages" id="chatMessages"></div><form class="chat-form" onsubmit="sendAdminChat(event)"><input id="adminChatInput" placeholder="Type your reply..." required><button class="btn primary">Send</button></form></div></div></section>
-
-<section class="admin-panel" id="mhf-panel-settings"><h2>Website Settings</h2><input id="mhfSettingName" placeholder="Foundation name"><input id="mhfSettingEmail" placeholder="Public email"><input id="mhfSettingPhone" placeholder="Public phone / WhatsApp"><textarea id="mhfSettingAnnouncement" placeholder="Homepage announcement"></textarea><button class="btn primary" onclick="mhfSaveSettings()">Save Settings</button><div id="mhfSettingsStatus" class="mhf-status"></div></section>
-</main></div></div>
-
-<script>
-/* Mugerwa Hope Foundation administrator content manager. Uses browser storage for immediate CRUD;
-   payment secrets and authenticated payment processing remain server-side in Supabase. */
-const MHF_STORE='mhf_admin_content_v3';
-const mhfEmpty={posts:[],media:[],videos:[],leadership:[],projects:[],stories:[],impact:[],finance:[],partnership:[],documents:[],settings:{name:'Mugerwa Hope Foundation',email:'mugerwalouiscupa@gmail.com',phone:'+256747064373',announcement:''}};
-function mhfData(){try{return Object.assign({},mhfEmpty,JSON.parse(localStorage.getItem(MHF_STORE)||'{}'));}catch(e){return JSON.parse(JSON.stringify(mhfEmpty));}}
-function mhfPut(d){localStorage.setItem(MHF_STORE,JSON.stringify(d));mhfRender();}
-function mhfPanel(name){document.querySelectorAll('#adminDashboard .admin-panel').forEach(x=>x.classList.remove('active'));const p=document.getElementById('mhf-panel-'+name);if(p)p.classList.add('active');mhfRender();}
-function mhfEsc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
-function mhfClear(type){const ids={posts:['mhfPostTitle','mhfPostDate','mhfPostBody']};(ids[type]||[]).forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});}
-function mhfSave(type){const d=mhfData(), id=crypto.randomUUID?crypto.randomUUID():Date.now().toString();let item={id,created:new Date().toISOString()};if(type==='posts'){item.title=document.getElementById('mhfPostTitle').value.trim();item.date=document.getElementById('mhfPostDate').value;item.body=document.getElementById('mhfPostBody').value.trim();}else if(type==='projects'){item.name=document.getElementById('mhfProjectName').value.trim();item.location=document.getElementById('mhfProjectLocation').value.trim();item.budget=document.getElementById('mhfProjectBudget').value;item.beneficiaries=document.getElementById('mhfProjectBeneficiaries').value.trim();item.description=document.getElementById('mhfProjectDescription').value.trim();}else if(type==='finance'){item.title=document.getElementById('mhfFinanceTitle').value.trim();item.kind=document.getElementById('mhfFinanceType').value;item.amount=document.getElementById('mhfFinanceAmount').value;item.date=document.getElementById('mhfFinanceDate').value;item.note=document.getElementById('mhfFinanceNote').value.trim();}if(!item.title&&!item.name){alert('Please enter the required title/name.');return;}d[type].unshift(item);mhfPut(d);mhfClear(type);alert('Saved successfully.');}
-function mhfReadFile(input){return new Promise((resolve,reject)=>{const f=input?.files?.[0];if(!f)return resolve(null);if(f.size>8*1024*1024){reject(new Error('Please use a file smaller than 8 MB for this browser-based manager.'));return;}const r=new FileReader();r.onload=()=>resolve({name:f.name,type:f.type,data:r.result,size:f.size});r.onerror=reject;r.readAsDataURL(f);});}
-async function mhfSaveFile(type){try{const d=mhfData();let item={id:crypto.randomUUID?crypto.randomUUID():Date.now().toString(),created:new Date().toISOString()};if(type==='media'){item.title=document.getElementById('mhfMediaTitle').value.trim();item.file=await mhfReadFile(document.getElementById('mhfMediaFile'));}if(type==='videos'){item.title=document.getElementById('mhfVideoTitle').value.trim();item.url=document.getElementById('mhfVideoUrl').value.trim();item.file=await mhfReadFile(document.getElementById('mhfVideoFile'));}if(type==='leadership'){item.name=document.getElementById('mhfLeadName').value.trim();item.role=document.getElementById('mhfLeadRole').value.trim();item.bio=document.getElementById('mhfLeadBio').value.trim();item.file=await mhfReadFile(document.getElementById('mhfLeadPhoto'));}if(type==='stories'){item.title=document.getElementById('mhfStoryName').value.trim();item.body=document.getElementById('mhfStoryBody').value.trim();item.file=await mhfReadFile(document.getElementById('mhfStoryPhoto'));}if(type==='impact'){item.title=document.getElementById('mhfImpactTitle').value.trim();item.summary=document.getElementById('mhfImpactSummary').value.trim();item.file=await mhfReadFile(document.getElementById('mhfImpactFile'));}if(type==='partnership'){item.title=document.getElementById('mhfPartnerTitle').value.trim();item.note=document.getElementById('mhfPartnerNote').value.trim();item.file=await mhfReadFile(document.getElementById('mhfPartnerFile'));}if(type==='documents'){item.title=document.getElementById('mhfDocTitle').value.trim();item.kind=document.getElementById('mhfDocType').value;item.file=await mhfReadFile(document.getElementById('mhfDocFile'));}if(!item.title&&!item.name){alert('Please enter a title/name.');return;}d[type].unshift(item);mhfPut(d);alert('Saved successfully.');}catch(e){alert(e.message||'Could not save the item.');}}
-function mhfEdit(type,id){const d=mhfData(),x=d[type].find(i=>i.id===id);if(!x)return;const value=prompt('Edit title/name:',x.title||x.name||'');if(value===null)return;if(x.title!==undefined)x.title=value;else x.name=value;mhfPut(d);}
-function mhfDelete(type,id){if(!confirm('Delete this item? This cannot be undone.'))return;const d=mhfData();d[type]=d[type].filter(i=>i.id!==id);mhfPut(d);}
-function mhfDownload(item){if(!item.file?.data){if(item.url)window.open(item.url,'_blank','noopener');return;}const a=document.createElement('a');a.href=item.file.data;a.download=item.file.name||'download';a.click();}
-function mhfList(type,target,renderer){const d=mhfData();const el=document.getElementById(target);if(!el)return;el.innerHTML=d[type].length?d[type].map(x=>renderer(x)).join(''):'<p class="muted">Nothing added yet.</p>';}
-function mhfButtons(type,id,extra=''){return '<div class="mhf-actions">'+extra+'<button class="btn" onclick="mhfEdit(\''+type+'\',\''+id+'\')">Edit</button><button class="btn mhf-danger" onclick="mhfDelete(\''+type+'\',\''+id+'\')">Delete</button></div>';}
-function mhfRender(){const d=mhfData();for(const [id,n] of [['mhfCountPosts',d.posts.length],['mhfCountMedia',d.media.length],['mhfCountLeadership',d.leadership.length],['mhfCountProjects',d.projects.length],['mhfCountStories',d.stories.length],['mhfCountImpact',d.impact.length]])document.getElementById(id).textContent=n;
-mhfList('posts','mhfListPosts',x=>`<div class="mhf-item"><div class="mhf-item-head"><b>${mhfEsc(x.title)}</b><span class="mhf-small">${mhfEsc(x.date||'')}</span></div><p>${mhfEsc(x.body)}</p>${mhfButtons('posts',x.id)}</div>`);
-mhfList('media','mhfListMedia',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b>${x.file?.type?.startsWith('image/')?`<br><img class="mhf-thumb" src="${x.file.data}">`:''}${x.file?`<div class="mhf-small">${mhfEsc(x.file.name)}</div>`:''}${mhfButtons('media',x.id,x.file?`<button class="btn" onclick='mhfDownload(${JSON.stringify(x).replace(/'/g,"&#39;")})'>Open/Download</button>`:'')}</div>`);
-mhfList('videos','mhfListVideos',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><p class="mhf-small">${mhfEsc(x.url||x.file?.name||'')}</p>${mhfButtons('videos',x.id,x.url?`<button class="btn" onclick="window.open('${mhfEsc(x.url)}','_blank','noopener')">Open Video</button>`:'')}</div>`);
-mhfList('leadership','mhfListLeadership',x=>`<div class="mhf-item"><b>${mhfEsc(x.name)}</b> — ${mhfEsc(x.role)}<p>${mhfEsc(x.bio)}</p>${x.file?.type?.startsWith('image/')?`<img class="mhf-thumb" src="${x.file.data}">`:''}${mhfButtons('leadership',x.id)}</div>`);
-mhfList('projects','mhfListProjects',x=>`<div class="mhf-item"><b>${mhfEsc(x.name)}</b><p>${mhfEsc(x.description)}</p><div class="mhf-small">Location: ${mhfEsc(x.location)} · Budget: UGX ${mhfEsc(x.budget)} · Beneficiaries: ${mhfEsc(x.beneficiaries)}</div>${mhfButtons('projects',x.id)}</div>`);
-mhfList('stories','mhfListStories',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><p>${mhfEsc(x.body)}</p>${x.file?.type?.startsWith('image/')?`<img class="mhf-thumb" src="${x.file.data}">`:''}${mhfButtons('stories',x.id)}</div>`);
-mhfList('impact','mhfListImpact',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><p>${mhfEsc(x.summary)}</p>${mhfButtons('impact',x.id,x.file?`<button class="btn" onclick='mhfDownload(${JSON.stringify(x).replace(/'/g,"&#39;")})'>Open Report</button>`:'')}</div>`);
-mhfList('finance','mhfListFinance',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><div>${mhfEsc(x.kind)} · UGX ${mhfEsc(x.amount)} · ${mhfEsc(x.date)}</div><p>${mhfEsc(x.note)}</p>${mhfButtons('finance',x.id)}</div>`);
-mhfList('partnership','mhfListPartnership',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><p>${mhfEsc(x.note)}</p>${mhfButtons('partnership',x.id,x.file?`<button class="btn" onclick='mhfDownload(${JSON.stringify(x).replace(/'/g,"&#39;")})'>Open Proposal</button>`:'')}</div>`);
-mhfList('documents','mhfListDocuments',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b> <span class="mhf-small">${mhfEsc(x.kind)}</span>${mhfButtons('documents',x.id,x.file?`<button class="btn" onclick='mhfDownload(${JSON.stringify(x).replace(/'/g,"&#39;")})'>Open Document</button>`:'')}</div>`);
-}
-function mhfSaveSettings(){const d=mhfData();d.settings={name:document.getElementById('mhfSettingName').value.trim(),email:document.getElementById('mhfSettingEmail').value.trim(),phone:document.getElementById('mhfSettingPhone').value.trim(),announcement:document.getElementById('mhfSettingAnnouncement').value.trim()};mhfPut(d);const s=document.getElementById('mhfSettingsStatus');s.style.display='block';s.textContent='Settings saved successfully.';}
-(function(){const d=mhfData();document.addEventListener('DOMContentLoaded',()=>{document.getElementById('mhfSettingName').value=d.settings.name||'';document.getElementById('mhfSettingEmail').value=d.settings.email||'';document.getElementById('mhfSettingPhone').value=d.settings.phone||'';document.getElementById('mhfSettingAnnouncement').value=d.settings.announcement||'';mhfRender();});})();
-</script>
 
 
 <div id="resourceModal" class="admin-gate" style="z-index:1100">
