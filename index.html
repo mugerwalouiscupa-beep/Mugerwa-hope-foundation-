@@ -385,37 +385,153 @@ footer{background:#071f19}
 </main></div></div>
 
 <script>
-/* Mugerwa Hope Foundation administrator content manager. Uses browser storage for immediate CRUD;
-   payment secrets and authenticated payment processing remain server-side in Supabase. */
-const MHF_STORE='mhf_admin_content_v3';
+/* Mugerwa Hope Foundation administrator content manager.
+   FIXED: uses IndexedDB instead of localStorage for administrator content.
+   This prevents large photos/videos/documents from making the browser storage quota fail.
+   Supabase authentication/cloud resources remain separate and are not given secret keys here.
+*/
+const MHF_DB_NAME='mugerwa_hope_admin_v4';
+const MHF_DB_VERSION=1;
+const MHF_STORE='content';
+const MHF_CACHE_KEY='mhf_admin_content_v3';
 const mhfEmpty={posts:[],media:[],videos:[],leadership:[],projects:[],stories:[],impact:[],finance:[],partnership:[],documents:[],settings:{name:'Mugerwa Hope Foundation',email:'mugerwalouiscupa@gmail.com',phone:'+256747064373',announcement:''}};
-function mhfData(){try{return Object.assign({},mhfEmpty,JSON.parse(localStorage.getItem(MHF_STORE)||'{}'));}catch(e){return JSON.parse(JSON.stringify(mhfEmpty));}}
-function mhfPut(d){localStorage.setItem(MHF_STORE,JSON.stringify(d));mhfRender();}
-function mhfPanel(name){document.querySelectorAll('#adminDashboard .admin-panel').forEach(x=>x.classList.remove('active'));const p=document.getElementById('mhf-panel-'+name);if(p)p.classList.add('active');mhfRender();}
+let mhfCache=JSON.parse(JSON.stringify(mhfEmpty));
+let mhfDBPromise=null;
+
+function mhfCloneEmpty(){return JSON.parse(JSON.stringify(mhfEmpty));}
+function mhfMergeData(data){const out=mhfCloneEmpty();if(data&&typeof data==='object'){for(const k of Object.keys(out)){if(k==='settings')out.settings={...out.settings,...(data.settings||{})};else if(Array.isArray(data[k]))out[k]=data[k];}}return out;}
+function mhfData(){return mhfCache;}
 function mhfEsc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
-function mhfClear(type){const ids={posts:['mhfPostTitle','mhfPostDate','mhfPostBody']};(ids[type]||[]).forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});}
-function mhfSave(type){const d=mhfData(), id=crypto.randomUUID?crypto.randomUUID():Date.now().toString();let item={id,created:new Date().toISOString()};if(type==='posts'){item.title=document.getElementById('mhfPostTitle').value.trim();item.date=document.getElementById('mhfPostDate').value;item.body=document.getElementById('mhfPostBody').value.trim();}else if(type==='projects'){item.name=document.getElementById('mhfProjectName').value.trim();item.location=document.getElementById('mhfProjectLocation').value.trim();item.budget=document.getElementById('mhfProjectBudget').value;item.beneficiaries=document.getElementById('mhfProjectBeneficiaries').value.trim();item.description=document.getElementById('mhfProjectDescription').value.trim();}else if(type==='finance'){item.title=document.getElementById('mhfFinanceTitle').value.trim();item.kind=document.getElementById('mhfFinanceType').value;item.amount=document.getElementById('mhfFinanceAmount').value;item.date=document.getElementById('mhfFinanceDate').value;item.note=document.getElementById('mhfFinanceNote').value.trim();}if(!item.title&&!item.name){alert('Please enter the required title/name.');return;}d[type].unshift(item);mhfPut(d);mhfClear(type);alert('Saved successfully.');}
-function mhfReadFile(input){return new Promise((resolve,reject)=>{const f=input?.files?.[0];if(!f)return resolve(null);if(f.size>8*1024*1024){reject(new Error('Please use a file smaller than 8 MB for this browser-based manager.'));return;}const r=new FileReader();r.onload=()=>resolve({name:f.name,type:f.type,data:r.result,size:f.size});r.onerror=reject;r.readAsDataURL(f);});}
-async function mhfSaveFile(type){try{const d=mhfData();let item={id:crypto.randomUUID?crypto.randomUUID():Date.now().toString(),created:new Date().toISOString()};if(type==='media'){item.title=document.getElementById('mhfMediaTitle').value.trim();item.file=await mhfReadFile(document.getElementById('mhfMediaFile'));}if(type==='videos'){item.title=document.getElementById('mhfVideoTitle').value.trim();item.url=document.getElementById('mhfVideoUrl').value.trim();item.file=await mhfReadFile(document.getElementById('mhfVideoFile'));}if(type==='leadership'){item.name=document.getElementById('mhfLeadName').value.trim();item.role=document.getElementById('mhfLeadRole').value.trim();item.bio=document.getElementById('mhfLeadBio').value.trim();item.file=await mhfReadFile(document.getElementById('mhfLeadPhoto'));}if(type==='stories'){item.title=document.getElementById('mhfStoryName').value.trim();item.body=document.getElementById('mhfStoryBody').value.trim();item.file=await mhfReadFile(document.getElementById('mhfStoryPhoto'));}if(type==='impact'){item.title=document.getElementById('mhfImpactTitle').value.trim();item.summary=document.getElementById('mhfImpactSummary').value.trim();item.file=await mhfReadFile(document.getElementById('mhfImpactFile'));}if(type==='partnership'){item.title=document.getElementById('mhfPartnerTitle').value.trim();item.note=document.getElementById('mhfPartnerNote').value.trim();item.file=await mhfReadFile(document.getElementById('mhfPartnerFile'));}if(type==='documents'){item.title=document.getElementById('mhfDocTitle').value.trim();item.kind=document.getElementById('mhfDocType').value;item.file=await mhfReadFile(document.getElementById('mhfDocFile'));}if(!item.title&&!item.name){alert('Please enter a title/name.');return;}d[type].unshift(item);mhfPut(d);alert('Saved successfully.');}catch(e){alert(e.message||'Could not save the item.');}}
-function mhfEdit(type,id){const d=mhfData(),x=d[type].find(i=>i.id===id);if(!x)return;const value=prompt('Edit title/name:',x.title||x.name||'');if(value===null)return;if(x.title!==undefined)x.title=value;else x.name=value;mhfPut(d);}
-function mhfDelete(type,id){if(!confirm('Delete this item? This cannot be undone.'))return;const d=mhfData();d[type]=d[type].filter(i=>i.id!==id);mhfPut(d);}
-function mhfDownload(item){if(!item.file?.data){if(item.url)window.open(item.url,'_blank','noopener');return;}const a=document.createElement('a');a.href=item.file.data;a.download=item.file.name||'download';a.click();}
-function mhfList(type,target,renderer){const d=mhfData();const el=document.getElementById(target);if(!el)return;el.innerHTML=d[type].length?d[type].map(x=>renderer(x)).join(''):'<p class="muted">Nothing added yet.</p>';}
-function mhfButtons(type,id,extra=''){return '<div class="mhf-actions">'+extra+'<button class="btn" onclick="mhfEdit(\''+type+'\',\''+id+'\')">Edit</button><button class="btn mhf-danger" onclick="mhfDelete(\''+type+'\',\''+id+'\')">Delete</button></div>';}
-function mhfRender(){const d=mhfData();for(const [id,n] of [['mhfCountPosts',d.posts.length],['mhfCountMedia',d.media.length],['mhfCountLeadership',d.leadership.length],['mhfCountProjects',d.projects.length],['mhfCountStories',d.stories.length],['mhfCountImpact',d.impact.length]])document.getElementById(id).textContent=n;
-mhfList('posts','mhfListPosts',x=>`<div class="mhf-item"><div class="mhf-item-head"><b>${mhfEsc(x.title)}</b><span class="mhf-small">${mhfEsc(x.date||'')}</span></div><p>${mhfEsc(x.body)}</p>${mhfButtons('posts',x.id)}</div>`);
-mhfList('media','mhfListMedia',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b>${x.file?.type?.startsWith('image/')?`<br><img class="mhf-thumb" src="${x.file.data}">`:''}${x.file?`<div class="mhf-small">${mhfEsc(x.file.name)}</div>`:''}${mhfButtons('media',x.id,x.file?`<button class="btn" onclick='mhfDownload(${JSON.stringify(x).replace(/'/g,"&#39;")})'>Open/Download</button>`:'')}</div>`);
-mhfList('videos','mhfListVideos',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><p class="mhf-small">${mhfEsc(x.url||x.file?.name||'')}</p>${mhfButtons('videos',x.id,x.url?`<button class="btn" onclick="window.open('${mhfEsc(x.url)}','_blank','noopener')">Open Video</button>`:'')}</div>`);
-mhfList('leadership','mhfListLeadership',x=>`<div class="mhf-item"><b>${mhfEsc(x.name)}</b> — ${mhfEsc(x.role)}<p>${mhfEsc(x.bio)}</p>${x.file?.type?.startsWith('image/')?`<img class="mhf-thumb" src="${x.file.data}">`:''}${mhfButtons('leadership',x.id)}</div>`);
-mhfList('projects','mhfListProjects',x=>`<div class="mhf-item"><b>${mhfEsc(x.name)}</b><p>${mhfEsc(x.description)}</p><div class="mhf-small">Location: ${mhfEsc(x.location)} · Budget: UGX ${mhfEsc(x.budget)} · Beneficiaries: ${mhfEsc(x.beneficiaries)}</div>${mhfButtons('projects',x.id)}</div>`);
-mhfList('stories','mhfListStories',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><p>${mhfEsc(x.body)}</p>${x.file?.type?.startsWith('image/')?`<img class="mhf-thumb" src="${x.file.data}">`:''}${mhfButtons('stories',x.id)}</div>`);
-mhfList('impact','mhfListImpact',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><p>${mhfEsc(x.summary)}</p>${mhfButtons('impact',x.id,x.file?`<button class="btn" onclick='mhfDownload(${JSON.stringify(x).replace(/'/g,"&#39;")})'>Open Report</button>`:'')}</div>`);
-mhfList('finance','mhfListFinance',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><div>${mhfEsc(x.kind)} · UGX ${mhfEsc(x.amount)} · ${mhfEsc(x.date)}</div><p>${mhfEsc(x.note)}</p>${mhfButtons('finance',x.id)}</div>`);
-mhfList('partnership','mhfListPartnership',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><p>${mhfEsc(x.note)}</p>${mhfButtons('partnership',x.id,x.file?`<button class="btn" onclick='mhfDownload(${JSON.stringify(x).replace(/'/g,"&#39;")})'>Open Proposal</button>`:'')}</div>`);
-mhfList('documents','mhfListDocuments',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b> <span class="mhf-small">${mhfEsc(x.kind)}</span>${mhfButtons('documents',x.id,x.file?`<button class="btn" onclick='mhfDownload(${JSON.stringify(x).replace(/'/g,"&#39;")})'>Open Document</button>`:'')}</div>`);
+function mhfId(){return (crypto&&crypto.randomUUID)?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);}
+
+function mhfOpenDB(){
+  if(mhfDBPromise)return mhfDBPromise;
+  mhfDBPromise=new Promise((resolve,reject)=>{
+    if(!window.indexedDB){reject(new Error('IndexedDB is not available in this browser.'));return;}
+    const req=indexedDB.open(MHF_DB_NAME,MHF_DB_VERSION);
+    req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(MHF_STORE))db.createObjectStore(MHF_STORE,{keyPath:'key'});};
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error||new Error('Could not open browser database.'));
+  });
+  return mhfDBPromise;
 }
-function mhfSaveSettings(){const d=mhfData();d.settings={name:document.getElementById('mhfSettingName').value.trim(),email:document.getElementById('mhfSettingEmail').value.trim(),phone:document.getElementById('mhfSettingPhone').value.trim(),announcement:document.getElementById('mhfSettingAnnouncement').value.trim()};mhfPut(d);const s=document.getElementById('mhfSettingsStatus');s.style.display='block';s.textContent='Settings saved successfully.';}
-(function(){const d=mhfData();document.addEventListener('DOMContentLoaded',()=>{document.getElementById('mhfSettingName').value=d.settings.name||'';document.getElementById('mhfSettingEmail').value=d.settings.email||'';document.getElementById('mhfSettingPhone').value=d.settings.phone||'';document.getElementById('mhfSettingAnnouncement').value=d.settings.announcement||'';mhfRender();});})();
+
+async function mhfLoad(){
+  try{
+    const db=await mhfOpenDB();
+    const rows=await new Promise((resolve,reject)=>{
+      const tx=db.transaction(MHF_STORE,'readonly');
+      const req=tx.objectStore(MHF_STORE).get('all');
+      req.onsuccess=()=>resolve(req.result?.data||null);
+      req.onerror=()=>reject(req.error);
+    });
+    if(rows){mhfCache=mhfMergeData(rows);return mhfCache;}
+    const old=localStorage.getItem(MHF_CACHE_KEY);
+    if(old){
+      const migrated=mhfMergeData(JSON.parse(old));
+      mhfCache=migrated;
+      await mhfPersist();
+      try{localStorage.removeItem(MHF_CACHE_KEY);}catch(e){}
+    }
+  }catch(e){
+    console.warn('Admin database load failed; using in-memory data.',e);
+  }
+  return mhfCache;
+}
+
+async function mhfPersist(){
+  const snapshot=mhfMergeData(mhfCache);
+  try{
+    const db=await mhfOpenDB();
+    await new Promise((resolve,reject)=>{
+      const tx=db.transaction(MHF_STORE,'readwrite');
+      tx.objectStore(MHF_STORE).put({key:'all',data:snapshot,updatedAt:new Date().toISOString()});
+      tx.oncomplete=resolve;
+      tx.onerror=()=>reject(tx.error||new Error('Could not save administrator data.'));
+      tx.onabort=()=>reject(tx.error||new Error('Administrator save was aborted.'));
+    });
+    return true;
+  }catch(e){
+    console.error(e);
+    alert('Could not save this information on this device. Please make sure browser storage is enabled and try again.');
+    return false;
+  }
+}
+
+function mhfPanel(name){document.querySelectorAll('#adminDashboard .admin-panel').forEach(x=>x.classList.remove('active'));const p=document.getElementById('mhf-panel-'+name);if(p)p.classList.add('active');mhfRender();}
+function mhfClear(type){const ids={posts:['mhfPostTitle','mhfPostDate','mhfPostBody'],projects:['mhfProjectName','mhfProjectLocation','mhfProjectBudget','mhfProjectBeneficiaries','mhfProjectDescription'],finance:['mhfFinanceTitle','mhfFinanceAmount','mhfFinanceDate','mhfFinanceNote']};(ids[type]||[]).forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});}
+
+async function mhfSave(type){
+  try{
+    const d=mhfData();let item={id:mhfId(),created:new Date().toISOString()};
+    if(type==='posts'){item.title=document.getElementById('mhfPostTitle').value.trim();item.date=document.getElementById('mhfPostDate').value;item.body=document.getElementById('mhfPostBody').value.trim();}
+    else if(type==='projects'){item.name=document.getElementById('mhfProjectName').value.trim();item.location=document.getElementById('mhfProjectLocation').value.trim();item.budget=document.getElementById('mhfProjectBudget').value;item.beneficiaries=document.getElementById('mhfProjectBeneficiaries').value.trim();item.description=document.getElementById('mhfProjectDescription').value.trim();}
+    else if(type==='finance'){item.title=document.getElementById('mhfFinanceTitle').value.trim();item.kind=document.getElementById('mhfFinanceType').value;item.amount=document.getElementById('mhfFinanceAmount').value;item.date=document.getElementById('mhfFinanceDate').value;item.note=document.getElementById('mhfFinanceNote').value.trim();}
+    if(!item.title&&!item.name){alert('Please enter the required title/name.');return;}
+    d[type].unshift(item);
+    if(await mhfPersist()){mhfRender();mhfClear(type);alert('Saved successfully.');}
+  }catch(e){alert(e.message||'Could not save the item.');}
+}
+
+function mhfReadFile(input){return new Promise((resolve,reject)=>{const f=input?.files?.[0];if(!f)return resolve(null);if(f.size>30*1024*1024){reject(new Error('Please use a file smaller than 30 MB.'));return;}const r=new FileReader();r.onload=()=>resolve({name:f.name,type:f.type,data:r.result,size:f.size});r.onerror=()=>reject(new Error('Could not read the selected file.'));r.readAsDataURL(f);});}
+
+async function mhfSaveFile(type){
+  try{
+    const d=mhfData();let item={id:mhfId(),created:new Date().toISOString()};
+    if(type==='media'){item.title=document.getElementById('mhfMediaTitle').value.trim();item.file=await mhfReadFile(document.getElementById('mhfMediaFile'));}
+    if(type==='videos'){item.title=document.getElementById('mhfVideoTitle').value.trim();item.url=document.getElementById('mhfVideoUrl').value.trim();item.file=await mhfReadFile(document.getElementById('mhfVideoFile'));}
+    if(type==='leadership'){item.name=document.getElementById('mhfLeadName').value.trim();item.role=document.getElementById('mhfLeadRole').value.trim();item.bio=document.getElementById('mhfLeadBio').value.trim();item.file=await mhfReadFile(document.getElementById('mhfLeadPhoto'));}
+    if(type==='stories'){item.title=document.getElementById('mhfStoryName').value.trim();item.body=document.getElementById('mhfStoryBody').value.trim();item.file=await mhfReadFile(document.getElementById('mhfStoryPhoto'));}
+    if(type==='impact'){item.title=document.getElementById('mhfImpactTitle').value.trim();item.summary=document.getElementById('mhfImpactSummary').value.trim();item.file=await mhfReadFile(document.getElementById('mhfImpactFile'));}
+    if(type==='partnership'){item.title=document.getElementById('mhfPartnerTitle').value.trim();item.note=document.getElementById('mhfPartnerNote').value.trim();item.file=await mhfReadFile(document.getElementById('mhfPartnerFile'));}
+    if(type==='documents'){item.title=document.getElementById('mhfDocTitle').value.trim();item.kind=document.getElementById('mhfDocType').value;item.file=await mhfReadFile(document.getElementById('mhfDocFile'));}
+    if(!item.title&&!item.name){alert('Please enter a title/name.');return;}
+    if(['media','videos','leadership','stories','impact','partnership','documents'].includes(type) && type!=='videos' && !item.file){alert('Please choose a file.');return;}
+    if(type==='videos' && !item.file && !item.url){alert('Choose a video file or enter a video URL.');return;}
+    d[type].unshift(item);
+    if(await mhfPersist()){mhfRender();alert('Saved successfully.');}
+  }catch(e){alert(e.message||'Could not save the item.');}
+}
+
+async function mhfEdit(type,id){const d=mhfData(),x=d[type].find(i=>i.id===id);if(!x)return;const value=prompt('Edit title/name:',x.title||x.name||'');if(value===null)return;if(x.title!==undefined)x.title=value;else x.name=value;if(await mhfPersist())mhfRender();}
+async function mhfDelete(type,id){if(!confirm('Delete this item? This cannot be undone.'))return;const d=mhfData();d[type]=d[type].filter(i=>i.id!==id);if(await mhfPersist())mhfRender();}
+function mhfDownloadById(type,id){const item=mhfData()[type]?.find(x=>x.id===id);if(!item)return;if(item.file?.data){const a=document.createElement('a');a.href=item.file.data;a.download=item.file.name||'download';document.body.appendChild(a);a.click();a.remove();}else if(item.url){window.open(item.url,'_blank','noopener');}}
+function mhfButtons(type,id,extra=''){return '<div class="mhf-actions">'+extra+'<button class="btn" onclick="mhfEdit(\''+type+'\',\''+mhfEsc(id)+'\')">Edit</button><button class="btn mhf-danger" onclick="mhfDelete(\''+type+'\',\''+mhfEsc(id)+'\')">Delete</button></div>';}
+function mhfOpenButton(type,id,label){return '<button class="btn" onclick="mhfDownloadById(\''+type+'\',\''+mhfEsc(id)+'\')">'+label+'</button>';}
+function mhfList(type,target,renderer){const d=mhfData();const el=document.getElementById(target);if(!el)return;el.innerHTML=d[type].length?d[type].map(x=>renderer(x)).join(''):'<p class="muted">Nothing added yet.</p>';}
+
+function mhfRender(){
+  const d=mhfData();
+  for(const [id,n] of [['mhfCountPosts',d.posts.length],['mhfCountMedia',d.media.length],['mhfCountLeadership',d.leadership.length],['mhfCountProjects',d.projects.length],['mhfCountStories',d.stories.length],['mhfCountImpact',d.impact.length]]){const e=document.getElementById(id);if(e)e.textContent=n;}
+  mhfList('posts','mhfListPosts',x=>`<div class="mhf-item"><div class="mhf-item-head"><b>${mhfEsc(x.title)}</b><span class="mhf-small">${mhfEsc(x.date||'')}</span></div><p>${mhfEsc(x.body)}</p>${mhfButtons('posts',x.id)}</div>`);
+  mhfList('media','mhfListMedia',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b>${x.file?.type?.startsWith('image/')?`<br><img class="mhf-thumb" src="${x.file.data}" alt="${mhfEsc(x.title)}">`:''}${x.file?`<div class="mhf-small">${mhfEsc(x.file.name)}</div>`:''}${mhfButtons('media',x.id,x.file?mhfOpenButton('media',x.id,'Open/Download'):'')}</div>`);
+  mhfList('videos','mhfListVideos',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><p class="mhf-small">${mhfEsc(x.url||x.file?.name||'')}</p>${mhfButtons('videos',x.id,x.file||x.url?mhfOpenButton('videos',x.id,'Open Video'):'')}</div>`);
+  mhfList('leadership','mhfListLeadership',x=>`<div class="mhf-item"><b>${mhfEsc(x.name)}</b> — ${mhfEsc(x.role)}<p>${mhfEsc(x.bio)}</p>${x.file?.type?.startsWith('image/')?`<img class="mhf-thumb" src="${x.file.data}" alt="${mhfEsc(x.name)}">`:''}${mhfButtons('leadership',x.id)}</div>`);
+  mhfList('projects','mhfListProjects',x=>`<div class="mhf-item"><b>${mhfEsc(x.name)}</b><p>${mhfEsc(x.description)}</p><div class="mhf-small">Location: ${mhfEsc(x.location)} · Budget: UGX ${mhfEsc(x.budget)} · Beneficiaries: ${mhfEsc(x.beneficiaries)}</div>${mhfButtons('projects',x.id)}</div>`);
+  mhfList('stories','mhfListStories',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><p>${mhfEsc(x.body)}</p>${x.file?.type?.startsWith('image/')?`<img class="mhf-thumb" src="${x.file.data}" alt="${mhfEsc(x.title)}">`:''}${mhfButtons('stories',x.id)}</div>`);
+  mhfList('impact','mhfListImpact',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><p>${mhfEsc(x.summary)}</p>${mhfButtons('impact',x.id,x.file?mhfOpenButton('impact',x.id,'Open Report'):'')}</div>`);
+  mhfList('finance','mhfListFinance',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><div>${mhfEsc(x.kind)} · UGX ${mhfEsc(x.amount)} · ${mhfEsc(x.date)}</div><p>${mhfEsc(x.note)}</p>${mhfButtons('finance',x.id)}</div>`);
+  mhfList('partnership','mhfListPartnership',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><p>${mhfEsc(x.note)}</p>${mhfButtons('partnership',x.id,x.file?mhfOpenButton('partnership',x.id,'Open Proposal'):'')}</div>`);
+  mhfList('documents','mhfListDocuments',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b> <span class="mhf-small">${mhfEsc(x.kind)}</span>${mhfButtons('documents',x.id,x.file?mhfOpenButton('documents',x.id,'Open Document'):'')}</div>`);
+}
+
+async function mhfSaveSettings(){
+  const d=mhfData();
+  d.settings={name:document.getElementById('mhfSettingName').value.trim(),email:document.getElementById('mhfSettingEmail').value.trim(),phone:document.getElementById('mhfSettingPhone').value.trim(),announcement:document.getElementById('mhfSettingAnnouncement').value.trim()};
+  if(await mhfPersist()){const s=document.getElementById('mhfSettingsStatus');s.style.display='block';s.textContent='Settings saved successfully.';}
+}
+
+async function mhfInit(){
+  await mhfLoad();
+  document.addEventListener('DOMContentLoaded',()=>{
+    const s=mhfData().settings;
+    const pairs=[['mhfSettingName',s.name],['mhfSettingEmail',s.email],['mhfSettingPhone',s.phone],['mhfSettingAnnouncement',s.announcement]];
+    pairs.forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.value=v||'';});
+    mhfRender();
+  });
+  if(document.readyState!=='loading')mhfRender();
+}
+mhfInit();
 </script>
 
 
