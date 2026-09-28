@@ -240,23 +240,23 @@ footer{background:#071f19}
 <div class="paycard">
   <div class="payicon">📱</div>
   <h3>Mobile Money</h3>
-  <p class="muted">Send your donation directly to the foundation's Mobile Money number.</p>
-  <p><b>Mobile Money:</b> <span style="font-size:1.15rem">0747 064 373</span></p>
-  <button class="btn primary" type="button" onclick="startDonation('mobile')">Donate by Mobile Money</button>
+  <p class="muted">Pay securely by Airtel or MTN Mobile Money. The site will request the amount and phone number and start the payment through the secure payment provider.</p>
+  <p><b>Networks:</b> Airtel or MTN</p>
+  <button class="btn primary" type="button" onclick="startDonation('mobile')">Mobile Money Instructions</button>
   <span class="status">Airtel / MTN</span>
 </div>
 <div class="paycard">
   <div class="payicon">🏦</div>
   <h3>Bank Transfer</h3>
   <p class="muted">Use the foundation's verified bank instructions or the secure hosted payment page when configured.</p>
-  <button class="btn primary" type="button" onclick="startDonation('bank')">Donate by Bank Transfer</button>
+  <button class="btn primary" type="button" onclick="startDonation('bank')">Pay by Bank</button>
   <span class="status">Secure payment</span>
 </div>
 <div class="paycard">
   <div class="payicon">💳</div>
   <h3>Mastercard / Visa</h3>
   <p class="muted">Card payments are completed on a secure hosted checkout. No card number, CVV or PIN is stored in this website.</p>
-  <button class="btn primary" type="button" onclick="startDonation('card')">Donate by Mastercard / Visa</button>
+  <button class="btn primary" type="button" onclick="startDonation('card')">Pay securely by Card</button>
   <span class="status">Secure hosted checkout</span>
 </div>
 </div><div class="notice"><b>Secure payments:</b> The website will never ask supporters to enter a card PIN, CVV or Mobile Money PIN into this page. Payments are completed on the verified payment provider's secure checkout.</div><div class="support-contact"><p><b>Need help with a donation?</b></p><p><b>Email:</b> mugerwalouiscupa@gmail.com</p><p><b>Phone / WhatsApp:</b> +256 747 064 373</p><a class="btn primary" href="mailto:mugerwalouiscupa@gmail.com?subject=Donation%20%2F%20Support%20Inquiry">Ask About Supporting Us</a></div></div></div></section>
@@ -281,21 +281,20 @@ footer{background:#071f19}
 
 
 <!-- ADMINISTRATOR PORTAL -->
-<div id="paymentSetupModal" class="admin-gate" style="z-index:1100"><div class="admin-box"><h2 id="paymentMethodTitle">Secure Donation</h2><p id="paymentSetupMessage" class="muted"></p><button class="btn primary" type="button" onclick="closePaymentSetup()">Close</button></div></div>
-
-<div class="admin-gate" id="passwordResetGate" style="z-index:1200">
-  <div class="admin-box">
-    <h2>Reset Administrator Password</h2>
-    <p class="muted">Enter a new password for the Mugerwa Hope Foundation administrator account.</p>
-    <form onsubmit="completeAdminPasswordReset(event)">
-      <input id="newAdminPass" type="password" minlength="8" required placeholder="New password (8+ characters)">
-      <input id="confirmAdminPass" type="password" minlength="8" required placeholder="Confirm new password">
-      <button class="btn primary" type="submit" style="border:0;cursor:pointer;width:100%;margin-top:8px">Save New Password</button>
-    </form>
-    <button class="btn" type="button" style="border:0;background:#eef5f0;margin-top:10px;cursor:pointer;width:100%" onclick="closePasswordReset()">Cancel</button>
-    <p id="passwordResetStatus" class="muted" style="font-size:13px;margin-top:14px"></p>
-  </div>
-</div>
+<div id="paymentSetupModal" class="admin-gate" style="z-index:1100"><div class="admin-box">
+  <h2 id="paymentMethodTitle">Secure Donation</h2>
+  <p id="paymentSetupMessage" class="muted">Enter your donation details. You will be sent to the secure payment confirmation step.</p>
+  <form id="donationForm" onsubmit="submitDonation(event)">
+    <label>Donation amount (UGX)</label><input id="donationAmount" type="number" min="500" step="100" required placeholder="e.g. 10000">
+    <label>Your name</label><input id="donorName" required placeholder="Full name">
+    <label>Your email</label><input id="donorEmail" type="email" required placeholder="you@example.com">
+    <label>Mobile number</label><input id="donorPhone" type="tel" required placeholder="07XXXXXXXX">
+    <label id="networkLabel">Mobile network</label><select id="donorNetwork" style="width:100%;padding:13px;margin:6px 0;border:1px solid #d7e4de;border-radius:9px;font:inherit"><option value="AIRTEL">Airtel</option><option value="MTN">MTN</option></select>
+    <button class="btn primary" type="submit" id="donationSubmitBtn" style="width:100%;margin-top:10px">Continue to secure payment</button>
+  </form>
+  <div id="donationStatus" class="notice" style="display:none"></div>
+  <button class="btn" type="button" onclick="closePaymentSetup()" style="margin-top:8px">Close</button>
+</div></div>
 
 <div class="admin-gate" id="adminGate">
   <div class="admin-box">
@@ -309,6 +308,20 @@ footer{background:#071f19}
     <button class="btn" style="border:0;background:#eef5f0;margin-top:10px;cursor:pointer;width:100%" onclick="closeAdminLogin()">Cancel</button>
     <button class="btn" style="border:0;background:#fff;margin-top:10px;cursor:pointer;width:100%" onclick="resetAdminPassword()">Forgot password?</button>
     <p style="font-size:12px;color:#60756d;margin-top:15px">Administrator account: <b>mugerwalouiscupa@gmail.com</b>. The password is handled by Supabase Auth and is not stored in this HTML file.</p>
+  </div>
+</div>
+
+<div class="admin-gate" id="passwordResetGate" style="z-index:1200">
+  <div class="admin-box">
+    <h2>Reset Administrator Password</h2>
+    <p class="muted">Enter a new password for the foundation administrator account.</p>
+    <form onsubmit="completeAdminPasswordReset(event)">
+      <input id="newAdminPass" type="password" minlength="8" required placeholder="New password (8+ characters)">
+      <input id="confirmAdminPass" type="password" minlength="8" required placeholder="Confirm new password">
+      <button class="btn primary" type="submit" style="width:100%;margin-top:8px">Save New Password</button>
+    </form>
+    <button class="btn" type="button" onclick="closePasswordReset()" style="width:100%;margin-top:8px">Cancel</button>
+    <p id="passwordResetStatus" class="muted" style="font-size:13px"></p>
   </div>
 </div>
 
@@ -441,60 +454,41 @@ footer{background:#071f19}
      Mastercard/Visa and Mobile Money. The foundation must create/verify its merchant
      account and obtain its own payment-page URL before publishing it here.
 ================================================================ */
-const PAYMENT_PAGE_URL = ''; // Add the foundation's verified HTTPS hosted checkout URL after the payment account is approved.
-const MOBILE_MONEY_NUMBER = '0747 064 373';
-
-function showPaymentModal(title, html){
-  document.getElementById('paymentMethodTitle').textContent=title;
-  document.getElementById('paymentSetupMessage').innerHTML=html;
+const PAYMENT_FUNCTION_URL = 'https://eduousfgunznsdsbbrcu.supabase.co/functions/v1/create-donation';
+let selectedDonationMethod='mobile';
+function closePaymentSetup(){ document.getElementById('paymentSetupModal').style.display='none'; }
+function startDonation(method){
+  selectedDonationMethod=method;
+  const titles={mobile:'Mobile Money Donation',bank:'Bank Transfer Donation',card:'Mastercard / Visa Donation'};
+  document.getElementById('paymentMethodTitle').textContent=titles[method]||'Secure Donation';
+  document.getElementById('paymentSetupMessage').textContent=method==='mobile'
+    ? 'Enter the donor details and mobile-money number. The secure payment service will initiate the payment on Airtel or MTN.'
+    : 'Enter the donor details. You will be redirected to the secure payment provider to complete the payment.';
+  document.getElementById('networkLabel').style.display=method==='mobile'?'block':'none';
+  document.getElementById('donorNetwork').style.display=method==='mobile'?'block':'none';
   document.getElementById('paymentSetupModal').style.display='flex';
 }
-
-function copyMobileMoneyNumber(){
-  const n=MOBILE_MONEY_NUMBER.replace(/\s/g,'');
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(n).then(()=>alert('Mobile Money number copied: '+n)).catch(()=>alert('Mobile Money number: '+n));
-  } else { alert('Mobile Money number: '+n); }
-}
-
-function startDonation(method){
-  const labels={mobile:'Mobile Money donation',bank:'Bank Transfer donation',card:'Mastercard / Visa donation'};
-
-  if(method === 'mobile'){
-    showPaymentModal(labels.mobile,
-      '<b>Mobile Money donation</b><br><br>' +
-      'Send your donation to the foundation Mobile Money number:<br>' +
-      '<strong style="font-size:1.35rem;letter-spacing:.5px">'+MOBILE_MONEY_NUMBER+'</strong><br><br>' +
-      '<button class="btn primary" type="button" onclick="copyMobileMoneyNumber()">Copy number</button> ' +
-      '<a class="btn" href="https://wa.me/256747064373?text=Hello%20Mugerwa%20Hope%20Foundation%2C%20I%20would%20like%20to%20make%20a%20Mobile%20Money%20donation." target="_blank" rel="noopener">Ask on WhatsApp</a><br><br>' +
-      'After sending, keep your transaction confirmation. Do not enter your Mobile Money PIN on this website.<br><br>' +
-      '<b>Need help?</b> mugerwalouiscupa@gmail.com');
-    return;
-  }
-
-  if(PAYMENT_PAGE_URL && PAYMENT_PAGE_URL.startsWith('https://')){
-    const url=new URL(PAYMENT_PAGE_URL);
-    url.searchParams.set('method',method);
-    window.open(url.toString(),'_blank','noopener,noreferrer');
-    return;
-  }
-
-  if(method === 'bank'){
-    showPaymentModal(labels.bank,
-      '<b>Bank Transfer</b><br><br>' +
-      "The foundation's verified bank-account details have not been published in this website yet.<br><br>" +
-      '<a class="btn primary" href="mailto:mugerwalouiscupa@gmail.com?subject=Verified%20Bank%20Donation%20Details">Request bank details by email</a> ' +
-      '<a class="btn" href="https://wa.me/256747064373?text=Hello%20Mugerwa%20Hope%20Foundation%2C%20please%20send%20me%20the%20verified%20bank%20details%20for%20a%20donation." target="_blank" rel="noopener">Request on WhatsApp</a><br><br>' +
-      '<b>Safety:</b> Only use bank details confirmed by the foundation.');
-    return;
-  }
-
-  showPaymentModal(labels.card,
-    '<b>Secure card donation</b><br><br>' +
-    "The Mastercard/Visa checkout is ready to be connected to the foundation's verified payment-provider account.<br><br>" +
-    '<a class="btn primary" href="mailto:mugerwalouiscupa@gmail.com?subject=Online%20Card%20Donation">Request online donation link</a> ' +
-    '<a class="btn" href="https://wa.me/256747064373?text=Hello%20Mugerwa%20Hope%20Foundation%2C%20I%20would%20like%20to%20donate%20by%20Mastercard%20or%20Visa." target="_blank" rel="noopener">Ask on WhatsApp</a><br><br>' +
-    '<b>Important:</b> Never enter a card PIN, CVV or full card number into this website.');
+async function submitDonation(e){
+  e.preventDefault();
+  const btn=document.getElementById('donationSubmitBtn'), status=document.getElementById('donationStatus');
+  const payload={
+    method:selectedDonationMethod, amount:Number(document.getElementById('donationAmount').value),
+    name:document.getElementById('donorName').value.trim(), email:document.getElementById('donorEmail').value.trim(),
+    phone:document.getElementById('donorPhone').value.trim(), network:document.getElementById('donorNetwork').value,
+    redirect_url:'https://mugerwalouiscupa-beep.github.io/Mugerwa-hope-foundation-/'
+  };
+  if(payload.amount<500) return alert('Minimum donation is UGX 500.');
+  btn.disabled=true; btn.textContent='Starting secure payment…'; status.style.display='block'; status.textContent='Connecting to the secure payment service…';
+  try{
+    const r=await fetch(PAYMENT_FUNCTION_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(data.error||data.message||'Payment service is not configured or is unavailable.');
+    if(data.redirect_url){ status.textContent='Payment started. Opening secure payment page…'; window.location.href=data.redirect_url; return; }
+    throw new Error('The payment service did not return a secure payment URL.');
+  }catch(err){
+    status.textContent=err.message;
+    alert('Payment could not be started: '+err.message);
+  }finally{btn.disabled=false;btn.textContent='Continue to secure payment';}
 }
 </script>
 
@@ -513,132 +507,59 @@ function startDonation(method){
 </div>
 
 <script>
-function openAdminLogin(e){
-  if(e)e.preventDefault();
-  document.getElementById('adminGate').style.display='flex';
-}
-function closeAdminLogin(){
-  document.getElementById('adminGate').style.display='none';
-}
+function openAdminLogin(e){ if(e)e.preventDefault(); document.getElementById('adminGate').style.display='flex'; }
+function closeAdminLogin(){ document.getElementById('adminGate').style.display='none'; }
 async function adminLogin(e){
   e.preventDefault();
-  const email=(document.getElementById('adminUser')?.value || ADMIN_EMAIL).trim().toLowerCase();
-  const password=document.getElementById('adminPass')?.value || '';
-  if(email!==ADMIN_EMAIL.toLowerCase()) return alert('Only the foundation administrator email is authorized.');
-  if(!password) return alert('Enter your administrator password.');
-  if(!initSupabase()) return alert('Supabase is not configured yet. Add the project URL and publishable key to the website first.');
-
-  const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+  if(!initSupabase()) return alert('Supabase is not configured.');
+  const email=(document.getElementById('adminUser').value||'').trim().toLowerCase();
+  const password=document.getElementById('adminPass').value||'';
+  if(email!==ADMIN_EMAIL.toLowerCase()) return alert('Use the authorized administrator email.');
+  if(!password) return alert('Enter the administrator password.');
+  const {error}=await supabaseClient.auth.signInWithPassword({email,password});
   if(error) return alert('Login failed: '+error.message);
-
-  closeAdminLogin();
-  document.getElementById('adminDashboard').style.display='block';
-  await renderAdminData();
-  await renderFoundationResources();
-  await renderPublicResources();
-  await renderPublicMedia();
-  showAdminPanel('overview');
+  closeAdminLogin(); await openAdminDashboard();
 }
-function passwordResetRedirectUrl(){
-  // Always use the live GitHub Pages address. This prevents localhost or another
-  // development address from being placed in Supabase password-reset emails.
-  return 'https://mugerwalouiscupa-beep.github.io/Mugerwa-hope-foundation-/';
-}
-
 async function resetAdminPassword(){
-  if(!initSupabase()) return alert('Supabase is not configured yet.');
-  const email=ADMIN_EMAIL;
-  const {error}=await supabaseClient.auth.resetPasswordForEmail(email,{
-    redirectTo:passwordResetRedirectUrl()
-  });
+  if(!initSupabase()) return alert('Supabase is not configured.');
+  const {error}=await supabaseClient.auth.resetPasswordForEmail(ADMIN_EMAIL,{redirectTo:'https://mugerwalouiscupa-beep.github.io/Mugerwa-hope-foundation-/'});
   if(error) return alert('Password reset could not be sent: '+error.message);
-  alert('A password-reset email has been sent to '+email+'. Open the email and tap the reset link.');
+  alert('Password-reset email requested. Open the newest email and use its link.');
 }
-
-function openPasswordReset(){
-  const box=document.getElementById('passwordResetGate');
-  if(box) box.style.display='flex';
-}
-function closePasswordReset(){
-  const box=document.getElementById('passwordResetGate');
-  if(box) box.style.display='none';
-}
-
+function openPasswordReset(){ document.getElementById('passwordResetGate').style.display='flex'; }
+function closePasswordReset(){ document.getElementById('passwordResetGate').style.display='none'; }
 async function completeAdminPasswordReset(e){
   e.preventDefault();
-  if(!initSupabase()) return alert('Supabase is not configured yet.');
-  const p=document.getElementById('newAdminPass').value;
-  const c=document.getElementById('confirmAdminPass').value;
-  const status=document.getElementById('passwordResetStatus');
-  if(p.length<8) return alert('Use at least 8 characters for the new password.');
-  if(p!==c) return alert('The two passwords do not match.');
-  if(status) status.textContent='Saving your new password…';
+  if(!initSupabase()) return alert('Supabase is not configured.');
+  const p=document.getElementById('newAdminPass').value, c=document.getElementById('confirmAdminPass').value;
+  if(p.length<8) return alert('Use at least 8 characters.');
+  if(p!==c) return alert('The passwords do not match.');
+  const st=document.getElementById('passwordResetStatus'); st.textContent='Saving…';
   const {error}=await supabaseClient.auth.updateUser({password:p});
-  if(error){
-    if(status) status.textContent='Password update failed: '+error.message;
-    return alert('Password update failed: '+error.message);
-  }
-  if(status) status.textContent='Password changed successfully.';
-  alert('Your administrator password has been changed successfully. You can now log in with the new password.');
-  document.getElementById('newAdminPass').value='';
-  document.getElementById('confirmAdminPass').value='';
-  closePasswordReset();
+  if(error){st.textContent=error.message;return;}
+  st.textContent='Password changed successfully.';
   await supabaseClient.auth.signOut();
-  if(window.location.hash==='#password-reset') history.replaceState(null,'',window.location.pathname);
-  openAdminLogin();
+  setTimeout(()=>{closePasswordReset();openAdminLogin();},800);
 }
-
 async function handlePasswordRecovery(){
   if(!initSupabase()) return;
-
-  // Supabase sends PASSWORD_RECOVERY after the email link is verified.
-  // Register the listener immediately so the event is not missed.
-  supabaseClient.auth.onAuthStateChange((event, session)=>{
-    if(event === 'PASSWORD_RECOVERY' && session){
-      openPasswordReset();
-    }
-  });
-
-  // Also check the URL/session after Supabase has had time to process the
-  // recovery link. This covers both hash-token and code-based recovery links.
-  setTimeout(async()=>{
-    try{
-      const {data:{session}} = await supabaseClient.auth.getSession();
-      const hash = window.location.hash || '';
-      const hasRecoveryHash = hash.includes('access_token=') && hash.includes('type=recovery');
-      const hasRecoveryCode = new URLSearchParams(window.location.search).has('code');
-      const hasRecoveryMarker = hash.includes('type=recovery') || hash === '#password-reset';
-
-      if(session && (hasRecoveryHash || hasRecoveryCode || hasRecoveryMarker)){
-        openPasswordReset();
-      }
-    }catch(err){
-      console.error('Password recovery handling failed:', err);
-    }
-  }, 1200);
+  supabaseClient.auth.onAuthStateChange((event,session)=>{ if(event==='PASSWORD_RECOVERY' && session) openPasswordReset(); });
+  const hash=window.location.hash, query=new URLSearchParams(window.location.search);
+  const recovery=hash.includes('type=recovery') || query.has('code');
+  if(recovery){
+    setTimeout(async()=>{const {data:{session}}=await supabaseClient.auth.getSession(); if(session) openPasswordReset();},500);
+  }
 }
 async function openAdminDashboard(){
   if(!initSupabase()) return;
   const user=await getCurrentAdmin();
-  if(user){
-    document.getElementById('adminDashboard').style.display='block';
-    await renderAdminData();
-    await renderFoundationResources();
-    await renderPublicResources();
-    await renderPublicMedia();
-    showAdminPanel('overview');
-  }
+  if(!user) return;
+  document.getElementById('adminDashboard').style.display='block';
+  await renderAdminData(); await renderFoundationResources(); await renderPublicResources(); await renderPublicMedia(); showAdminPanel('overview');
 }
-function closeAdminDashboard(){ document.getElementById('adminDashboard').style.display='none'; }
-async function adminLogout(){
-  if(supabaseClient) await supabaseClient.auth.signOut();
-  closeAdminDashboard();
-}
-function showAdminPanel(name){
-  document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
-  const p=document.getElementById('panel-'+name); if(p)p.classList.add('active');
-  renderAdminData();
-}
+function closeAdminDashboard(){document.getElementById('adminDashboard').style.display='none';}
+async function adminLogout(){if(supabaseClient)await supabaseClient.auth.signOut();closeAdminDashboard();}
+function showAdminPanel(name){document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));const p=document.getElementById('panel-'+name);if(p)p.classList.add('active');renderAdminData();}
 
 function getData(key, fallback){ try{return JSON.parse(localStorage.getItem(key)) || fallback}catch(e){return fallback} }
 function setData(key,val){localStorage.setItem(key,JSON.stringify(val));}
@@ -701,7 +622,7 @@ function deleteMedia(i){const m=getData('mhfMedia',[]);m.splice(i,1);setData('mh
 function toggleClientChat(){const b=document.getElementById('clientChatBox');b.style.display=b.style.display==='none'?'block':'none';renderClientChat();}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
 
-window.addEventListener('load',()=>{renderAdminData(); renderFoundationResources(); renderPublicResources(); handlePasswordRecovery();});
+
 
 const FUNDRAISING_RESOURCES = {
   registration:{title:'Registration Documents', body:'Upload your verified registration certificate and other official documents through the administrator area when file-upload storage is connected.'},
@@ -1323,4 +1244,12 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 </script>
 
+<script>
+window.addEventListener('load', async ()=>{
+  renderAdminData();
+  await handlePasswordRecovery();
+  await initializeCloudResources();
+  if(initSupabase()){const user=await getCurrentAdmin(); if(user) await openAdminDashboard();}
+});
+</script>
 </body></html>
