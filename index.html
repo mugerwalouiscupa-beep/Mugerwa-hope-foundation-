@@ -104,6 +104,18 @@ footer{background:#071f19}
 
 </style>
 <meta name="theme-color" content="#08734f">
+
+<style id="mhf-media-viewer-styles">
+.mhf-media-clickable{cursor:pointer;transition:transform .2s ease,opacity .2s ease}
+.mhf-media-clickable:hover{transform:scale(1.01);opacity:.96}
+#mhfMediaViewer{position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:99999;display:none;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}
+#mhfMediaViewer.open{display:flex}
+#mhfMediaViewerContent{max-width:96vw;max-height:88vh;display:flex;align-items:center;justify-content:center}
+#mhfMediaViewerContent img,#mhfMediaViewerContent video{max-width:96vw;max-height:82vh;width:auto;height:auto;object-fit:contain;border-radius:10px}
+#mhfMediaViewerTitle{position:absolute;top:18px;left:20px;right:80px;color:#fff;font-size:18px;font-weight:700;text-align:center}
+#mhfMediaViewerClose{position:absolute;top:12px;right:16px;border:0;background:#fff;color:#111;width:46px;height:46px;border-radius:50%;font-size:28px;cursor:pointer}
+#mhfMediaViewerFull{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);border:0;background:#08734f;color:#fff;padding:12px 18px;border-radius:10px;font-weight:700;cursor:pointer}
+</style>
 </head>
 <body>
 <header class="nav"><div class="navin"><a class="brand" href="#home"><span class="brand-mark">❤</span><span>Mugerwa Hope Foundation</span></a><nav><a href="#about">About</a><a href="#programs">Programs</a><a href="#impact">Impact</a><a href="#media">Media & Stories</a><a href="#partner">Partner</a><a href="#resources">Fundraising</a><a href="#contact">Contact</a><a class="admin-link" href="#" onclick="openAdminLogin(event)">Administrator</a></nav></div></header>
@@ -801,6 +813,13 @@ async function mhfCloudInit(){
   </div>
 </div>
 
+
+<div id="mhfMediaViewer" aria-hidden="true">
+  <div id="mhfMediaViewerTitle"></div>
+  <button id="mhfMediaViewerClose" type="button" aria-label="Close full screen media" onclick="closeMediaViewer()">×</button>
+  <div id="mhfMediaViewerContent"></div>
+  <button id="mhfMediaViewerFull" type="button" onclick="fullscreenMediaViewer()">⛶ Full screen</button>
+</div>
 <footer><div class="foot"><div><h3>Mugerwa Hope Foundation</h3><p>Supporting vulnerable people and communities with compassion, dignity and practical opportunities.</p></div><div><h3>Explore</h3><p><a href="#about">About</a><br><a href="#programs">Programs</a><br><a href="#impact">Impact</a><br><a href="#media">Media & Stories</a><br><a href="#partner">Partner</a></p></div><div><h3>Contact</h3><p>mugerwalouiscupa@gmail.com<br>+256 747 064 373<br>Uganda</p></div></div><div class="foot small">© 2026 Mugerwa Hope Foundation. This first website is a working prototype. Official registration and donation details should be published only after verification.</div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -1280,39 +1299,72 @@ async function deleteFoundationResource(id){
   if(!user)return;
   const r=cloudResources.find(x=>x.id===id);
   if(!r)return;
-  if(!confirm('Delete this media permanently from the administrator AND the public website?'))return;
+  if(!confirm('Delete this media permanently? It will disappear from the administrator and the public website.'))return;
 
-  // Delete the database row first. The public website reads only published
-  // rows from foundation_resources, so removing this row immediately removes
-  // the media from the public gallery after the next refresh.
-  const {error:dbError}=await supabaseClient
+  // IMPORTANT: delete the database record first. The public website reads
+  // foundation_resources, so this is what removes the media from the gallery.
+  const {data:deleted,error:dbError}=await supabaseClient
     .from('foundation_resources')
     .delete()
-    .eq('id',id);
+    .eq('id',id)
+    .select('id');
 
   if(dbError){
-    return alert('Database deletion failed: '+dbError.message);
+    return alert('Nothing was deleted. Supabase blocked the database deletion.\n\nPlease make sure the administrator DELETE policy for foundation_resources has been added in Supabase SQL Editor.\n\nError: '+dbError.message);
   }
 
-  // Then remove the physical file from the public Storage bucket.
+  if(!deleted || !deleted.length){
+    return alert('Nothing was deleted. Supabase did not delete the media record. Check the foundation_resources DELETE policy.');
+  }
+
+  // Remove the physical file as cleanup. Even if this part fails, the database
+  // row is already gone, so the media is no longer published on the website.
   if(r.storage_path){
-    const {error:fileError}=await supabaseClient
-      .storage.from('foundation-public')
-      .remove([r.storage_path]);
-
-    if(fileError){
-      console.warn('Storage file cleanup failed:',fileError.message);
-      alert('The media was removed from the website database, but the storage file could not be cleaned up: '+fileError.message);
-    }
+    const {error:fileError}=await supabaseClient.storage
+      .from('foundation-public').remove([r.storage_path]);
+    if(fileError) console.warn('Storage cleanup failed:',fileError.message);
   }
 
+  // Refresh the administrator and public sections immediately.
   await loadCloudResources();
   await renderFoundationResources();
   await renderPublicResources();
   await renderPublicMedia();
-  alert('Media deleted successfully. It is no longer published on the website.');
+  alert('Deleted successfully. The media has been removed from the public website.');
 }
 
+
+function openMediaViewer(url,type,title){
+  const viewer=document.getElementById('mhfMediaViewer');
+  const content=document.getElementById('mhfMediaViewerContent');
+  const titleEl=document.getElementById('mhfMediaViewerTitle');
+  if(!viewer||!content)return;
+  titleEl.textContent=title||'Mugerwa Hope Foundation Media';
+  if(type==='photo'){
+    content.innerHTML='<img src="'+url.replace(/"/g,'&quot;')+'" alt="">';
+  }else{
+    content.innerHTML='<video controls autoplay playsinline src="'+url.replace(/"/g,'&quot;')+'"></video>';
+  }
+  viewer.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeMediaViewer(){
+  const viewer=document.getElementById('mhfMediaViewer');
+  const content=document.getElementById('mhfMediaViewerContent');
+  if(viewer)viewer.classList.remove('open');
+  if(content)content.innerHTML='';
+  document.body.style.overflow='';
+}
+async function fullscreenMediaViewer(){
+  const content=document.getElementById('mhfMediaViewerContent');
+  const media=content?.querySelector('img,video');
+  if(!media)return;
+  try{
+    if(media.requestFullscreen) await media.requestFullscreen();
+    else if(media.webkitRequestFullscreen) media.webkitRequestFullscreen();
+  }catch(e){}
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMediaViewer();});
 
 async function renderPublicMedia(){
   const buckets={
@@ -1352,21 +1404,24 @@ async function renderPublicMedia(){
         .from('foundation-public').createSignedUrl(r.storage_path,3600);
       if(signedError || !signed?.signedUrl) continue;
       const u=signed.signedUrl;
+      const safeUrl=u.replace(/\/g,'\\').replace(/'/g,"\'");
+      const safeTitle=escapeHtml(r.title);
       let mediaHtml='';
       if(category==='photos'){
-        mediaHtml='<img src="'+u+'" alt="'+escapeHtml(r.title)+'" loading="lazy" style="width:100%;height:220px;object-fit:cover;display:block">';
+        mediaHtml='<button type="button" class="mhf-media-clickable" onclick="openMediaViewer(\''+safeUrl+'\',\'photo\',\''+safeTitle.replace(/'/g,"&#39;")+'\')" style="padding:0;border:0;background:transparent;width:100%;display:block"><img src="'+u+'" alt="'+safeTitle+'" loading="lazy" style="width:100%;height:220px;object-fit:cover;display:block"></button>';
       }else{
-        mediaHtml='<video controls preload="metadata" style="width:100%;height:220px;object-fit:cover;display:block" src="'+u+'"></video>';
+        mediaHtml='<button type="button" class="mhf-media-clickable" onclick="openMediaViewer(\''+safeUrl+'\',\'video\',\''+safeTitle.replace(/'/g,"&#39;")+'\')" style="padding:0;border:0;background:transparent;width:100%;display:block"><video muted preload="metadata" style="width:100%;height:220px;object-fit:cover;display:block" src="'+u+'"></video></button>';
       }
       cards.push('<article class="media-card">'+mediaHtml+
         '<div class="media-body"><span class="status">'+escapeHtml(RESOURCE_CATEGORIES[category])+'</span>'+
-        '<h3>'+escapeHtml(r.title)+'</h3><p class="muted">'+escapeHtml(r.file_name)+'</p>'+
-        '<a class="btn primary" href="'+u+'" target="_blank" rel="noopener">Open full '+escapeHtml(RESOURCE_CATEGORIES[category]).toLowerCase()+'</a>'+
+        '<h3>'+safeTitle+'</h3><p class="muted">'+escapeHtml(r.file_name)+'</p>'+
+        '<button type="button" class="btn primary" onclick="openMediaViewer(\''+safeUrl+'\',\''+(category==='photos'?'photo':'video')+'\',\''+safeTitle.replace(/'/g,"&#39;")+'\')">View full screen</button>'+
         '</div></article>');
     }
     el.innerHTML=cards.join('') || '<p class="muted">No '+RESOURCE_CATEGORIES[category].toLowerCase()+' could be displayed.</p>';
   }
 }
+
 
 async function initializeCloudResources(){
   if(!initSupabase()){
