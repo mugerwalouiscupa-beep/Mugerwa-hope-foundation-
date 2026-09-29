@@ -109,11 +109,11 @@ footer{background:#071f19}
 <meta name="theme-color" content="#08734f">
 </head>
 <body>
-<header class="nav"><div class="navin"><a class="brand" href="#home"><span class="brand-mark">❤</span><span>Mugerwa Hope Foundation</span></a><nav><a href="#about">About</a><a href="#programs">Programs</a><a href="#impact">Impact</a><a href="#media">Media & Stories</a><a href="#partner">Partner</a><a href="#resources">Fundraising</a><a href="#contact">Contact</a><a class="admin-link" href="#" onclick="openAdminLogin(event)">Administrator</a></nav></div></header>
+<header class="nav"><div class="navin"><a class="brand" href="#home"><span class="brand-mark">❤</span><span>Mugerwa Hope Foundation</span></a><nav><a href="#about">About</a><a href="#programs">Programs</a><a href="#impact">Impact</a><a href="#media">Media & Stories</a><a href="#partner">Partner</a><a href="#resources">Fundraising</a><a href="#contact">Contact</a><a href="#" onclick="shareFoundation(event)">🔗 Share</a><a class="admin-link" href="#" onclick="openAdminLogin(event)">Administrator</a></nav></div></header>
 <a id="mobileAdminLauncher" class="mobile-admin-launcher" href="#" onclick="openAdminLogin(event)">🔐 Administrator</a>
 
 <main>
-<section class="hero" id="home"><div class="hero-in"><div><div class="hero-badge">🇺🇬 Uganda • Community-centered action</div><h1>Hope. Dignity. Opportunity.</h1><p>We are building a compassionate foundation supporting people with disabilities, older people, orphans and other vulnerable communities with practical help and long-term opportunities.</p><div class="actions"><a class="btn gold" href="#support">Support Our Mission</a><a class="btn" style="border:2px solid #fff;color:#fff" href="#about">Learn About Us</a></div></div><div class="hero-card"><div class="section-kicker">For supporters & partners</div><h2 style="font-size:27px">Be part of the change</h2><p class="muted">Individuals, businesses, foundations and international partners can help turn compassion into measurable community impact.</p><div class="stats"><div class="stat"><b>01</b><span>Community first</span></div><div class="stat"><b>04</b><span>Core programs</span></div><div class="stat"><b>∞</b><span>Possibilities</span></div></div></div></div></section>
+<section class="hero" id="home"><div class="hero-in"><div><div class="hero-badge">🇺🇬 Uganda • Community-centered action</div><h1>Hope. Dignity. Opportunity.</h1><p>We are building a compassionate foundation supporting people with disabilities, older people, orphans and other vulnerable communities with practical help and long-term opportunities.</p><div class="actions"><a class="btn gold" href="#support">Support Our Mission</a><a class="btn" style="border:2px solid #fff;color:#fff" href="#about">Learn About Us</a><button class="btn" type="button" style="border:2px solid #fff;color:#fff;background:transparent;cursor:pointer" onclick="shareFoundation(event)">🔗 Share Website</button></div></div><div class="hero-card"><div class="section-kicker">For supporters & partners</div><h2 style="font-size:27px">Be part of the change</h2><p class="muted">Individuals, businesses, foundations and international partners can help turn compassion into measurable community impact.</p><div class="stats"><div class="stat"><b>01</b><span>Community first</span></div><div class="stat"><b>04</b><span>Core programs</span></div><div class="stat"><b>∞</b><span>Possibilities</span></div></div></div></div></section>
 <div class="trust-strip">
   <div class="trust-grid">
     <div class="trust-item"><span>🔎</span><span>Transparency-focused</span></div>
@@ -279,6 +279,22 @@ footer{background:#071f19}
   </div>
 </section>
 
+
+<section id="shareWebsite" class="feature-band">
+  <div class="container">
+    <div class="feature-box" style="text-align:center">
+      <div class="section-kicker">Share Mugerwa Hope Foundation</div>
+      <h2>Invite people to visit our website</h2>
+      <p class="muted">Visitors and the administrator can share this same live website link through WhatsApp, Facebook, SMS, email or any other sharing app on their phone or computer.</p>
+      <div class="actions" style="justify-content:center">
+        <button class="btn primary" type="button" onclick="shareFoundation(event)">🔗 Share Website</button>
+        <button class="btn" type="button" style="border:2px solid var(--g);color:var(--g);background:#fff;cursor:pointer" onclick="copyFoundationLink(event)">📋 Copy Website Link</button>
+      </div>
+      <div id="foundationShareStatus" class="muted" style="margin-top:12px;font-size:13px"></div>
+    </div>
+  </div>
+</section>
+
 <section id="contact"><div class="container"><div class="head"><div class="tag">Contact</div><h2>Let's work together</h2><p class="muted">Whether you want to support a project, volunteer, partner or learn more, we would like to hear from you.</p></div><div class="contact"><div class="contactbox"><p><b>Email</b></p><div id="publicContactEmails" class="contact-list"><span class="muted">mugerwalouiscupa@gmail.com</span></div><p><b>Phone / WhatsApp</b></p><div id="publicContactPhones" class="contact-list"><span class="muted">+256 747 064 373</span></div><p><b>Country</b><br><span class="muted">Uganda</span></p></div><div class="contactbox"><form onsubmit="sendMail(event)"><input id="name" required placeholder="Your name"><input id="email" required type="email" placeholder="Your email"><textarea id="msg" required placeholder="How would you like to help or partner with us?"></textarea><button class="btn primary" type="submit">Send Message</button></form></div></div></div></section>
 
 <section class="cta"><div class="container"><div class="tag" style="color:#f3d47e">Stand with humanity</div><h2>Together, we can create more hope.</h2><p>Help us build programs that give vulnerable people practical support, dignity and opportunities for a better future.</p><a class="btn gold" href="mailto:mugerwalouiscupa@gmail.com?subject=I%20Want%20to%20Support%20Mugerwa%20Hope%20Foundation">I Want to Support</a></div></section>
@@ -341,7 +357,7 @@ footer{background:#071f19}
 </style>
 <div class="admin-top">
   <b>❤ Mugerwa Hope Foundation — Administrator</b>
-  <div><button class="btn gold" onclick="closeAdminDashboard()">View Website</button><button class="btn" style="background:#fff;color:#103b30;border:0;cursor:pointer" onclick="adminLogout()">Logout</button></div>
+  <div><button class="btn gold" onclick="closeAdminDashboard()">View Website</button><button class="btn" style="background:#fff;color:#103b30;border:0;cursor:pointer" onclick="shareFoundation(event)">🔗 Share Website</button><button class="btn" style="background:#fff;color:#103b30;border:0;cursor:pointer" onclick="adminLogout()">Logout</button></div>
 </div>
 <div class="admin-layout mhf-admin-v2">
 <aside class="admin-side">
@@ -398,6 +414,49 @@ footer{background:#071f19}
 
 <section class="admin-panel" id="mhf-panel-settings"><h2>Website Settings & Contacts</h2><p class="muted">Change or remove the public emails and phone/WhatsApp numbers here. Separate multiple contacts with commas.</p><input id="mhfSettingName" placeholder="Foundation name"><label>Public emails (comma-separated)<input id="mhfSettingEmail" placeholder="email1@example.com, email2@example.com"></label><label>Public phones / WhatsApp (comma-separated)<input id="mhfSettingPhone" placeholder="+256..., +256..."></label><label>Notification email (where administrator alerts should be sent)<input id="mhfNotifyEmail" placeholder="mugerwalouiscupa@gmail.com"></label><label>Notification phone (SMS alerts)<input id="mhfNotifyPhone" placeholder="+256747064373"></label><textarea id="mhfSettingAnnouncement" placeholder="Homepage announcement"></textarea><button class="btn primary" onclick="mhfSaveSettings()">Save Settings</button><div id="mhfSettingsStatus" class="mhf-status"></div><h3 style="margin-top:22px">Administrator notification queue</h3><p class="muted">Comments and other website events are queued here. Actual email/SMS delivery uses the secure Supabase notification function configured separately.</p><div id="mhfNotificationList"></div></section>
 </main></div></div>
+
+
+<script>
+/* Universal website sharing.
+   The link is taken from the live page URL, so nobody is sent to a local
+   file on the administrator's phone. It works on Android, iPhone and desktop.
+*/
+function foundationPublicUrl(){
+  return window.location.href.split('#')[0];
+}
+async function copyFoundationLink(event){
+  if(event) event.preventDefault();
+  const url=foundationPublicUrl();
+  const status=document.getElementById('foundationShareStatus');
+  try{
+    await navigator.clipboard.writeText(url);
+    if(status) status.textContent='Website link copied. You can now paste it into WhatsApp, Facebook, SMS or email.';
+    else alert('Website link copied. You can now paste it anywhere.');
+  }catch(e){
+    const ta=document.createElement('textarea');
+    ta.value=url; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{document.execCommand('copy'); if(status) status.textContent='Website link copied.'; else alert('Website link copied.');}
+    catch(err){prompt('Copy this website link:',url);}
+    ta.remove();
+  }
+}
+async function shareFoundation(event){
+  if(event) event.preventDefault();
+  const url=foundationPublicUrl();
+  const data={
+    title:'Mugerwa Hope Foundation',
+    text:'Visit Mugerwa Hope Foundation — Hope, Dignity and Opportunity.',
+    url:url
+  };
+  if(navigator.share){
+    try{ await navigator.share(data); return; }catch(e){
+      if(e && e.name==='AbortError') return;
+    }
+  }
+  await copyFoundationLink(event);
+}
+</script>
 
 <script>
 /* Mugerwa Hope Foundation administrator content manager.
