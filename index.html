@@ -192,23 +192,12 @@ footer{background:#071f19}
       <div id="documentaries" style="margin-top:32px"><h3>🎬 Documentaries</h3><div id="publicDocumentaries" class="media-grid"></div></div>
     </div>
 
-    <div class="panel media-publish">
-      <div class="tag">Foundation updates</div>
-      <h3>Keep supporters informed</h3>
+    <div class="panel media-publish" style="margin-top:24px">
+      <div class="tag">Public viewing</div>
+      <h3>Media is managed by the Administrator</h3>
       <p class="muted">
-        New photos, videos and documentaries can be added here as the foundation
-        carries out activities. For videos and documentaries, we can connect this
-        section to the foundation's official YouTube channel so visitors can watch
-        them directly from the website.
-      </p>
-      <div class="actions">
-        <a class="btn primary" href="mailto:mugerwalouiscupa@gmail.com?subject=Media%20Update%20for%20Mugerwa%20Hope%20Foundation">Send a Media Update</a>
-        <a class="btn" style="border:2px solid var(--g);color:var(--g)" href="#contact">Contact Foundation</a>
-      </div>
-      <p class="muted" style="font-size:13px;margin-top:14px">
-        <b>Important:</b> Before publishing identifiable photos or videos of children,
-        vulnerable people or beneficiaries, obtain appropriate consent and avoid
-        publishing sensitive personal information.
+        Photos, videos and documentaries are uploaded, edited, approved and published
+        by the Mugerwa Hope Foundation Administrator. Visitors can view published media here.
       </p>
     </div>
   </div>
@@ -685,18 +674,41 @@ async function editStructuredContent(id){
 async function deleteStructuredContent(id){const user=await ensureAdminSession();if(!user||!confirm('Delete this content permanently?'))return;const x=await getStructured(id);if(x?.payload?.storage_path)await supabaseClient.storage.from('foundation-public').remove([x.payload.storage_path]);const {error}=await supabaseClient.from('mhf_posts').delete().eq('id',id);if(error)return alert(error.message);await loadStructuredAdmin();await renderPublicStructured();}
 function structuredEngagementHtml(id){return `<div class="engage-box" style="margin-top:14px"><div class="engage-actions"><button type="button" onclick="togglePostLike('${id}',this)">♥ Like <span id="postLikeCount_${id}">0</span></button><span class="muted">💬 <span id="postCommentCount_${id}">0</span> comments</span></div><div class="comment-box"><input id="postCommentName_${id}" placeholder="Your name"><input id="postCommentEmail_${id}" type="email" placeholder="Email (optional)"><div class="mhf-emoji-row"><button type="button" onclick="addCommentEmoji('postCommentBody_${id}','❤️')">❤️</button><button type="button" onclick="addCommentEmoji('postCommentBody_${id}','👍')">👍</button><button type="button" onclick="addCommentEmoji('postCommentBody_${id}','🙏')">🙏</button><button type="button" onclick="addCommentEmoji('postCommentBody_${id}','👏')">👏</button><button type="button" onclick="addCommentEmoji('postCommentBody_${id}','😊')">😊</button></div><textarea id="postCommentBody_${id}" placeholder="Write a comment..."></textarea><button class="btn primary" type="button" onclick="submitPostComment('${id}')">Submit comment for approval</button></div><div class="comment-list" id="postCommentList_${id}"><span class="muted">Loading approved comments…</span></div></div>`;}
 async function renderPublicStructured(){
-  const el=document.getElementById('publicStructuredContent');if(!el||!initSupabase())return;
-  const {data,error}=await supabaseClient.from('mhf_posts').select('id,title,body,post_date,published,created_at').like('title','[MHF:%').eq('published',true).order('created_at',{ascending:false});
-  if(error){el.innerHTML='<p class="muted">Foundation content is temporarily unavailable.</p>';return;}
-  const items=(data||[]).map(parseStructuredPost).filter(Boolean);
+  const el=document.getElementById('publicStructuredContent');
+  if(!el||!initSupabase())return;
+  el.innerHTML='<p class="muted">Loading administrator content…</p>';
+  const {data,error}=await supabaseClient.from(CONTENT)
+    .select('id,type,title,data,is_public,created_at,updated_at')
+    .eq('is_public',true)
+    .in('type',['leadership','projects','stories','impact','finance','partnership','documents'])
+    .order('created_at',{ascending:false});
+  if(error){el.innerHTML='<p class="muted">Foundation content is temporarily unavailable: '+escapeHtml(error.message)+'</p>';return;}
+  const items=data||[];
   if(!items.length){el.innerHTML='<p class="muted">No administrator content has been published yet.</p>';return;}
   const labels={leadership:'👥 Board & Leadership',projects:'🏗️ Project & Budget',stories:'❤️ Beneficiary Story',impact:'📊 Impact Report',finance:'💰 Financial Transparency',partnership:'🤝 Partnership Proposal',documents:'📁 Registration & Documents'};
   const cards=[];
-  for(const x of items){const p=x.payload||{};let details='';if(x.type==='leadership')details=`<b>${escapeHtml(p.role||'')}</b><p>${escapeHtml(p.bio||'')}</p>`;if(x.type==='projects')details=`<p>${escapeHtml(p.description||'')}</p><small>Location: ${escapeHtml(p.location||'')} · Budget: UGX ${escapeHtml(p.budget||'')} · Beneficiaries: ${escapeHtml(p.beneficiaries||'')}</small>`;if(x.type==='stories')details=`<p>${escapeHtml(p.body||'')}</p>`;if(x.type==='impact')details=`<p>${escapeHtml(p.summary||'')}</p>`;if(x.type==='finance')details=`<p><b>${escapeHtml(p.kind||'')}</b> · UGX ${escapeHtml(p.amount||'')} · ${escapeHtml(p.date||'')}</p><p>${escapeHtml(p.note||'')}</p>`;if(x.type==='partnership')details=`<p>${escapeHtml(p.note||'')}</p>`;if(x.type==='documents')details=`<p>${escapeHtml(p.kind||'')}</p>`;let file='';if(p.storage_path){const {data:signed}=await supabaseClient.storage.from('foundation-public').createSignedUrl(p.storage_path,3600);if(signed?.signedUrl){if((p.mime_type||'').startsWith('image/'))file=`<img src="${signed.signedUrl}" style="width:100%;height:220px;object-fit:cover;border-radius:12px" alt="${escapeHtml(x.title)}">`;else file=`<a class="btn primary" href="${signed.signedUrl}" target="_blank" rel="noopener">Open / Download file</a>`;}}cards.push(`<article class="card" style="padding:20px"><span class="status">${labels[x.type]||'Foundation Update'}</span><h3>${escapeHtml(x.title)}</h3>${file}${details}<small class="muted">Published ${new Date(x.created_at).toLocaleDateString()}</small>${structuredEngagementHtml(x.id)}</article>`);}
+  for(const x of items){
+    const p=x.data||{};let details='';
+    if(x.type==='leadership')details=`<b>${escapeHtml(p.role||'')}</b><p>${escapeHtml(p.bio||'')}</p>`;
+    if(x.type==='projects')details=`<p>${escapeHtml(p.description||'')}</p><small>Location: ${escapeHtml(p.location||'')} · Budget: UGX ${escapeHtml(p.budget||'')} · Beneficiaries: ${escapeHtml(p.beneficiaries||'')}</small>`;
+    if(x.type==='stories')details=`<p class="mhf-public-story">${escapeHtml(p.body||'')}</p>`;
+    if(x.type==='impact')details=`<p>${escapeHtml(p.summary||'')}</p>`;
+    if(x.type==='finance')details=`<p><b>${escapeHtml(p.kind||'')}</b> · UGX ${escapeHtml(p.amount||'')} · ${escapeHtml(p.date||'')}</p><p>${escapeHtml(p.note||'')}</p>`;
+    if(x.type==='partnership')details=`<p>${escapeHtml(p.note||'')}</p>`;
+    if(x.type==='documents')details=`<p>${escapeHtml(p.kind||'')}</p>`;
+    let file='';
+    if(p.storage_path){
+      const {data:signed}=await supabaseClient.storage.from('foundation-public').createSignedUrl(p.storage_path,3600);
+      if(signed?.signedUrl){
+        if((p.mime_type||'').startsWith('image/'))file=`<img src="${signed.signedUrl}" style="width:100%;height:220px;object-fit:cover;border-radius:12px" alt="${escapeHtml(x.title)}">`;
+        else file=`<a class="btn primary" href="${signed.signedUrl}" target="_blank" rel="noopener">Open / Download file</a>`;
+      }
+    }
+    cards.push(`<article class="card" style="padding:20px"><span class="status">${labels[x.type]||'Foundation Update'}</span><h3>${escapeHtml(x.title)}</h3>${file}${details}<small class="muted">Published ${new Date(x.created_at).toLocaleDateString()}</small>${structuredEngagementHtml(x.id)}</article>`);
+  }
   el.innerHTML=cards.join('');
-  for(const x of items) loadPostEngagement(x.id);
+  for(const x of items)loadPostEngagement(x.id);
 }
-
 async function mhfEdit(type,id){const d=mhfData(),x=d[type].find(i=>i.id===id);if(!x)return;const value=prompt('Edit title/name:',x.title||x.name||'');if(value===null)return;if(x.title!==undefined)x.title=value;else x.name=value;if(await mhfPersist())mhfRender();}
 async function mhfDelete(type,id){if(!confirm('Delete this item? This cannot be undone.'))return;const d=mhfData();d[type]=d[type].filter(i=>i.id!==id);if(await mhfPersist())mhfRender();}
 function mhfDownloadById(type,id){const item=mhfData()[type]?.find(x=>x.id===id);if(!item)return;if(item.file?.data){const a=document.createElement('a');a.href=item.file.data;a.download=item.file.name||'download';document.body.appendChild(a);a.click();a.remove();}else if(item.url){window.open(item.url,'_blank','noopener');}}
@@ -2041,7 +2053,7 @@ window.addEventListener('load', async function(){
     const d=x.data||{};
     if(x.type==='leadership')return `<b>${escapeHtml(d.role||'')}</b><p>${escapeHtml(d.bio||'')}</p>`;
     if(x.type==='projects')return `<p>${escapeHtml(d.description||'')}</p><div class="mhf-small">Location: ${escapeHtml(d.location||'')} · Budget: UGX ${escapeHtml(d.budget||'')} · Beneficiaries: ${escapeHtml(d.beneficiaries||'')}</div>`;
-    if(x.type==='stories')return `<p class=\"mhf-public-story\">${escapeHtml(d.body||'')}</p>`;
+    if(x.type==='stories')return `<p class="mhf-story-preview">${escapeHtml(d.body||'')}</p>`;
     if(x.type==='impact')return `<p>${escapeHtml(d.summary||'')}</p>`;
     if(x.type==='finance')return `<div>${escapeHtml(d.kind||'')} · UGX ${escapeHtml(d.amount||'')} · ${escapeHtml(d.date||'')}</div><p>${escapeHtml(d.note||'')}</p>`;
     if(x.type==='partnership')return `<p>${escapeHtml(d.note||'')}</p>`;
