@@ -560,27 +560,70 @@ async function mhfSaveFile(type){
 async function mhfEdit(type,id){
   try{
     if(!(await mhfEnsureCloud()))throw new Error('Supabase is not connected.');
-    const user=await mhfAdminUser(); if(!user)throw new Error('Administrator login is required.');
-    const row=mhfCache[type]?.find(x=>x.id===id); if(!row)return;
-    const value=prompt('Edit title/name:',row.title||row.name||''); if(value===null)return;
-    const data={...(row||{})};
-    if(data.title!==undefined)data.title=value; else data.name=value;
-    const {error}=await supabaseClient.from('mhf_content').update({title:value,data}).eq('id',id);
+    const user=await mhfAdminUser();
+    if(!user)throw new Error('Administrator login is required.');
+    const row=mhfCache[type]?.find(x=>String(x.id)===String(id));
+    if(!row)throw new Error('The selected item could not be found. Refresh the administrator page and try again.');
+
+    const oldValue=row.title||row.name||'';
+    const value=prompt('Edit title/name:',oldValue);
+    if(value===null)return;
+    const trimmed=value.trim();
+    if(!trimmed)throw new Error('Title/name cannot be empty.');
+
+    const data={...row};
+    if(data.title!==undefined || !data.name) data.title=trimmed;
+    if(data.name!==undefined && type==='leadership') data.name=trimmed;
+
+    // Remove display-only nested file metadata before writing the JSON data.
+    // The actual file metadata remains in the table columns.
+    if(data.file) delete data.file;
+
+    const {error}=await supabaseClient
+      .from('mhf_content')
+      .update({title:trimmed,data:data,updated_at:new Date().toISOString()})
+      .eq('id',id);
+
     if(error)throw new Error(error.message);
-    await mhfLoad();mhfRender();await mhfRenderPublic();
-  }catch(e){alert('Edit failed: '+e.message);}
+
+    await mhfLoad();
+    mhfRender();
+    await mhfRenderPublic();
+    alert('Item updated successfully.');
+  }catch(e){
+    alert('Edit failed: '+(e.message||e));
+  }
 }
 
 async function mhfDelete(type,id){
   if(!confirm('Delete this item permanently from the shared website?'))return;
   try{
     if(!(await mhfEnsureCloud()))throw new Error('Supabase is not connected.');
-    const row=mhfCache[type]?.find(x=>x.id===id);
-    if(row?.file?.path)await supabaseClient.storage.from('foundation-public').remove([row.file.path]);
+    const user=await mhfAdminUser();
+    if(!user)throw new Error('Administrator login is required.');
+
+    const row=mhfCache[type]?.find(x=>String(x.id)===String(id));
+    if(!row)throw new Error('The selected item could not be found. Refresh the administrator page and try again.');
+
+    // Remove the database record first so the item disappears from the public site.
     const {error}=await supabaseClient.from('mhf_content').delete().eq('id',id);
     if(error)throw new Error(error.message);
-    await mhfLoad();mhfRender();await mhfRenderPublic();
-  }catch(e){alert('Delete failed: '+e.message);}
+
+    // Then remove the associated Storage file when one exists.
+    // If Storage cleanup is blocked, the website record is still deleted.
+    if(row.file?.path){
+      const {error:storageError}=await supabaseClient
+        .storage.from('foundation-public').remove([row.file.path]);
+      if(storageError) console.warn('Storage cleanup failed:',storageError.message);
+    }
+
+    await mhfLoad();
+    mhfRender();
+    await mhfRenderPublic();
+    alert('Item deleted successfully.');
+  }catch(e){
+    alert('Delete failed: '+(e.message||e));
+  }
 }
 
 async function mhfDownloadById(type,id){
@@ -595,9 +638,27 @@ async function mhfDownloadById(type,id){
 
 function mhfButtons(type,id,extra=''){
   return '<div class="mhf-actions">'+extra+
-    '<button class="btn" onclick="mhfEdit(\''+type+'\',\''+mhfEsc(id)+'\')">Edit</button>'+
-    '<button class="btn mhf-danger" onclick="mhfDelete(\''+type+'\',\''+mhfEsc(id)+'\')">Delete</button></div>';
+    '<button type="button" class="btn mhf-edit-btn" data-mhf-action="edit" data-mhf-type="'+mhfEsc(type)+'" data-mhf-id="'+mhfEsc(id)+'">Edit</button>'+
+    '<button type="button" class="btn mhf-danger mhf-delete-btn" data-mhf-action="delete" data-mhf-type="'+mhfEsc(type)+'" data-mhf-id="'+mhfEsc(id)+'">Delete</button></div>';
 }
+
+document.addEventListener('click', async function(e){
+  const btn=e.target.closest('[data-mhf-action]');
+  if(!btn)return;
+  e.preventDefault();
+  e.stopPropagation();
+  const type=btn.getAttribute('data-mhf-type');
+  const id=btn.getAttribute('data-mhf-id');
+  if(!type||!id)return;
+  if(btn.dataset.mhfBusy==='1')return;
+  btn.dataset.mhfBusy='1';
+  try{
+    if(btn.getAttribute('data-mhf-action')==='edit') await mhfEdit(type,id);
+    if(btn.getAttribute('data-mhf-action')==='delete') await mhfDelete(type,id);
+  }finally{
+    btn.dataset.mhfBusy='0';
+  }
+});
 function mhfOpenButton(type,id,label){return '<button class="btn" onclick="mhfDownloadById(\''+type+'\',\''+mhfEsc(id)+'\')">'+label+'</button>';}
 function mhfList(type,target,renderer){
   const el=document.getElementById(target);if(!el)return;
