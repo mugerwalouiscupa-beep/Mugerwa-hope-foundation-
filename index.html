@@ -106,7 +106,22 @@ footer{background:#071f19}
 <meta name="theme-color" content="#08734f">
 </head>
 <body>
-<header class="nav"><div class="navin"><a class="brand" href="#home"><span class="brand-mark">❤</span><span>Mugerwa Hope Foundation</span></a><nav><a href="#about">About</a><a href="#programs">Programs</a><a href="#impact">Impact</a><a href="#media">Media & Stories</a><a href="#partner">Partner</a><a href="#resources">Fundraising</a><a href="#contact">Contact</a><a class="admin-link" href="#" onclick="openAdminLogin(event)">Administrator</a></nav></div></header>
+<header class="nav">
+<div class="navin">
+<a class="brand" href="#home"><span class="brand-mark">❤</span><span>Mugerwa Hope Foundation</span></a>
+<button class="mobile-menu-btn" type="button" aria-label="Open menu" aria-expanded="false" onclick="toggleMobileMenu()">☰ <span>Menu</span></button>
+<nav id="mainNav">
+<a href="#about" onclick="closeMobileMenu()">About</a>
+<a href="#programs" onclick="closeMobileMenu()">Programs</a>
+<a href="#impact" onclick="closeMobileMenu()">Impact</a>
+<a href="#media" onclick="closeMobileMenu()">Media & Stories</a>
+<a href="#partner" onclick="closeMobileMenu()">Partner</a>
+<a href="#resources" onclick="closeMobileMenu()">Fundraising</a>
+<a href="#contact" onclick="closeMobileMenu()">Contact</a>
+<a class="admin-link" href="#" onclick="openAdminLogin(event);closeMobileMenu()">Administrator</a>
+</nav>
+</div>
+</header>
 
 <main>
 <section class="hero" id="home"><div class="hero-in"><div><div class="hero-badge">🇺🇬 Uganda • Community-centered action</div><h1>Hope. Dignity. Opportunity.</h1><p>We are building a compassionate foundation supporting people with disabilities, older people, orphans and other vulnerable communities with practical help and long-term opportunities.</p><div class="actions"><a class="btn gold" href="#support">Support Our Mission</a><a class="btn" style="border:2px solid #fff;color:#fff" href="#about">Learn About Us</a></div></div><div class="hero-card"><div class="section-kicker">For supporters & partners</div><h2 style="font-size:27px">Be part of the change</h2><p class="muted">Individuals, businesses, foundations and international partners can help turn compassion into measurable community impact.</p><div class="stats"><div class="stat"><b>01</b><span>Community first</span></div><div class="stat"><b>04</b><span>Core programs</span></div><div class="stat"><b>∞</b><span>Possibilities</span></div></div></div></div></section>
@@ -332,6 +347,70 @@ footer{background:#071f19}
 .mhf-admin-v2 .admin-side{max-height:none;overflow:auto}.mhf-admin-v2 .admin-side button{white-space:normal;text-align:left}
 .mhf-form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.mhf-admin-v2 input,.mhf-admin-v2 textarea,.mhf-admin-v2 select{box-sizing:border-box;width:100%;padding:11px;border:1px solid #d7e4de;border-radius:9px;font:inherit;margin:5px 0}.mhf-admin-v2 textarea{min-height:110px;resize:vertical}
 .mhf-item{border:1px solid #dce8e2;border-radius:12px;padding:14px;margin:10px 0;background:#fff}.mhf-item-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.mhf-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.mhf-small{font-size:12px;color:#60756d}.mhf-thumb{max-width:140px;max-height:100px;border-radius:8px;object-fit:cover;margin-top:8px}.mhf-status{padding:10px;border-radius:8px;background:#f1f7f3;margin:10px 0;display:none}.mhf-danger{background:#fff0f0!important;color:#a32222!important}.mhf-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}.mhf-stat{padding:18px;border:1px solid #dce8e2;border-radius:12px;background:#fff}.mhf-stat b{font-size:25px;display:block}
+
+
+/* ===== MOBILE NAVIGATION & TOUCH SUPPORT ===== */
+.mobile-menu-btn{
+  display:none;
+  border:1px solid #dfeae4;
+  background:#fff;
+  color:var(--d);
+  border-radius:10px;
+  padding:9px 12px;
+  font:inherit;
+  font-weight:800;
+  cursor:pointer;
+  min-height:44px;
+}
+.mobile-menu-btn span{font-size:13px;margin-left:3px}
+@media(max-width:850px){
+  .navin{padding:10px 14px;position:relative}
+  .brand{max-width:calc(100% - 75px);font-size:15px}
+  .brand-mark{width:34px;height:34px;flex:0 0 34px}
+  .mobile-menu-btn{display:inline-flex;align-items:center;justify-content:center}
+  header.nav nav{
+    display:none;
+    position:absolute;
+    left:10px;
+    right:10px;
+    top:calc(100% + 6px);
+    background:#fff;
+    border:1px solid #dfeae4;
+    border-radius:16px;
+    padding:8px;
+    box-shadow:0 18px 45px rgba(16,59,48,.16);
+  }
+  header.nav nav.mobile-open{display:block}
+  header.nav nav a{
+    display:block;
+    margin:0;
+    padding:13px 12px;
+    border-radius:10px;
+    font-size:15px;
+  }
+  header.nav nav a:hover{background:#eef7f2}
+  .admin-link{margin-left:0!important}
+  .btn{min-height:44px}
+  input,textarea,select{min-height:44px}
+}
+@media(max-width:520px){
+  .hero-in{padding:45px 16px 55px}
+  section{padding:58px 16px}
+  .container{width:100%}
+  .actions{gap:9px}
+  .actions .btn{width:100%;text-align:center}
+  .paycard,.card,.panel,.feature-box,.contactbox{padding:20px}
+  .media-body .btn{min-height:44px}
+  .admin-layout{padding:12px}
+  .admin-panel{padding:17px}
+  .admin-side{padding:8px}
+  .admin-side button{min-height:46px}
+  .admin-table{display:block;overflow-x:auto;white-space:nowrap}
+  .chat-form{flex-wrap:wrap}
+  .chat-form input{width:100%!important}
+  .chat-form button{width:100%}
+  .resource-actions .btn{min-width:90px}
+}
 </style>
 <div class="admin-top">
   <b>❤ Mugerwa Hope Foundation — Administrator</b>
@@ -384,6 +463,36 @@ footer{background:#071f19}
 <section class="admin-panel" id="mhf-panel-settings"><h2>Website Settings</h2><input id="mhfSettingName" placeholder="Foundation name"><input id="mhfSettingEmail" placeholder="Public email"><input id="mhfSettingPhone" placeholder="Public phone / WhatsApp"><textarea id="mhfSettingAnnouncement" placeholder="Homepage announcement"></textarea><button class="btn primary" onclick="mhfSaveSettings()">Save Settings</button><div id="mhfSettingsStatus" class="mhf-status"></div></section>
 </main></div></div>
 
+
+
+<script>
+function toggleMobileMenu(){
+  const nav=document.getElementById('mainNav');
+  const btn=document.querySelector('.mobile-menu-btn');
+  if(!nav || !btn)return;
+  const open=nav.classList.toggle('mobile-open');
+  btn.setAttribute('aria-expanded',open?'true':'false');
+  btn.innerHTML=open?'✕ <span>Close</span>':'☰ <span>Menu</span>';
+}
+function closeMobileMenu(){
+  const nav=document.getElementById('mainNav');
+  const btn=document.querySelector('.mobile-menu-btn');
+  if(nav)nav.classList.remove('mobile-open');
+  if(btn){
+    btn.setAttribute('aria-expanded','false');
+    btn.innerHTML='☰ <span>Menu</span>';
+  }
+}
+document.addEventListener('click',function(e){
+  const nav=document.getElementById('mainNav');
+  const btn=document.querySelector('.mobile-menu-btn');
+  if(!nav || !btn || !nav.classList.contains('mobile-open'))return;
+  if(!nav.contains(e.target) && !btn.contains(e.target))closeMobileMenu();
+});
+window.addEventListener('resize',function(){
+  if(window.innerWidth>850)closeMobileMenu();
+});
+</script>
 <script>
 /* Mugerwa Hope Foundation administrator content manager.
    FIXED: uses IndexedDB instead of localStorage for administrator content.
