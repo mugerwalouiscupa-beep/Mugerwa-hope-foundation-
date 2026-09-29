@@ -1324,6 +1324,7 @@ async function uploadFoundationResource(){
       category:cat,
       title:title,
       file_name:file.name,
+      file_url:objectPath,
       storage_path:objectPath,
       mime_type:file.type || null,
       file_size:file.size,
@@ -2149,12 +2150,10 @@ window.addEventListener('load', async function(){
           const {error:up}=await supabaseClient.storage.from('foundation-public').upload(storage_path,file,{contentType:file.type||'application/octet-stream',upsert:false});if(up)throw up;
         }
         const category=isPhoto?'photos':'videos';
-        const row={category,title,file_name:file_name||'External video',storage_path:storage_path||('external/'+Date.now()),mime_type,is_public:true,uploaded_by:user.id};
-        if(url)row.public_url=url;
-        /* public_url is not assumed in the DB. URL-only videos therefore use the title/body fallback below. */
+        const row={category,title,file_name:file_name||'External video',file_url:storage_path||url||('external/'+Date.now()),storage_path:storage_path||('external-'+Date.now()),mime_type,is_public:true,uploaded_by:user.id};
         if(url && !storage_path){
           row.file_name=url;
-          delete row.public_url;
+          row.file_url=url;
           row.storage_path='external-'+Date.now();
         }
         const {error:db}=await supabaseClient.from(RES).insert(row);if(db){if(storage_path)await supabaseClient.storage.from('foundation-public').remove([storage_path]);throw db;}
