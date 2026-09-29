@@ -198,6 +198,7 @@ footer{background:#071f19}
       <a class="btn primary" href="#videos">▶️ Videos</a>
       <a class="btn primary" href="#documentaries">🎬 Documentaries</a>
     </div>
+    <div id="mhfPublicSyncStatus" class="muted" style="margin-bottom:12px;font-size:.9rem">Published content loads automatically from the administrator database.</div>
     <div id="publicMediaArea" style="margin-top:24px">
       <div id="photos"><h3>📷 Photos</h3><div id="publicPhotos" class="media-grid"></div></div>
       <div id="videos" style="margin-top:32px"><h3>▶️ Videos</h3><div id="publicVideos" class="media-grid"></div></div>
@@ -550,6 +551,7 @@ async function mhfPersist(){
     // Keep the in-memory copy synchronized with the exact data written to Supabase.
     mhfCache=mhfMergeData(snapshot);
     mhfRenderPublicContent();
+    if(window.mhfLoadPublicContent) await window.mhfLoadPublicContent();
     return true;
   }catch(e){
     console.error('MHF cloud save error:',e);
@@ -1312,51 +1314,117 @@ window.addEventListener('load', async ()=>{
 });
 </script>
 <script id="mhf-final-public-sync">
-/* FINAL PUBLIC CONTENT SYNC
-   One public renderer for content saved by the Administrator in mhf_site_content.
-   It does not require an administrator login. */
+/* AUTHORITATIVE PUBLIC CONTENT SYNC
+   The public website always reads the same mhf_site_content row used by
+   the administrator. It retries after page load and never writes data. */
 (function(){
-  function h(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
-  function set(id,html){const e=document.getElementById(id);if(e)e.innerHTML=html;}
-  function empty(id,msg){set(id,'<p class="muted">'+h(msg)+'</p>');}
-  function fileUrl(f){return f?.data||f?.url||'';}
+  const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  const put=(id,html)=>{const e=document.getElementById(id);if(e)e.innerHTML=html;};
+  const empty=(id,msg)=>put(id,'<p class="muted">'+esc(msg)+'</p>');
+  const fileUrl=f=>f?.data||f?.url||'';
+
   function render(d){
     d=d||{};
-    const posts=Array.isArray(d.posts)?d.posts:[], projects=Array.isArray(d.projects)?d.projects:[],
-      stories=Array.isArray(d.stories)?d.stories:[], impact=Array.isArray(d.impact)?d.impact:[],
-      finance=Array.isArray(d.finance)?d.finance:[], partnership=Array.isArray(d.partnership)?d.partnership:[],
-      documents=Array.isArray(d.documents)?d.documents:[], leadership=Array.isArray(d.leadership)?d.leadership:[],
-      media=Array.isArray(d.media)?d.media:[], videos=Array.isArray(d.videos)?d.videos:[];
+    const posts=Array.isArray(d.posts)?d.posts:[],
+      projects=Array.isArray(d.projects)?d.projects:[],
+      stories=Array.isArray(d.stories)?d.stories:[],
+      impact=Array.isArray(d.impact)?d.impact:[],
+      finance=Array.isArray(d.finance)?d.finance:[],
+      partnership=Array.isArray(d.partnership)?d.partnership:[],
+      documents=Array.isArray(d.documents)?d.documents:[],
+      leadership=Array.isArray(d.leadership)?d.leadership:[],
+      media=Array.isArray(d.media)?d.media:[],
+      videos=Array.isArray(d.videos)?d.videos:[];
 
-    if(posts.length)set('publicPosts',posts.map(x=>`<article class="card"><h3>${h(x.title)}</h3><small class="muted">${h(x.date||'')}</small><p class="muted">${h(x.body)}</p></article>`).join(''));else empty('publicPosts','No public updates yet.');
-    if(projects.length)set('publicProjects',projects.map(x=>`<article class="card"><h3>${h(x.name)}</h3><p><b>Location:</b> ${h(x.location)}</p><p><b>Budget:</b> ${h(x.budget)}</p><p><b>Beneficiaries:</b> ${h(x.beneficiaries)}</p><p class="muted">${h(x.description)}</p></article>`).join(''));else empty('publicProjects','No projects published yet.');
-    if(stories.length)set('publicStories',stories.map(x=>`<article class="card">${x.file?.data?`<img src="${x.file.data}" alt="${h(x.title||x.name)}" loading="lazy" style="width:100%;height:220px;object-fit:cover;border-radius:14px">`:''}<h3>${h(x.title||x.name)}</h3><p class="muted">${h(x.body)}</p></article>`).join(''));else empty('publicStories','No beneficiary stories published yet.');
-    if(impact.length)set('publicImpact',impact.map(x=>`<article class="card"><h3>${h(x.title)}</h3><p class="muted">${h(x.summary)}</p>${x.file?.data?`<a class="btn primary" href="${x.file.data}" target="_blank" rel="noopener">Open report</a>`:''}</article>`).join(''));else empty('publicImpact','No impact reports published yet.');
-    if(finance.length)set('publicFinance',finance.map(x=>`<article class="card"><h3>${h(x.title)}</h3><p><b>${h(x.kind||x.type||'')}</b> · UGX ${h(x.amount)}</p><small class="muted">${h(x.date||'')}</small><p class="muted">${h(x.note||'')}</p></article>`).join(''));else empty('publicFinance','No financial records published yet.');
-    if(partnership.length)set('publicPartnership',partnership.map(x=>`<article class="card"><h3>${h(x.title)}</h3><p class="muted">${h(x.note)}</p>${x.file?.data?`<a class="btn primary" href="${x.file.data}" target="_blank" rel="noopener">Open proposal</a>`:''}</article>`).join(''));else empty('publicPartnership','No partnership resources published yet.');
-    if(documents.length)set('publicDocuments',documents.map(x=>`<article class="card"><h3>${h(x.title)}</h3><p class="muted">${h(x.note||x.kind||'')}</p>${x.file?.data?`<a class="btn primary" href="${x.file.data}" target="_blank" rel="noopener">Open document</a>`:''}</article>`).join(''));else empty('publicDocuments','No public documents yet.');
-    if(leadership.length)set('publicLeadershipCloud',leadership.map(x=>`<article class="card">${x.file?.data?`<img src="${x.file.data}" alt="${h(x.name)}" loading="lazy" style="width:100%;height:210px;object-fit:cover;border-radius:14px">`:''}<h3>${h(x.name)}</h3><strong>${h(x.role)}</strong><p class="muted">${h(x.bio)}</p></article>`).join(''));else empty('publicLeadershipCloud','Leadership profiles will appear here.');
+    put('publicPosts', posts.length
+      ? posts.map(x=>`<article class="card"><h3>${esc(x.title)}</h3><small class="muted">${esc(x.date||'')}</small><p class="muted">${esc(x.body)}</p></article>`).join('')
+      : '<p class="muted">No public updates yet.</p>');
 
-    if(media.length)set('publicPhotos',media.map(x=>{const u=fileUrl(x.file);return u?`<article class="media-card"><img src="${u}" alt="${h(x.title)}" loading="lazy" style="width:100%;height:220px;object-fit:cover;display:block"><div class="media-body"><h3>${h(x.title)}</h3><a class="btn primary" href="${u}" target="_blank" rel="noopener">Open photo</a></div></article>`:''}).join('')||'<p class="muted">No photos published yet.</p>');else empty('publicPhotos','No photos published yet.');
+    put('publicProjects', projects.length
+      ? projects.map(x=>`<article class="card"><h3>${esc(x.name)}</h3><p><b>Location:</b> ${esc(x.location)}</p><p><b>Budget:</b> UGX ${esc(x.budget)}</p><p><b>Beneficiaries:</b> ${esc(x.beneficiaries)}</p><p class="muted">${esc(x.description)}</p></article>`).join('')
+      : '<p class="muted">No projects published yet.</p>');
 
-    const v=videos.filter(x=>(x.kind||'videos')==='videos'), docs=videos.filter(x=>(x.kind||'videos')==='documentaries');
-    const card=x=>{const u=fileUrl(x.file)||x.url||'';return u?`<article class="media-card"><video controls preload="metadata" style="width:100%;height:220px;object-fit:cover;display:block" src="${h(u)}"></video><div class="media-body"><h3>${h(x.title)}</h3><a class="btn primary" href="${h(u)}" target="_blank" rel="noopener">Open</a></div></article>`:''};
-    if(v.length)set('publicVideos',v.map(card).join('')||'<p class="muted">No videos published yet.</p>');else empty('publicVideos','No videos published yet.');
-    if(docs.length)set('publicDocumentaries',docs.map(card).join('')||'<p class="muted">No documentaries published yet.</p>');else empty('publicDocumentaries','No documentaries published yet.');
+    put('publicStories', stories.length
+      ? stories.map(x=>`<article class="card">${x.file?.data?`<img src="${x.file.data}" alt="${esc(x.title||x.name)}" loading="lazy" style="width:100%;height:220px;object-fit:cover;border-radius:14px">`:''}<h3>${esc(x.title||x.name)}</h3><p class="muted">${esc(x.body)}</p></article>`).join('')
+      : '<p class="muted">No beneficiary stories published yet.</p>');
+
+    put('publicImpact', impact.length
+      ? impact.map(x=>`<article class="card"><h3>${esc(x.title)}</h3><p class="muted">${esc(x.summary)}</p>${x.file?.data?`<a class="btn primary" href="${x.file.data}" target="_blank" rel="noopener">Open report</a>`:''}</article>`).join('')
+      : '<p class="muted">No impact reports published yet.</p>');
+
+    put('publicFinance', finance.length
+      ? finance.map(x=>`<article class="card"><h3>${esc(x.title)}</h3><p><b>${esc(x.kind||x.type||'')}</b> · UGX ${esc(x.amount)}</p><small class="muted">${esc(x.date||'')}</small><p class="muted">${esc(x.note||'')}</p></article>`).join('')
+      : '<p class="muted">No financial records published yet.</p>');
+
+    put('publicPartnership', partnership.length
+      ? partnership.map(x=>`<article class="card"><h3>${esc(x.title)}</h3><p class="muted">${esc(x.note)}</p>${x.file?.data?`<a class="btn primary" href="${x.file.data}" target="_blank" rel="noopener">Open proposal</a>`:''}</article>`).join('')
+      : '<p class="muted">No partnership resources published yet.</p>');
+
+    put('publicDocuments', documents.length
+      ? documents.map(x=>`<article class="card"><h3>${esc(x.title)}</h3><p class="muted">${esc(x.note||x.kind||'')}</p>${x.file?.data?`<a class="btn primary" href="${x.file.data}" target="_blank" rel="noopener">Open document</a>`:''}</article>`).join('')
+      : '<p class="muted">No public documents yet.</p>');
+
+    put('publicLeadershipCloud', leadership.length
+      ? leadership.map(x=>`<article class="card">${x.file?.data?`<img src="${x.file.data}" alt="${esc(x.name)}" loading="lazy" style="width:100%;height:210px;object-fit:cover;border-radius:14px">`:''}<h3>${esc(x.name)}</h3><strong>${esc(x.role)}</strong><p class="muted">${esc(x.bio)}</p></article>`).join('')
+      : '<p class="muted">Leadership profiles will appear here.</p>');
+
+    put('publicPhotos', media.length
+      ? media.map(x=>{
+          const u=fileUrl(x.file);
+          return u ? `<article class="media-card"><img src="${u}" alt="${esc(x.title)}" loading="lazy" style="width:100%;height:220px;object-fit:cover;display:block"><div class="media-body"><h3>${esc(x.title)}</h3><a class="btn primary" href="${u}" target="_blank" rel="noopener">Open photo</a></div></article>` : '';
+        }).join('') || '<p class="muted">No photos published yet.</p>'
+      : '<p class="muted">No photos published yet.</p>');
+
+    const normalVideos=videos.filter(x=>(x.kind||'videos')==='videos');
+    const documentaries=videos.filter(x=>(x.kind||'videos')==='documentaries');
+    const videoCard=x=>{
+      const u=fileUrl(x.file)||x.url||'';
+      return u ? `<article class="media-card"><video controls preload="metadata" style="width:100%;height:220px;object-fit:cover;display:block" src="${esc(u)}"></video><div class="media-body"><h3>${esc(x.title)}</h3><a class="btn primary" href="${esc(u)}" target="_blank" rel="noopener">Open</a></div></article>` : '';
+    };
+
+    put('publicVideos', normalVideos.length
+      ? normalVideos.map(videoCard).join('') || '<p class="muted">No videos published yet.</p>'
+      : '<p class="muted">No videos published yet.</p>');
+
+    put('publicDocumentaries', documentaries.length
+      ? documentaries.map(videoCard).join('') || '<p class="muted">No documentaries published yet.</p>'
+      : '<p class="muted">No documentaries published yet.</p>');
+
+    document.documentElement.setAttribute('data-mhf-cloud-content','loaded');
   }
-  async function load(){
+
+  async function loadPublic(){
     try{
-      const url=SUPABASE_URL+'/rest/v1/mhf_site_content?id=eq.main&select=content';
-      const r=await fetch(url,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:'Bearer '+SUPABASE_PUBLISHABLE_KEY},cache:'no-store'});
-      if(!r.ok)throw new Error('HTTP '+r.status);
-      const rows=await r.json();
-      if(!rows.length)throw new Error('No published content row found.');
-      render(rows[0].content||{});
+      if(typeof initSupabase!=='function' || !initSupabase()){
+        throw new Error('Supabase is not configured.');
+      }
+      const {data,error}=await supabaseClient
+        .from('mhf_site_content')
+        .select('content')
+        .eq('id','main')
+        .maybeSingle();
+
+      if(error) throw error;
+      render(data?.content||{});
       window.MHF_PUBLIC_CONTENT_LOADED=true;
-    }catch(e){console.error('Public content sync:',e);}
+      return true;
+    }catch(error){
+      console.error('MHF public cloud content error:',error);
+      return false;
+    }
   }
-  window.mhfLoadPublicContent=load;
-  window.addEventListener('load',()=>setTimeout(load,500));
+
+  window.mhfLoadPublicContent=loadPublic;
+
+  window.addEventListener('load',()=>{
+    loadPublic();
+    setTimeout(loadPublic,1500);
+    setTimeout(loadPublic,4000);
+  });
+
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible') loadPublic();
+  });
 })();
 </script>
 </body></html>
