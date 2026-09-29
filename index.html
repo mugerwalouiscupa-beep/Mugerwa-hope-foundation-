@@ -679,9 +679,11 @@ async function mhfRenderPublic(){
 }
 
 async function mhfPublicFileUrl(path){
-  if(!path)return null;
-  const {data,error}=await supabaseClient.storage.from('foundation-public').createSignedUrl(path,3600);
-  return error?null:data?.signedUrl||null;
+  if(!path || !supabaseClient) return null;
+  // The foundation-public bucket is PUBLIC, so use its public URL.
+  // This lets every website visitor see published media without being logged in.
+  const {data}=supabaseClient.storage.from('foundation-public').getPublicUrl(path);
+  return data?.publicUrl || null;
 }
 async function mhfRenderPublicLeadership(board,items){
   if(!items.length){board.innerHTML='<p class="muted">Leadership profiles will appear here as they are published by the administrator.</p>';return;}
