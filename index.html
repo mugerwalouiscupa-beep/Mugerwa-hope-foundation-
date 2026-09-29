@@ -1,143 +1,1834 @@
--- Mugerwa Hope Foundation: cloud posts, post likes/comments and subscribers
--- Run this ONCE in Supabase SQL Editor.
--- It is designed for the existing Supabase project used by the website.
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="google-site-verification" content="Q_2hB3ZIsHkpKYXY6Ot0U1xJ__qYbxJ8whE9UiTxA5M" /><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mugerwa Hope Foundation | Hope • Dignity • Opportunity</title>
+<meta name="description" content="Mugerwa Hope Foundation — supporting vulnerable communities in Uganda through dignity, practical assistance, opportunity, partnerships and transparent community action.">
+<style>
+:root{--g:#08734f;--d:#103b30;--gold:#e6ad39;--bg:#f5faf7;--mut:#60756d}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Arial,sans-serif;color:var(--d);background:var(--bg);line-height:1.6}a{text-decoration:none}.nav{position:sticky;top:0;z-index:5;background:#fff;box-shadow:0 2px 15px #0001}.navin{max-width:1100px;margin:auto;padding:14px 20px;display:flex;justify-content:space-between;align-items:center}.brand{font-weight:800;font-size:18px;color:var(--d)}nav a{margin-left:20px;color:#34564c;font-weight:700;font-size:14px}.btn{display:inline-block;padding:12px 18px;border-radius:10px;font-weight:800}.primary{background:var(--g);color:#fff}.gold{background:var(--gold);color:#17281f}.hero{background:linear-gradient(120deg,#08734f,#123c31);color:#fff}.hero-in{max-width:1100px;margin:auto;padding:75px 20px;display:grid;grid-template-columns:1.3fr .7fr;gap:40px;align-items:center}.tag{font-size:13px;text-transform:uppercase;letter-spacing:1.4px;font-weight:800;color:#f3d47e}.hero h1{font-size:clamp(42px,7vw,70px);line-height:1.02;margin:12px 0 20px}.hero p{font-size:19px;color:#e5f4ee;max-width:700px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:25px}.hero-card,.card,.panel{background:#fff;border-radius:20px;padding:27px;box-shadow:0 12px 35px #12352c18}.hero-card{color:var(--d)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#eef7f2;border-radius:10px;text-align:center;padding:12px}.stat b{display:block;font-size:23px;color:var(--g)}section{padding:70px 20px}.container{max-width:1100px;margin:auto}.head{max-width:720px;margin-bottom:30px}.head .tag{color:var(--g)}h2{font-size:clamp(30px,5vw,45px);line-height:1.1;margin:10px 0}.muted{color:var(--mut)}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.icon{font-size:30px;background:#e9f6f0;width:52px;height:52px;display:grid;place-items:center;border-radius:14px}.card h3{margin:15px 0 6px}.split{display:grid;grid-template-columns:1fr 1fr;gap:35px;align-items:center}.checks{padding:0;list-style:none}.checks li{margin:13px 0}.checks li:before{content:"✓";display:inline-grid;place-items:center;width:25px;height:25px;background:#dff2e9;border-radius:50%;color:var(--g);font-weight:900;margin-right:9px}.dark{background:var(--d);color:#fff}.dark .muted{color:#c6ddd5}.project{display:grid;grid-template-columns:.7fr 1.3fr;background:#fff;color:var(--d);border-radius:20px;overflow:hidden}.visual{display:grid;place-items:center;font-size:80px;background:linear-gradient(135deg,#08734f,#4aaa83);color:#fff}.project div:last-child{padding:30px}.contact{display:grid;grid-template-columns:1fr 1fr;gap:20px}.contactbox{background:#fff;padding:25px;border-radius:18px;box-shadow:0 10px 30px #0000000d}input,textarea{width:100%;padding:13px;margin:6px 0;border:1px solid #d7e4de;border-radius:9px;font:inherit}textarea{min-height:120px}.cta{text-align:center;background:linear-gradient(120deg,#08734f,#0e8b60);color:#fff}.cta p{max-width:680px;margin:0 auto 22px;color:#e4f5ee}footer{background:#092820;color:#b8d0c8;padding:40px 20px}.foot{max-width:1100px;margin:auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px}.foot h3{color:#fff}.foot a{color:#b8d0c8}.small{font-size:12px;border-top:1px solid #ffffff1c;margin-top:25px;padding-top:15px}@media(max-width:850px){nav{display:flex;flex-wrap:wrap;gap:8px;overflow-x:auto;margin-top:10px}nav a{margin-left:0;white-space:nowrap}.navin{align-items:flex-start;flex-direction:column}.hero-in,.split,.contact,.project{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}.foot{grid-template-columns:1fr 1fr}}@media(max-width:520px){.grid{grid-template-columns:1fr}.foot{grid-template-columns:1fr}.hero-in{padding:55px 20px}}
 
-create extension if not exists pgcrypto;
+.paygrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0}.paycard{background:#fff;border:1px solid #e4e8e5;border-radius:16px;padding:20px;box-shadow:0 8px 25px rgba(0,0,0,.04)}.payicon{font-size:30px;margin-bottom:8px}.paycard h3{margin:7px 0}.status{display:inline-block;margin-top:8px;padding:6px 10px;border-radius:999px;background:#eef5ef;color:#205d35;font-size:12px;font-weight:700}.notice{margin:18px 0;padding:16px 18px;border-left:4px solid #d3aa32;background:#fff8df;border-radius:10px;color:#4d452b}.support-contact{padding-top:8px}.support-contact p{margin:7px 0}@media(max-width:800px){.paygrid{grid-template-columns:1fr}}
 
-create table if not exists public.mhf_posts (
-  id uuid primary key default gen_random_uuid(),
-  title text not null,
-  body text not null,
-  post_date date not null default current_date,
-  published boolean not null default true,
-  author_id uuid references auth.users(id) on delete set null,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
+.media-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}
+.media-card{background:#fff;border:1px solid #dfe9e4;border-radius:16px;overflow:hidden;box-shadow:0 8px 24px #0000000a}
+.media-placeholder{height:180px;display:flex;align-items:center;justify-content:center;background:#eaf5ef;font-size:52px}
+.media-body{padding:18px}.media-body h3{margin:10px 0 6px}
+.media-publish{margin-top:24px}
+@media(max-width:800px){.media-grid{grid-template-columns:1fr}}
 
-create index if not exists mhf_posts_public_date_idx
-on public.mhf_posts (published, post_date desc, created_at desc);
+/* ADMIN / CLIENT CHAT */
+.admin-link{margin-left:20px;color:#08734f;font-weight:800;font-size:14px}
+.admin-gate{display:none;position:fixed;inset:0;background:#092820ee;z-index:1000;align-items:center;justify-content:center;padding:20px}
+.admin-box{background:#fff;width:min(430px,100%);border-radius:20px;padding:28px;box-shadow:0 20px 70px #0006}
+.admin-box h2{font-size:30px}
+.admin-dashboard{display:none;position:fixed;inset:0;background:#f3f8f5;z-index:999;overflow:auto}
+.admin-top{background:#103b30;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:3}
+.admin-layout{max-width:1200px;margin:auto;padding:25px;display:grid;grid-template-columns:220px 1fr;gap:20px}
+.admin-side{background:#fff;border-radius:16px;padding:15px;height:max-content}
+.admin-side button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:12px;border-radius:9px;font-weight:700;color:#34564c;cursor:pointer}
+.admin-side button:hover{background:#eaf5ef}
+.admin-main{min-width:0}
+.admin-panel{display:none;background:#fff;border-radius:18px;padding:24px;box-shadow:0 8px 25px #0000000b}
+.admin-panel.active{display:block}
+.admin-table{width:100%;border-collapse:collapse}
+.admin-table th,.admin-table td{padding:11px;border-bottom:1px solid #e3ebe7;text-align:left}
+.chat-wrap{display:grid;grid-template-columns:280px 1fr;gap:15px}
+.chat-users{border:1px solid #dce8e2;border-radius:12px;padding:10px}
+.chat-user{padding:12px;border-radius:9px;cursor:pointer}
+.chat-user:hover,.chat-user.active{background:#eaf5ef}
+.chat-window{border:1px solid #dce8e2;border-radius:12px;display:flex;flex-direction:column;min-height:430px}
+.chat-messages{flex:1;padding:15px;overflow:auto;background:#f7faf8}
+.chat-bubble{max-width:78%;padding:10px 13px;border-radius:13px;margin:7px 0}
+.chat-client{background:#fff;border:1px solid #dce8e2}
+.chat-admin{background:#08734f;color:#fff;margin-left:auto}
+.chat-form{display:flex;gap:8px;padding:10px;border-top:1px solid #dce8e2}
+.chat-form input{margin:0}
+.admin-note{background:#fff8df;border-left:4px solid #d3aa32;padding:12px;margin-bottom:18px;border-radius:8px}
+@media(max-width:800px){.admin-layout{grid-template-columns:1fr}.chat-wrap{grid-template-columns:1fr}}
 
-create table if not exists public.mhf_post_likes (
-  id uuid primary key default gen_random_uuid(),
-  post_id uuid not null references public.mhf_posts(id) on delete cascade,
-  visitor_token text not null,
-  created_at timestamptz not null default now(),
-  unique(post_id, visitor_token)
-);
+.resource-row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid #e3ebe7}
+.resource-meta{min-width:0}.resource-meta b{display:block}.resource-meta small{color:#60756d}
+.resource-actions{display:flex;gap:7px;flex-wrap:wrap}
+@media(max-width:650px){.resource-row{align-items:flex-start;flex-direction:column}.resource-actions{width:100%}}
 
-create table if not exists public.mhf_post_comments (
-  id uuid primary key default gen_random_uuid(),
-  post_id uuid not null references public.mhf_posts(id) on delete cascade,
-  visitor_name text not null,
-  visitor_email text,
-  body text not null,
-  status text not null default 'pending' check (status in ('pending','approved','rejected')),
-  approved_at timestamptz,
-  approved_by uuid references auth.users(id) on delete set null,
-  created_at timestamptz not null default now()
-);
 
-create index if not exists mhf_post_comments_post_idx
-on public.mhf_post_comments (post_id, created_at desc);
+/* ===== SUPPORTER-FIRST PROFESSIONAL REDESIGN ===== */
+:root{
+  --g:#08734f;--g2:#0b9367;--d:#103b30;--gold:#e6ad39;
+  --cream:#fbfdfb;--mut:#60756d;--line:#dfeae4;--shadow:0 18px 55px rgba(16,59,48,.10)
+}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#f7faf8}
+.nav{backdrop-filter:blur(12px);background:rgba(255,255,255,.94);border-bottom:1px solid #e9f0ec}
+.brand{display:flex;align-items:center;gap:9px;font-size:17px;letter-spacing:-.2px}
+.brand-mark{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--g),#18a875);color:#fff;box-shadow:0 8px 20px rgba(8,115,79,.22)}
+nav a{transition:.2s}nav a:hover{color:var(--g)}
+.hero{position:relative;overflow:hidden;background:
+ radial-gradient(circle at 88% 18%,rgba(230,173,57,.20),transparent 28%),
+ radial-gradient(circle at 10% 85%,rgba(40,180,128,.18),transparent 30%),
+ linear-gradient(125deg,#082f26 0%,#08734f 55%,#0b8a61 100%)}
+.hero:after{content:"";position:absolute;inset:auto -10% -55% 35%;height:430px;background:rgba(255,255,255,.06);border-radius:50%;transform:rotate(-9deg)}
+.hero-in{position:relative;z-index:1;padding:92px 20px 88px;grid-template-columns:1.15fr .85fr}
+.hero h1{letter-spacing:-2.5px;text-wrap:balance}
+.hero p{line-height:1.7}
+.hero-card{border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.94);box-shadow:0 25px 70px rgba(0,0,0,.18)}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.18);font-size:13px;font-weight:800}
+.btn{transition:transform .18s,box-shadow .18s,background .18s}.btn:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(0,0,0,.10)}
+.primary{background:linear-gradient(135deg,var(--g),var(--g2))}
+.gold{box-shadow:0 10px 25px rgba(230,173,57,.22)}
+.trust-strip{background:#fff;border-bottom:1px solid var(--line)}
+.trust-grid{max-width:1100px;margin:auto;padding:18px 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.trust-item{display:flex;gap:10px;align-items:center;color:#35554b;font-size:13px;font-weight:750}
+.trust-item span:first-child{width:34px;height:34px;border-radius:10px;background:#eaf6f0;display:grid;place-items:center}
+section{padding:82px 20px}.head h2{letter-spacing:-1.2px}.head p{font-size:16px}
+.card,.panel,.contactbox,.paycard{border:1px solid var(--line);box-shadow:var(--shadow)}
+.card{transition:transform .2s,box-shadow .2s}.card:hover{transform:translateY(-4px);box-shadow:0 24px 60px rgba(16,59,48,.13)}
+.icon{background:linear-gradient(135deg,#e9f6f0,#f5fbf8)}
+.section-kicker{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:1.4px;color:var(--g)}
+.section-kicker:before{content:"";width:24px;height:3px;border-radius:5px;background:var(--gold)}
+.feature-band{background:#eef7f2}
+.feature-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:stretch}
+.feature-box{background:#fff;border:1px solid var(--line);border-radius:22px;padding:30px;box-shadow:var(--shadow)}
+.check-card{display:flex;gap:13px;padding:14px 0;border-bottom:1px solid #edf2ef}.check-card:last-child{border-bottom:0}
+.check-dot{flex:0 0 30px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#dff2e9;color:var(--g);font-weight:900}
+.support-banner{background:linear-gradient(135deg,#0a3b30,#08734f);color:#fff;border-radius:28px;padding:38px;display:grid;grid-template-columns:1fr auto;gap:25px;align-items:center;box-shadow:0 24px 60px rgba(8,115,79,.22)}
+.support-banner h2{margin:0 0 8px}.support-banner p{margin:0;color:#dff2eb}
+.media-card{transition:transform .2s,box-shadow .2s}.media-card:hover{transform:translateY(-3px);box-shadow:0 18px 45px rgba(16,59,48,.12)}
+.media-placeholder{background:linear-gradient(135deg,#eaf5ef,#dcefe7)}
+footer{background:#071f19}
+.footer-cta{display:inline-block;margin-top:12px}
+.float-support{position:fixed;right:18px;bottom:18px;z-index:20;background:#25d366;color:#fff;padding:12px 16px;border-radius:999px;font-weight:900;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.float-support:hover{color:#fff}
+@media(max-width:850px){.trust-grid{grid-template-columns:repeat(2,1fr)}.feature-grid{grid-template-columns:1fr}.support-banner{grid-template-columns:1fr}}
+@media(max-width:520px){.trust-grid{grid-template-columns:1fr}.hero h1{letter-spacing:-1.6px}.support-banner{padding:27px 22px}}
 
-create table if not exists public.mhf_subscribers (
-  id uuid primary key default gen_random_uuid(),
-  email text not null,
-  subscribed_at timestamptz not null default now(),
-  unique(email)
-);
 
-alter table public.mhf_posts enable row level security;
-alter table public.mhf_post_likes enable row level security;
-alter table public.mhf_post_comments enable row level security;
-alter table public.mhf_subscribers enable row level security;
+.mobile-admin-launcher{display:none;position:fixed;right:14px;bottom:72px;z-index:50;background:#08734f;color:#fff;padding:11px 15px;border-radius:999px;font-weight:800;box-shadow:0 10px 28px rgba(0,0,0,.2)}
+@media(max-width:850px){.mobile-admin-launcher{display:block}}
+</style>
+<meta name="theme-color" content="#08734f">
+</head>
+<body>
+<header class="nav"><div class="navin"><a class="brand" href="#home"><span class="brand-mark">❤</span><span>Mugerwa Hope Foundation</span></a><nav><a href="#about">About</a><a href="#programs">Programs</a><a href="#impact">Impact</a><a href="#media">Media & Stories</a><a href="#posts">Posts</a><a href="#subscribe">Subscribe</a><a href="#partner">Partner</a><a href="#resources">Fundraising</a><a href="#contact">Contact</a><a href="#" onclick="shareFoundation(event)">🔗 Share</a><a class="admin-link" href="#" onclick="openAdminLogin(event)">Administrator</a></nav></div></header>
+<a id="mobileAdminLauncher" class="mobile-admin-launcher" href="#" onclick="openAdminLogin(event)">🔐 Administrator</a>
 
--- Public visitors may see published posts.
-drop policy if exists "Public can read published MHF posts" on public.mhf_posts;
-create policy "Public can read published MHF posts"
-on public.mhf_posts for select
-to anon, authenticated
-using (published = true or (auth.jwt()->>'email') = 'mugerwalouiscupa@gmail.com');
+<main>
+<section class="hero" id="home"><div class="hero-in"><div><div class="hero-badge">🇺🇬 Uganda • Community-centered action</div><h1>Hope. Dignity. Opportunity.</h1><p>We are building a compassionate foundation supporting people with disabilities, older people, orphans and other vulnerable communities with practical help and long-term opportunities.</p><div class="actions"><a class="btn gold" href="#support">Support Our Mission</a><a class="btn" style="border:2px solid #fff;color:#fff" href="#about">Learn About Us</a><button class="btn" type="button" style="border:2px solid #fff;color:#fff;background:transparent;cursor:pointer" onclick="shareFoundation(event)">🔗 Share Website</button></div></div><div class="hero-card"><div class="section-kicker">For supporters & partners</div><h2 style="font-size:27px">Be part of the change</h2><p class="muted">Individuals, businesses, foundations and international partners can help turn compassion into measurable community impact.</p><div class="stats"><div class="stat"><b>01</b><span>Community first</span></div><div class="stat"><b>04</b><span>Core programs</span></div><div class="stat"><b>∞</b><span>Possibilities</span></div></div></div></div></section>
+<div class="trust-strip">
+  <div class="trust-grid">
+    <div class="trust-item"><span>🔎</span><span>Transparency-focused</span></div>
+    <div class="trust-item"><span>🤝</span><span>Open to partnerships</span></div>
+    <div class="trust-item"><span>📷</span><span>Real stories & media</span></div>
+    <div class="trust-item"><span>💚</span><span>Community-centered</span></div>
+  </div>
+</div>
 
--- Only the foundation administrator may create/change/delete posts.
-drop policy if exists "Admin manages MHF posts" on public.mhf_posts;
-create policy "Admin manages MHF posts"
-on public.mhf_posts for all
-to authenticated
-using ((auth.jwt()->>'email') = 'mugerwalouiscupa@gmail.com')
-with check ((auth.jwt()->>'email') = 'mugerwalouiscupa@gmail.com');
+<section id="about"><div class="container split"><div><div class="head"><div class="tag">Who we are</div><h2>A foundation built around human dignity.</h2><p class="muted">Mugerwa Hope Foundation is being developed in Uganda to create practical and compassionate support for vulnerable people and communities.</p></div><ul class="checks"><li>Respect and dignity for every person</li><li>Support based on real community needs</li><li>Sustainable partnerships and opportunities</li><li>Transparency and responsible use of resources</li></ul></div><div class="panel"><h3>Our vision</h3><p class="muted">A society where vulnerable people are treated with dignity and have access to support, opportunity and hope.</p><h3>Our mission</h3><p class="muted">To mobilize people and resources to support vulnerable communities through humanitarian assistance, education, health, inclusion and livelihood initiatives.</p></div></div></section>
 
--- Public likes: anyone can add a like and see like rows/counts.
-drop policy if exists "Public can read MHF post likes" on public.mhf_post_likes;
-create policy "Public can read MHF post likes"
-on public.mhf_post_likes for select
-to anon, authenticated
-using (true);
+<section id="programs"><div class="container"><div class="head"><div class="tag">Our programs</div><h2>Where we want to make a difference</h2><p class="muted">Our programs will address immediate needs while helping people and communities become more resilient.</p></div><div class="grid"><div class="card"><div class="icon">♿</div><h3>Disability Support</h3><p class="muted">Essential assistance, inclusion, skills and opportunities for people with disabilities.</p></div><div class="card"><div class="icon">🤝</div><h3>Older People</h3><p class="muted">Practical assistance, companionship and community support for older people.</p></div><div class="card"><div class="icon">👧</div><h3>Children & Orphans</h3><p class="muted">Education, basic needs, protection and positive development for vulnerable children.</p></div><div class="card"><div class="icon">🌱</div><h3>Livelihoods</h3><p class="muted">Skills and small-enterprise initiatives designed to create sustainable opportunities.</p></div></div></div></section>
 
-drop policy if exists "Public can add MHF post likes" on public.mhf_post_likes;
-create policy "Public can add MHF post likes"
-on public.mhf_post_likes for insert
-to anon, authenticated
-with check (visitor_token is not null and length(visitor_token) > 5);
+<section class="feature-band">
+  <div class="container">
+    <div class="feature-grid">
+      <div class="feature-box">
+        <div class="section-kicker">Why supporters matter</div>
+        <h2>Help turn compassion into practical action.</h2>
+        <p class="muted">Support can help the foundation develop programs, strengthen community partnerships and respond to real needs as projects become active.</p>
+        <div class="check-card"><div class="check-dot">✓</div><div><b>Clear purpose</b><br><span class="muted">Support is connected to defined humanitarian and community-development goals.</span></div></div>
+        <div class="check-card"><div class="check-dot">✓</div><div><b>Visible progress</b><br><span class="muted">Project updates, photographs, videos and reports can keep supporters informed.</span></div></div>
+        <div class="check-card"><div class="check-dot">✓</div><div><b>Responsible stewardship</b><br><span class="muted">Financial and organizational information can be published as it becomes verified and available.</span></div></div>
+      </div>
+      <div class="feature-box">
+        <div class="section-kicker">Ways to participate</div>
+        <h3>Support • Partner • Share</h3>
+        <p class="muted">Individuals, businesses, community groups, foundations and international partners can contribute in different ways.</p>
+        <div class="actions">
+          <a class="btn primary" href="#support">Donate</a>
+          <a class="btn" style="border:2px solid var(--g);color:var(--g)" href="#partner">Partner with us</a>
+        </div>
+        <p class="muted" style="font-size:13px;margin-top:18px">Every public claim, project figure and beneficiary story should be supported by appropriate records and consent.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
--- Only admin can delete likes if needed.
-drop policy if exists "Admin can delete MHF post likes" on public.mhf_post_likes;
-create policy "Admin can delete MHF post likes"
-on public.mhf_post_likes for delete
-to authenticated
-using ((auth.jwt()->>'email') = 'mugerwalouiscupa@gmail.com');
+<section id="impact" class="dark"><div class="container"><div class="head"><div class="tag">Our approach</div><h2>From compassion to measurable impact</h2><p class="muted">As projects grow, we will publish verified activities, beneficiaries and financial reporting so supporters can understand how resources are used.</p></div><div class="project"><div class="visual">❤</div><div><h3>Community Support Initiative</h3><p class="muted">A planned program combining essential assistance with education, skills and livelihood support for vulnerable households.</p><p><b>Current stage:</b> Organization development, registration, partnerships and fundraising.</p><a class="btn primary" href="#partner">Become a partner</a></div></div></div></section>
 
--- Visitors can submit comments; public can only read approved comments.
-drop policy if exists "Public can read approved MHF post comments" on public.mhf_post_comments;
-create policy "Public can read approved MHF post comments"
-on public.mhf_post_comments for select
-to anon, authenticated
-using (
-  status = 'approved'
-  or (auth.jwt()->>'email') = 'mugerwalouiscupa@gmail.com'
-);
 
-drop policy if exists "Public can submit MHF post comments" on public.mhf_post_comments;
-create policy "Public can submit MHF post comments"
-on public.mhf_post_comments for insert
-to anon, authenticated
-with check (status = 'pending');
 
-drop policy if exists "Admin manages MHF post comments" on public.mhf_post_comments;
-create policy "Admin manages MHF post comments"
-on public.mhf_post_comments for update
-to authenticated
-using ((auth.jwt()->>'email') = 'mugerwalouiscupa@gmail.com')
-with check ((auth.jwt()->>'email') = 'mugerwalouiscupa@gmail.com');
+<section id="posts" style="background:#f7faf8">
+  <div class="container">
+    <div class="head">
+      <div class="tag">Posts & Updates</div>
+      <h2>Latest from Mugerwa Hope Foundation</h2>
+      <p class="muted">Follow our latest announcements, activities and foundation updates.</p>
+    </div>
+    <div id="publicPostsList" class="media-grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
+      <p class="muted">Loading posts…</p>
+    </div>
+  </div>
+</section>
 
-drop policy if exists "Admin deletes MHF post comments" on public.mhf_post_comments;
-create policy "Admin deletes MHF post comments"
-on public.mhf_post_comments for delete
-to authenticated
-using ((auth.jwt()->>'email') = 'mugerwalouiscupa@gmail.com');
+<section id="media">
+  <div class="container">
+    <div class="head">
+      <div class="tag">Media & Stories</div>
+      <h2>See our work in pictures, videos and documentaries.</h2>
+      <p class="muted">
+        This is where Mugerwa Hope Foundation will share verified field activities,
+        project updates, beneficiary stories, photographs, videos and documentaries
+        so supporters and the public can follow our work.
+      </p>
+    </div>
 
--- Visitors can subscribe. Only admin can read/delete subscribers.
-drop policy if exists "Public can subscribe to MHF updates" on public.mhf_subscribers;
-create policy "Public can subscribe to MHF updates"
-on public.mhf_subscribers for insert
-to anon, authenticated
-with check (email is not null);
+    <div class="actions" style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn primary" href="#photos">📷 Photos</a>
+      <a class="btn primary" href="#videos">▶️ Videos</a>
+      <a class="btn primary" href="#documentaries">🎬 Documentaries</a>
+    </div>
+    <div id="publicMediaArea" style="margin-top:24px">
+      <div id="photos"><h3>📷 Photos</h3><div id="publicPhotos" class="media-grid"></div></div>
+      <div id="videos" style="margin-top:32px"><h3>▶️ Videos</h3><div id="publicVideos" class="media-grid"></div></div>
+      <div id="documentaries" style="margin-top:32px"><h3>🎬 Documentaries</h3><div id="publicDocumentaries" class="media-grid"></div></div>
+    </div>
 
-drop policy if exists "Admin can read MHF subscribers" on public.mhf_subscribers;
-create policy "Admin can read MHF subscribers"
-on public.mhf_subscribers for select
-to authenticated
-using ((auth.jwt()->>'email') = 'mugerwalouiscupa@gmail.com');
+    <div class="panel media-publish">
+      <div class="tag">Foundation updates</div>
+      <h3>Keep supporters informed</h3>
+      <p class="muted">
+        New photos, videos and documentaries can be added here as the foundation
+        carries out activities. For videos and documentaries, we can connect this
+        section to the foundation's official YouTube channel so visitors can watch
+        them directly from the website.
+      </p>
+      <div class="actions">
+        <a class="btn primary" href="mailto:mugerwalouiscupa@gmail.com?subject=Media%20Update%20for%20Mugerwa%20Hope%20Foundation">Send a Media Update</a>
+        <a class="btn" style="border:2px solid var(--g);color:var(--g)" href="#contact">Contact Foundation</a>
+      </div>
+      <p class="muted" style="font-size:13px;margin-top:14px">
+        <b>Important:</b> Before publishing identifiable photos or videos of children,
+        vulnerable people or beneficiaries, obtain appropriate consent and avoid
+        publishing sensitive personal information.
+      </p>
+    </div>
+  </div>
+</section>
 
-drop policy if exists "Admin can delete MHF subscribers" on public.mhf_subscribers;
-create policy "Admin can delete MHF subscribers"
-on public.mhf_subscribers for delete
-to authenticated
-using ((auth.jwt()->>'email') = 'mugerwalouiscupa@gmail.com');
 
--- Publish a simple test post after the tables are created if you want:
--- insert into public.mhf_posts(title, body, post_date, published)
--- values ('Welcome to Mugerwa Hope Foundation',
---         'This is our first public foundation update.',
---         current_date, true);
+
+<section id="subscribe" style="background:#eef7f2">
+  <div class="container">
+    <div class="panel" style="max-width:760px;margin:auto">
+      <div class="tag">Stay Connected</div>
+      <h2>Subscribe to Mugerwa Hope Foundation</h2>
+      <p class="muted">Leave your email to receive new foundation posts and important updates.</p>
+      <form onsubmit="submitFoundationSubscription(event)" class="actions" style="display:flex;gap:10px;flex-wrap:wrap">
+        <input id="subscriberEmail" type="email" required placeholder="Your email address" style="flex:1;min-width:230px">
+        <button class="btn primary" type="submit">🔔 Subscribe</button>
+      </form>
+      <div id="subscribeStatus" class="muted" style="margin-top:10px"></div>
+    </div>
+  </div>
+</section>
+
+<section id="resources">
+  <div class="container">
+    <div class="head">
+      <div class="tag">Fundraising & Transparency</div>
+      <h2>Information for donors, partners and supporters</h2>
+      <p class="muted">This section is designed to give funders the information they need to understand, verify and support Mugerwa Hope Foundation.</p>
+    </div>
+
+    <div class="grid">
+      <div class="card"><div class="icon">📜</div><h3>Registration Documents</h3><p class="muted">Upload verified registration certificates, permits and other official organizational documents here.</p><a class="btn primary" href="#" onclick="openResource(event,'registration')">View Documents</a></div>
+      <div class="card"><div class="icon">👥</div><h3>Board & Leadership</h3><p class="muted">Introduce the board members and leadership team, including their roles and responsibilities.</p><a class="btn primary" href="#" onclick="openResource(event,'leadership')">View Leadership</a></div>
+      <div class="card"><div class="icon">🎯</div><h3>Mission & Vision</h3><p class="muted">Our mission and vision guide our humanitarian and community-development work.</p><a class="btn primary" href="#" onclick="openResource(event,'mission')">Read More</a></div>
+      <div class="card"><div class="icon">📋</div><h3>Specific Projects</h3><p class="muted">Publish individual projects, objectives, target beneficiaries, locations, timelines and progress.</p><a class="btn primary" href="#" onclick="openResource(event,'projects')">View Projects</a></div>
+      <div class="card"><div class="icon">💰</div><h3>Project Budgets</h3><p class="muted">Show project budgets, funding targets and major cost categories so partners can understand what their support will fund.</p><a class="btn primary" href="#" onclick="openResource(event,'budgets')">View Budgets</a></div>
+      <div class="card"><div class="icon">📷</div><h3>Photos & Documentaries</h3><p class="muted">Share verified photographs, videos and documentaries from approved activities.</p><a class="btn primary" href="#media">View Media</a></div>
+      <div class="card"><div class="icon">❤️</div><h3>Beneficiary Stories</h3><p class="muted">Share consent-based stories showing how programs affect people and communities.</p><a class="btn primary" href="#" onclick="openResource(event,'stories')">Read Stories</a></div>
+      <div class="card"><div class="icon">📈</div><h3>Impact Reports</h3><p class="muted">Publish project results, beneficiaries reached, activities completed, lessons and future plans.</p><a class="btn primary" href="#" onclick="openResource(event,'impact')">View Reports</a></div>
+      <div class="card"><div class="icon">🔎</div><h3>Financial Transparency</h3><p class="muted">Publish appropriate financial reports, funding received, project expenditure and accountability information.</p><a class="btn primary" href="#" onclick="openResource(event,'finance')">View Information</a></div>
+      <div class="card"><div class="icon">💳</div><h3>Verified Donation Methods</h3><p class="muted">Publish only organization-controlled, verified bank, Mobile Money and online payment details.</p><a class="btn primary" href="#support">Donate / Support</a></div>
+      <div class="card"><div class="icon">📞</div><h3>Contact Information</h3><p class="muted">Keep official email, phone/WhatsApp and other public contact channels easy to find.</p><a class="btn primary" href="#contact">Contact Us</a></div>
+      <div class="card"><div class="icon">📄</div><h3>Partnership Proposal</h3><p class="muted">Provide a downloadable organizational profile and partnership proposal for funders, companies and international partners.</p><a class="btn primary" href="#" onclick="openResource(event,'proposal')">Download Profile</a></div>
+    </div>
+
+
+<div class="panel" style="margin-top:25px">
+  <div class="tag">Documents & Downloads</div>
+  <h3>Foundation resources</h3>
+  <p class="muted">Verified public documents, proposals, reports and approved photos uploaded by the foundation administrator will appear here.</p>
+  <div id="publicResourceList"><p class="muted">No public resources uploaded yet.</p></div>
+</div>
+
+    <div class="panel" style="margin-top:25px">
+      <div class="tag">Funders' Resource Center</div>
+      <h3>Build donor confidence</h3>
+      <p class="muted">Before publishing documents or financial information, replace the placeholders with verified official records. Sensitive personal information, children's identities and private financial details should not be publicly displayed.</p>
+      <div class="notice"><b>Recommended document format:</b> PDF is preferred for registration documents, annual/impact reports, project proposals and budgets. Use clear filenames such as <b>Mugerwa-Hope-Foundation-Registration.pdf</b>.</div>
+    </div>
+  </div>
+</section>
+
+<section id="partner"><div class="container split"><div class="panel"><div class="tag">Global partnerships</div><h2>Partner with us</h2><p class="muted">We welcome responsible partnerships with individuals, companies, foundations, community groups and international organizations interested in humanitarian and community-development work in Uganda.</p><ul class="checks"><li>Financial and material donations</li><li>Equipment and essential supplies</li><li>Skills, mentorship and professional support</li><li>Project partnerships</li></ul><a class="btn primary" href="mailto:mugerwalouiscupa@gmail.com?subject=Partnership%20Inquiry">Contact for Partnership</a></div><div class="panel" id="support"><div class="tag">Support our mission</div><h2>Every contribution can help.</h2><p class="muted">Choose how you would like to support Mugerwa Hope Foundation. Online payments can use a verified payment page that accepts Uganda mobile money, cards and bank transfer.</p><div class="paygrid">
+<div class="paycard">
+  <div class="payicon">📱</div>
+  <h3>Mobile Money</h3>
+  <p class="muted">Pay securely by Airtel or MTN Mobile Money. The site will request the amount and phone number and start the payment through the secure payment provider.</p>
+  <p><b>Networks:</b> Airtel or MTN</p>
+  <button class="btn primary" type="button" onclick="startDonation('mobile')">Mobile Money Instructions</button>
+  <span class="status">Airtel / MTN</span>
+</div>
+<div class="paycard">
+  <div class="payicon">🏦</div>
+  <h3>Bank Transfer</h3>
+  <p class="muted">Use the foundation's verified bank instructions or the secure hosted payment page when configured.</p>
+  <button class="btn primary" type="button" onclick="startDonation('bank')">Pay by Bank</button>
+  <span class="status">Secure payment</span>
+</div>
+<div class="paycard">
+  <div class="payicon">💳</div>
+  <h3>Mastercard / Visa</h3>
+  <p class="muted">Card payments are completed on a secure hosted checkout. No card number, CVV or PIN is stored in this website.</p>
+  <button class="btn primary" type="button" onclick="startDonation('card')">Pay securely by Card</button>
+  <span class="status">Secure hosted checkout</span>
+</div>
+</div><div id="publicPaymentMethods" style="margin-top:16px"></div><div class="notice"><b>Secure payments:</b> The website will never ask supporters to enter a card PIN, CVV or Mobile Money PIN into this page. Payments are completed on the verified payment provider's secure checkout.</div><div class="support-contact"><p><b>Need help with a donation?</b></p><p><b>Email:</b> mugerwalouiscupa@gmail.com</p><p><b>Phone / WhatsApp:</b> +256 747 064 373</p><a class="btn primary" href="mailto:mugerwalouiscupa@gmail.com?subject=Donation%20%2F%20Support%20Inquiry">Ask About Supporting Us</a></div></div></div></section>
+
+<section class="container" style="padding-top:30px;padding-bottom:20px">
+  <div class="support-banner">
+    <div>
+      <h2>Stand with vulnerable communities.</h2>
+      <p>Donate, partner with the foundation or share its mission with someone who may want to help.</p>
+    </div>
+    <div class="actions" style="margin:0">
+      <a class="btn gold" href="#support">Support the mission</a>
+      <a class="btn" style="border:2px solid #fff;color:#fff" href="https://wa.me/256747064373" target="_blank" rel="noopener">WhatsApp us</a>
+    </div>
+  </div>
+</section>
+
+
+<section id="shareWebsite" class="feature-band">
+  <div class="container">
+    <div class="feature-box" style="text-align:center">
+      <div class="section-kicker">Share Mugerwa Hope Foundation</div>
+      <h2>Invite people to visit our website</h2>
+      <p class="muted">Visitors and the administrator can share this same live website link through WhatsApp, Facebook, SMS, email or any other sharing app on their phone or computer.</p>
+      <div class="actions" style="justify-content:center">
+        <button class="btn primary" type="button" onclick="shareFoundation(event)">🔗 Share Website</button>
+        <button class="btn" type="button" style="border:2px solid var(--g);color:var(--g);background:#fff;cursor:pointer" onclick="copyFoundationLink(event)">📋 Copy Website Link</button>
+      </div>
+      <div id="foundationShareStatus" class="muted" style="margin-top:12px;font-size:13px"></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact"><div class="container"><div class="head"><div class="tag">Contact</div><h2>Let's work together</h2><p class="muted">Whether you want to support a project, volunteer, partner or learn more, we would like to hear from you.</p></div><div class="contact"><div class="contactbox"><p><b>Email</b></p><div id="publicContactEmails" class="contact-list"><span class="muted">mugerwalouiscupa@gmail.com</span></div><p><b>Phone / WhatsApp</b></p><div id="publicContactPhones" class="contact-list"><span class="muted">+256 747 064 373</span></div><p><b>Country</b><br><span class="muted">Uganda</span></p></div><div class="contactbox"><form onsubmit="sendMail(event)"><input id="name" required placeholder="Your name"><input id="email" required type="email" placeholder="Your email"><textarea id="msg" required placeholder="How would you like to help or partner with us?"></textarea><button class="btn primary" type="submit">Send Message</button></form></div></div></div></section>
+
+<section class="cta"><div class="container"><div class="tag" style="color:#f3d47e">Stand with humanity</div><h2>Together, we can create more hope.</h2><p>Help us build programs that give vulnerable people practical support, dignity and opportunities for a better future.</p><a class="btn gold" href="mailto:mugerwalouiscupa@gmail.com?subject=I%20Want%20to%20Support%20Mugerwa%20Hope%20Foundation">I Want to Support</a></div></section>
+</main>
+
+
+<!-- ADMINISTRATOR PORTAL -->
+<div id="paymentSetupModal" class="admin-gate" style="z-index:1100"><div class="admin-box">
+  <h2 id="paymentMethodTitle">Secure Donation</h2>
+  <p id="paymentSetupMessage" class="muted">Enter your donation details. You will be sent to the secure payment confirmation step.</p>
+  <form id="donationForm" onsubmit="submitDonation(event)">
+    <label>Donation amount (UGX)</label><input id="donationAmount" type="number" min="500" step="100" required placeholder="e.g. 10000">
+    <label>Your name</label><input id="donorName" required placeholder="Full name">
+    <label>Your email</label><input id="donorEmail" type="email" required placeholder="you@example.com">
+    <label>Mobile number</label><input id="donorPhone" type="tel" required placeholder="07XXXXXXXX">
+    <label id="networkLabel">Mobile network</label><select id="donorNetwork" style="width:100%;padding:13px;margin:6px 0;border:1px solid #d7e4de;border-radius:9px;font:inherit"><option value="AIRTEL">Airtel</option><option value="MTN">MTN</option></select>
+    <button class="btn primary" type="submit" id="donationSubmitBtn" style="width:100%;margin-top:10px">Continue to secure payment</button>
+  </form>
+  <div id="donationStatus" class="notice" style="display:none"></div>
+  <button class="btn" type="button" onclick="closePaymentSetup()" style="margin-top:8px">Close</button>
+</div></div>
+
+<div class="admin-gate" id="adminGate">
+  <div class="admin-box">
+    <h2>Administrator Login</h2>
+    <p class="muted">Sign in securely with the Mugerwa Hope Foundation administrator email.</p>
+    <form onsubmit="adminLogin(event)">
+      <input id="adminUser" type="email" required value="mugerwalouiscupa@gmail.com" placeholder="Administrator email">
+      <input id="adminPass" type="password" required placeholder="Administrator password">
+      <button class="btn primary" style="border:0;cursor:pointer;width:100%;margin-top:8px">Login securely</button>
+    </form>
+    <button class="btn" style="border:0;background:#eef5f0;margin-top:10px;cursor:pointer;width:100%" onclick="closeAdminLogin()">Cancel</button>
+    <button class="btn" style="border:0;background:#fff;margin-top:10px;cursor:pointer;width:100%" onclick="resetAdminPassword()">Forgot password?</button>
+    <p style="font-size:12px;color:#60756d;margin-top:15px">Administrator account: <b>mugerwalouiscupa@gmail.com</b>. The password is handled by Supabase Auth and is not stored in this HTML file.</p>
+  </div>
+</div>
+
+<div class="admin-gate" id="passwordResetGate" style="z-index:1200">
+  <div class="admin-box">
+    <h2>Reset Administrator Password</h2>
+    <p class="muted">Enter a new password for the foundation administrator account.</p>
+    <form onsubmit="completeAdminPasswordReset(event)">
+      <input id="newAdminPass" type="password" minlength="8" required placeholder="New password (8+ characters)">
+      <input id="confirmAdminPass" type="password" minlength="8" required placeholder="Confirm new password">
+      <button class="btn primary" type="submit" style="width:100%;margin-top:8px">Save New Password</button>
+    </form>
+    <button class="btn" type="button" onclick="closePasswordReset()" style="width:100%;margin-top:8px">Cancel</button>
+    <p id="passwordResetStatus" class="muted" style="font-size:13px"></p>
+  </div>
+</div>
+
+<div class="admin-dashboard" id="adminDashboard">
+<style>
+.mhf-admin-v2{font-family:inherit}
+.engage-box{margin-top:14px;padding-top:12px;border-top:1px solid #dce8e2}.engage-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.engage-actions button{border:1px solid #d7e4de;background:#fff;border-radius:9px;padding:8px 12px;font-weight:700;cursor:pointer;color:#103b30}.engage-actions button.liked{background:#e9f6f0;border-color:#08734f}.comment-box{margin-top:10px;display:grid;gap:7px}.comment-box input,.comment-box textarea{width:100%;padding:9px;border:1px solid #d7e4de;border-radius:8px;font:inherit}.comment-box textarea{min-height:75px}.comment-list{margin-top:10px;display:grid;gap:8px}.comment-item{background:#f7faf8;border-radius:9px;padding:9px}.audience-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}.audience-stat{padding:16px;border:1px solid #dce8e2;border-radius:12px;background:#fff}.audience-stat b{display:block;font-size:25px}.payment-admin-row{border:1px solid #dce8e2;border-radius:12px;padding:13px;margin:10px 0;background:#fff}.notification-row{border:1px solid #dce8e2;border-radius:10px;padding:10px;margin:7px 0;background:#fff}.public-payment{border:1px solid #dce8e2;border-radius:14px;padding:15px;background:#fff;margin-top:10px}.contact-list{display:grid;gap:5px}.contact-list a{color:#08734f;font-weight:700}
+.mhf-admin-v2 .admin-layout{min-height:calc(100vh - 70px)}
+.mhf-admin-v2 .admin-side{max-height:none;overflow:auto}.mhf-admin-v2 .admin-side button{white-space:normal;text-align:left}
+.mhf-form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.mhf-admin-v2 input,.mhf-admin-v2 textarea,.mhf-admin-v2 select{box-sizing:border-box;width:100%;padding:11px;border:1px solid #d7e4de;border-radius:9px;font:inherit;margin:5px 0}.mhf-admin-v2 textarea{min-height:110px;resize:vertical}
+.mhf-item{border:1px solid #dce8e2;border-radius:12px;padding:14px;margin:10px 0;background:#fff}.mhf-item-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.mhf-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.mhf-small{font-size:12px;color:#60756d}.mhf-thumb{max-width:140px;max-height:100px;border-radius:8px;object-fit:cover;margin-top:8px}.mhf-status{padding:10px;border-radius:8px;background:#f1f7f3;margin:10px 0;display:none}.mhf-danger{background:#fff0f0!important;color:#a32222!important}.mhf-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}.mhf-stat{padding:18px;border:1px solid #dce8e2;border-radius:12px;background:#fff}.mhf-stat b{font-size:25px;display:block}
+</style>
+<div class="admin-top">
+  <b>❤ Mugerwa Hope Foundation — Administrator</b>
+  <div><button class="btn gold" onclick="closeAdminDashboard()">View Website</button><button class="btn" style="background:#fff;color:#103b30;border:0;cursor:pointer" onclick="shareFoundation(event)">🔗 Share Website</button><button class="btn" style="background:#fff;color:#103b30;border:0;cursor:pointer" onclick="adminLogout()">Logout</button></div>
+</div>
+<div class="admin-layout mhf-admin-v2">
+<aside class="admin-side">
+<button onclick="mhfPanel('overview')">📊 Dashboard</button>
+<button onclick="mhfPanel('posts')">📝 Posts & Updates</button>
+<button onclick="mhfPanel('media')">📷 Photos & Media</button>
+<button onclick="mhfPanel('videos')">🎥 Videos & Documentaries</button>
+<button onclick="mhfPanel('leadership')">👥 Board & Leadership</button>
+<button onclick="mhfPanel('projects')">🏗️ Projects & Budgets</button>
+<button onclick="mhfPanel('stories')">❤️ Beneficiaries & Stories</button>
+<button onclick="mhfPanel('impact')">📊 Impact Reports</button>
+<button onclick="mhfPanel('finance')">💰 Financial Transparency</button>
+<button onclick="mhfPanel('partnership')">🤝 Partnership Proposal</button>
+<button onclick="mhfPanel('documents')">📁 Registration & Documents</button>
+<button onclick="mhfPanel('donations')">💳 Donations</button>
+<button onclick="mhfPanel('paymentMethods')">💰 Donation Methods</button>
+<button onclick="mhfPanel('audience')">👁️ Viewers & Likes</button>
+<button onclick="mhfPanel('comments')">💬 Comments Approval</button>
+<button onclick="mhfPanel('messages')">💬 Client Chat</button>
+<button onclick="mhfPanel('settings')">⚙️ Website Settings</button>
+</aside>
+<main class="admin-main">
+<section class="admin-panel active" id="mhf-panel-overview"><h2>Administrator Dashboard</h2><p class="muted">Everything below can be added, edited and deleted from this control panel.</p><div class="mhf-card-grid"><div class="mhf-stat">Posts<b id="mhfCountPosts">0</b></div><div class="mhf-stat">Photos<b id="mhfCountMedia">0</b></div><div class="mhf-stat">Leadership<b id="mhfCountLeadership">0</b></div><div class="mhf-stat">Projects<b id="mhfCountProjects">0</b></div><div class="mhf-stat">Stories<b id="mhfCountStories">0</b></div><div class="mhf-stat">Reports<b id="mhfCountImpact">0</b></div></div></section>
+
+<section class="admin-panel" id="mhf-panel-posts"><h2>Posts & Updates</h2><div class="mhf-form-grid"><input id="mhfPostTitle" placeholder="Post title"><input id="mhfPostDate" type="date"></div><textarea id="mhfPostBody" placeholder="Write the update..."></textarea><button class="btn primary" onclick="mhfSave('posts')">Add Post</button><button class="btn" onclick="mhfClear('posts')">Clear</button><div id="mhfListPosts"></div></section>
+
+<section class="admin-panel" id="mhf-panel-media"><h2>Photos</h2><p class="muted">Add a photo with a title. You can edit or delete it later.</p><div class="mhf-form-grid"><input id="mhfMediaTitle" placeholder="Photo title"><input id="mhfMediaFile" type="file" accept="image/*"></div><button class="btn primary" onclick="mhfSaveFile('media')">Add Photo</button><div id="mhfListMedia"></div></section>
+
+<section class="admin-panel" id="mhf-panel-videos"><h2>Videos & Documentaries</h2><p class="muted">Add a video/documentary file or a public video URL.</p><div class="mhf-form-grid"><input id="mhfVideoTitle" placeholder="Video/documentary title"><input id="mhfVideoUrl" placeholder="YouTube or video URL (optional)"><input id="mhfVideoFile" type="file" accept="video/*"></div><button class="btn primary" onclick="mhfSaveFile('videos')">Add Video / Documentary</button><div id="mhfListVideos"></div></section>
+
+<section class="admin-panel" id="mhf-panel-leadership"><h2>Board & Leadership</h2><div class="mhf-form-grid"><input id="mhfLeadName" placeholder="Full name"><input id="mhfLeadRole" placeholder="Position / role"><input id="mhfLeadPhoto" type="file" accept="image/*"></div><textarea id="mhfLeadBio" placeholder="Biography / responsibilities"></textarea><button class="btn primary" onclick="mhfSaveFile('leadership')">Add Leader</button><div id="mhfListLeadership"></div></section>
+
+<section class="admin-panel" id="mhf-panel-projects"><h2>Specific Projects & Budgets</h2><div class="mhf-form-grid"><input id="mhfProjectName" placeholder="Project name"><input id="mhfProjectLocation" placeholder="Location"><input id="mhfProjectBudget" type="number" placeholder="Budget (UGX)"><input id="mhfProjectBeneficiaries" placeholder="Number/type of beneficiaries"></div><textarea id="mhfProjectDescription" placeholder="Project description, activities and expected results"></textarea><button class="btn primary" onclick="mhfSave('projects')">Add Project</button><div id="mhfListProjects"></div></section>
+
+<section class="admin-panel" id="mhf-panel-stories"><h2>Beneficiaries & Stories</h2><div class="mhf-form-grid"><input id="mhfStoryName" placeholder="Beneficiary/story name or title"><input id="mhfStoryPhoto" type="file" accept="image/*"></div><textarea id="mhfStoryBody" placeholder="Story and impact (avoid publishing private/sensitive information without consent)"></textarea><button class="btn primary" onclick="mhfSaveFile('stories')">Add Story</button><div id="mhfListStories"></div></section>
+
+<section class="admin-panel" id="mhf-panel-impact"><h2>Impact Reports</h2><div class="mhf-form-grid"><input id="mhfImpactTitle" placeholder="Report title"><input id="mhfImpactFile" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.csv"></div><textarea id="mhfImpactSummary" placeholder="Short summary of the report"></textarea><button class="btn primary" onclick="mhfSaveFile('impact')">Add Impact Report</button><div id="mhfListImpact"></div></section>
+
+<section class="admin-panel" id="mhf-panel-finance"><h2>Financial Transparency</h2><div class="mhf-form-grid"><input id="mhfFinanceTitle" placeholder="Report/transaction title"><select id="mhfFinanceType"><option>Income</option><option>Expenditure</option><option>Financial Report</option></select><input id="mhfFinanceAmount" type="number" placeholder="Amount (UGX)"><input id="mhfFinanceDate" type="date"></div><textarea id="mhfFinanceNote" placeholder="Purpose, source, project or explanation"></textarea><button class="btn primary" onclick="mhfSave('finance')">Add Financial Record</button><div id="mhfListFinance"></div></section>
+
+<section class="admin-panel" id="mhf-panel-partnership"><h2>Partnership Proposal & Organizational Profile</h2><div class="mhf-form-grid"><input id="mhfPartnerTitle" placeholder="Document title"><input id="mhfPartnerFile" type="file" accept=".pdf,.doc,.docx"></div><textarea id="mhfPartnerNote" placeholder="Partnership description / invitation"></textarea><button class="btn primary" onclick="mhfSaveFile('partnership')">Add Partnership Resource</button><div id="mhfListPartnership"></div></section>
+
+<section class="admin-panel" id="mhf-panel-documents"><h2>Registration & Official Documents</h2><div class="mhf-form-grid"><input id="mhfDocTitle" placeholder="Document title"><select id="mhfDocType"><option>Registration</option><option>Board Profile</option><option>Project Proposal</option><option>Project Budget</option><option>Other</option></select><input id="mhfDocFile" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.csv"></div><button class="btn primary" onclick="mhfSaveFile('documents')">Add Document</button><div id="mhfListDocuments"></div></section>
+
+<section class="admin-panel" id="mhf-panel-donations"><h2>Donations</h2><div class="admin-note">Mobile Money and card payments use the secure payment service already connected to this website. The provider credentials belong in Supabase Edge Functions, never in this HTML file.</div><p class="muted">Use the public donation buttons to test the payment flow after the payment provider is configured.</p><button class="btn primary" onclick="closeAdminDashboard();document.getElementById('support')?.scrollIntoView({behavior:'smooth'})">Open Donation Section</button></section>
+
+<section class="admin-panel" id="mhf-panel-messages"><h2>Client Chat</h2><p class="muted">Existing visitor chat controls are retained below.</p><div class="chat-wrap"><div class="chat-users" id="chatUsers"></div><div class="chat-window"><div id="chatTitle" style="padding:13px;font-weight:800;border-bottom:1px solid #dce8e2">Select a client</div><div class="chat-messages" id="chatMessages"></div><form class="chat-form" onsubmit="sendAdminChat(event)"><input id="adminChatInput" placeholder="Type your reply..." required><button class="btn primary">Send</button></form></div></div></section>
+
+<section class="admin-panel" id="mhf-panel-paymentMethods"><h2>Donation / Payment Methods</h2><p class="muted">Add the payment instructions you want visitors to see. You can publish, hide, edit or delete each method.</p><div class="mhf-form-grid"><select id="mhfPayType"><option value="mobile_money">Mobile Money</option><option value="bank">Bank Transfer</option><option value="card">Mastercard / Visa</option><option value="other">Other</option></select><input id="mhfPayTitle" placeholder="Title e.g. Airtel Money Donations"><input id="mhfPayAccountName" placeholder="Account name"><input id="mhfPayAccountNumber" placeholder="Account / merchant number"><input id="mhfPayPhone" placeholder="Phone / Mobile Money number"><input id="mhfPayProviderUrl" placeholder="Verified payment URL (optional)"></div><textarea id="mhfPayInstructions" placeholder="Instructions visitors should follow"></textarea><button class="btn primary" onclick="mhfSavePaymentMethod()">Save Donation Method</button><div id="mhfPaymentMethodsList"></div></section>
+
+<section class="admin-panel" id="mhf-panel-audience"><h2>Audience & Website Statistics</h2><p class="muted">View website visits and engagement recorded by the public site.</p><div class="audience-grid"><div class="audience-stat">Website viewers / visits<b id="mhfTotalViews">0</b></div><div class="audience-stat">Total likes<b id="mhfTotalLikes">0</b></div><div class="audience-stat">Pending comments<b id="mhfPendingComments">0</b></div><div class="audience-stat">Approved comments<b id="mhfApprovedComments">0</b></div></div><div id="mhfTopEngagement" style="margin-top:18px"></div><button class="btn" onclick="loadAudienceStats()">Refresh statistics</button></section>
+
+<section class="admin-panel" id="mhf-panel-comments"><h2>Comments Approval</h2><p class="muted">New visitor comments stay private until you approve them. You can approve or reject them.</p><div id="mhfCommentsList"></div></section>
+
+<section class="admin-panel" id="mhf-panel-settings"><h2>Website Settings & Contacts</h2><p class="muted">Change or remove the public emails and phone/WhatsApp numbers here. Separate multiple contacts with commas.</p><input id="mhfSettingName" placeholder="Foundation name"><label>Public emails (comma-separated)<input id="mhfSettingEmail" placeholder="email1@example.com, email2@example.com"></label><label>Public phones / WhatsApp (comma-separated)<input id="mhfSettingPhone" placeholder="+256..., +256..."></label><label>Notification email (where administrator alerts should be sent)<input id="mhfNotifyEmail" placeholder="mugerwalouiscupa@gmail.com"></label><label>Notification phone (SMS alerts)<input id="mhfNotifyPhone" placeholder="+256747064373"></label><textarea id="mhfSettingAnnouncement" placeholder="Homepage announcement"></textarea><button class="btn primary" onclick="mhfSaveSettings()">Save Settings</button><div id="mhfSettingsStatus" class="mhf-status"></div><h3 style="margin-top:22px">Administrator notification queue</h3><p class="muted">Comments and other website events are queued here. Actual email/SMS delivery uses the secure Supabase notification function configured separately.</p><div id="mhfNotificationList"></div></section>
+</main></div></div>
+
+
+<script>
+/* Universal website sharing.
+   The link is taken from the live page URL, so nobody is sent to a local
+   file on the administrator's phone. It works on Android, iPhone and desktop.
+*/
+function foundationPublicUrl(){
+  return window.location.href.split('#')[0];
+}
+async function copyFoundationLink(event){
+  if(event) event.preventDefault();
+  const url=foundationPublicUrl();
+  const status=document.getElementById('foundationShareStatus');
+  try{
+    await navigator.clipboard.writeText(url);
+    if(status) status.textContent='Website link copied. You can now paste it into WhatsApp, Facebook, SMS or email.';
+    else alert('Website link copied. You can now paste it anywhere.');
+  }catch(e){
+    const ta=document.createElement('textarea');
+    ta.value=url; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{document.execCommand('copy'); if(status) status.textContent='Website link copied.'; else alert('Website link copied.');}
+    catch(err){prompt('Copy this website link:',url);}
+    ta.remove();
+  }
+}
+async function shareFoundation(event){
+  if(event) event.preventDefault();
+  const url=foundationPublicUrl();
+  const data={
+    title:'Mugerwa Hope Foundation',
+    text:'Visit Mugerwa Hope Foundation — Hope, Dignity and Opportunity.',
+    url:url
+  };
+  if(navigator.share){
+    try{ await navigator.share(data); return; }catch(e){
+      if(e && e.name==='AbortError') return;
+    }
+  }
+  await copyFoundationLink(event);
+}
+</script>
+
+<script>
+/* Mugerwa Hope Foundation administrator content manager.
+   FIXED: uses IndexedDB instead of localStorage for administrator content.
+   This prevents large photos/videos/documents from making the browser storage quota fail.
+   Supabase authentication/cloud resources remain separate and are not given secret keys here.
+*/
+const MHF_DB_NAME='mugerwa_hope_admin_v4';
+const MHF_DB_VERSION=1;
+const MHF_STORE='content';
+const MHF_CACHE_KEY='mhf_admin_content_v3';
+const mhfEmpty={posts:[],media:[],videos:[],leadership:[],projects:[],stories:[],impact:[],finance:[],partnership:[],documents:[],settings:{name:'Mugerwa Hope Foundation',email:'mugerwalouiscupa@gmail.com',phone:'+256747064373',announcement:'',notification_email:'mugerwalouiscupa@gmail.com',notification_phone:'+256747064373'}};
+let mhfCache=JSON.parse(JSON.stringify(mhfEmpty));
+let mhfDBPromise=null;
+
+function mhfCloneEmpty(){return JSON.parse(JSON.stringify(mhfEmpty));}
+function mhfMergeData(data){const out=mhfCloneEmpty();if(data&&typeof data==='object'){for(const k of Object.keys(out)){if(k==='settings')out.settings={...out.settings,...(data.settings||{})};else if(Array.isArray(data[k]))out[k]=data[k];}}return out;}
+function mhfData(){return mhfCache;}
+function mhfEsc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+function mhfId(){return (crypto&&crypto.randomUUID)?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);}
+
+function mhfOpenDB(){
+  if(mhfDBPromise)return mhfDBPromise;
+  mhfDBPromise=new Promise((resolve,reject)=>{
+    if(!window.indexedDB){reject(new Error('IndexedDB is not available in this browser.'));return;}
+    const req=indexedDB.open(MHF_DB_NAME,MHF_DB_VERSION);
+    req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(MHF_STORE))db.createObjectStore(MHF_STORE,{keyPath:'key'});};
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error||new Error('Could not open browser database.'));
+  });
+  return mhfDBPromise;
+}
+
+async function mhfLoad(){
+  try{
+    const db=await mhfOpenDB();
+    const rows=await new Promise((resolve,reject)=>{
+      const tx=db.transaction(MHF_STORE,'readonly');
+      const req=tx.objectStore(MHF_STORE).get('all');
+      req.onsuccess=()=>resolve(req.result?.data||null);
+      req.onerror=()=>reject(req.error);
+    });
+    if(rows){mhfCache=mhfMergeData(rows);return mhfCache;}
+    const old=localStorage.getItem(MHF_CACHE_KEY);
+    if(old){
+      const migrated=mhfMergeData(JSON.parse(old));
+      mhfCache=migrated;
+      await mhfPersist();
+      try{localStorage.removeItem(MHF_CACHE_KEY);}catch(e){}
+    }
+  }catch(e){
+    console.warn('Admin database load failed; using in-memory data.',e);
+  }
+  return mhfCache;
+}
+
+async function mhfPersist(){
+  const snapshot=mhfMergeData(mhfCache);
+  try{
+    const db=await mhfOpenDB();
+    await new Promise((resolve,reject)=>{
+      const tx=db.transaction(MHF_STORE,'readwrite');
+      tx.objectStore(MHF_STORE).put({key:'all',data:snapshot,updatedAt:new Date().toISOString()});
+      tx.oncomplete=resolve;
+      tx.onerror=()=>reject(tx.error||new Error('Could not save administrator data.'));
+      tx.onabort=()=>reject(tx.error||new Error('Administrator save was aborted.'));
+    });
+    return true;
+  }catch(e){
+    console.error(e);
+    alert('Could not save this information on this device. Please make sure browser storage is enabled and try again.');
+    return false;
+  }
+}
+
+function mhfPanel(name){document.querySelectorAll('#adminDashboard .admin-panel').forEach(x=>x.classList.remove('active'));const p=document.getElementById('mhf-panel-'+name);if(p)p.classList.add('active');mhfRender();if(name==='posts')loadAdminPosts();if(name==='comments')loadAdminPostComments();}
+function mhfClear(type){const ids={posts:['mhfPostTitle','mhfPostDate','mhfPostBody'],projects:['mhfProjectName','mhfProjectLocation','mhfProjectBudget','mhfProjectBeneficiaries','mhfProjectDescription'],finance:['mhfFinanceTitle','mhfFinanceAmount','mhfFinanceDate','mhfFinanceNote']};(ids[type]||[]).forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});}
+
+async function mhfSave(type){
+  try{
+    const d=mhfData();let item={id:mhfId(),created:new Date().toISOString()};
+    if(type==='posts'){
+      item.title=document.getElementById('mhfPostTitle').value.trim();
+      item.date=document.getElementById('mhfPostDate').value || new Date().toISOString().slice(0,10);
+      item.body=document.getElementById('mhfPostBody').value.trim();
+      if(!item.title || !item.body) return alert('Enter a post title and update text.');
+      if(initSupabase()){
+        const user=await ensureAdminSession();
+        if(!user) return;
+        const {error}=await supabaseClient.from('mhf_posts').insert({
+          title:item.title, body:item.body, post_date:item.date, published:true, author_id:user.id
+        });
+        if(error) return alert('Post could not be published to the cloud: '+error.message);
+        document.getElementById('mhfPostTitle').value='';
+        document.getElementById('mhfPostDate').value='';
+        document.getElementById('mhfPostBody').value='';
+        await loadAdminPosts();
+        await renderPublicPosts();
+        return;
+      }
+    }
+    else if(type==='projects'){item.name=document.getElementById('mhfProjectName').value.trim();item.location=document.getElementById('mhfProjectLocation').value.trim();item.budget=document.getElementById('mhfProjectBudget').value;item.beneficiaries=document.getElementById('mhfProjectBeneficiaries').value.trim();item.description=document.getElementById('mhfProjectDescription').value.trim();}
+    else if(type==='finance'){item.title=document.getElementById('mhfFinanceTitle').value.trim();item.kind=document.getElementById('mhfFinanceType').value;item.amount=document.getElementById('mhfFinanceAmount').value;item.date=document.getElementById('mhfFinanceDate').value;item.note=document.getElementById('mhfFinanceNote').value.trim();}
+    if(!item.title&&!item.name){alert('Please enter the required title/name.');return;}
+    d[type].unshift(item);
+    if(await mhfPersist()){mhfRender();mhfClear(type);alert('Saved successfully.');}
+  }catch(e){alert(e.message||'Could not save the item.');}
+}
+
+function mhfReadFile(input){return new Promise((resolve,reject)=>{const f=input?.files?.[0];if(!f)return resolve(null);if(f.size>30*1024*1024){reject(new Error('Please use a file smaller than 30 MB.'));return;}const r=new FileReader();r.onload=()=>resolve({name:f.name,type:f.type,data:r.result,size:f.size});r.onerror=()=>reject(new Error('Could not read the selected file.'));r.readAsDataURL(f);});}
+
+async function mhfSaveFile(type){
+  try{
+    const d=mhfData();let item={id:mhfId(),created:new Date().toISOString()};
+    if(type==='media'){item.title=document.getElementById('mhfMediaTitle').value.trim();item.file=await mhfReadFile(document.getElementById('mhfMediaFile'));}
+    if(type==='videos'){item.title=document.getElementById('mhfVideoTitle').value.trim();item.url=document.getElementById('mhfVideoUrl').value.trim();item.file=await mhfReadFile(document.getElementById('mhfVideoFile'));}
+    if(type==='leadership'){item.name=document.getElementById('mhfLeadName').value.trim();item.role=document.getElementById('mhfLeadRole').value.trim();item.bio=document.getElementById('mhfLeadBio').value.trim();item.file=await mhfReadFile(document.getElementById('mhfLeadPhoto'));}
+    if(type==='stories'){item.title=document.getElementById('mhfStoryName').value.trim();item.body=document.getElementById('mhfStoryBody').value.trim();item.file=await mhfReadFile(document.getElementById('mhfStoryPhoto'));}
+    if(type==='impact'){item.title=document.getElementById('mhfImpactTitle').value.trim();item.summary=document.getElementById('mhfImpactSummary').value.trim();item.file=await mhfReadFile(document.getElementById('mhfImpactFile'));}
+    if(type==='partnership'){item.title=document.getElementById('mhfPartnerTitle').value.trim();item.note=document.getElementById('mhfPartnerNote').value.trim();item.file=await mhfReadFile(document.getElementById('mhfPartnerFile'));}
+    if(type==='documents'){item.title=document.getElementById('mhfDocTitle').value.trim();item.kind=document.getElementById('mhfDocType').value;item.file=await mhfReadFile(document.getElementById('mhfDocFile'));}
+    if(!item.title&&!item.name){alert('Please enter a title/name.');return;}
+    if(['media','videos','leadership','stories','impact','partnership','documents'].includes(type) && type!=='videos' && !item.file){alert('Please choose a file.');return;}
+    if(type==='videos' && !item.file && !item.url){alert('Choose a video file or enter a video URL.');return;}
+    d[type].unshift(item);
+    if(await mhfPersist()){mhfRender();alert('Saved successfully.');}
+  }catch(e){alert(e.message||'Could not save the item.');}
+}
+
+async function mhfEdit(type,id){const d=mhfData(),x=d[type].find(i=>i.id===id);if(!x)return;const value=prompt('Edit title/name:',x.title||x.name||'');if(value===null)return;if(x.title!==undefined)x.title=value;else x.name=value;if(await mhfPersist())mhfRender();}
+async function mhfDelete(type,id){if(!confirm('Delete this item? This cannot be undone.'))return;const d=mhfData();d[type]=d[type].filter(i=>i.id!==id);if(await mhfPersist())mhfRender();}
+function mhfDownloadById(type,id){const item=mhfData()[type]?.find(x=>x.id===id);if(!item)return;if(item.file?.data){const a=document.createElement('a');a.href=item.file.data;a.download=item.file.name||'download';document.body.appendChild(a);a.click();a.remove();}else if(item.url){window.open(item.url,'_blank','noopener');}}
+function mhfButtons(type,id,extra=''){return '<div class="mhf-actions">'+extra+'<button class="btn" onclick="mhfEdit(\''+type+'\',\''+mhfEsc(id)+'\')">Edit</button><button class="btn mhf-danger" onclick="mhfDelete(\''+type+'\',\''+mhfEsc(id)+'\')">Delete</button></div>';}
+function mhfOpenButton(type,id,label){return '<button class="btn" onclick="mhfDownloadById(\''+type+'\',\''+mhfEsc(id)+'\')">'+label+'</button>';}
+function mhfList(type,target,renderer){const d=mhfData();const el=document.getElementById(target);if(!el)return;el.innerHTML=d[type].length?d[type].map(x=>renderer(x)).join(''):'<p class="muted">Nothing added yet.</p>';}
+
+function mhfRender(){
+  const d=mhfData();
+  for(const [id,n] of [['mhfCountPosts',d.posts.length],['mhfCountMedia',d.media.length],['mhfCountLeadership',d.leadership.length],['mhfCountProjects',d.projects.length],['mhfCountStories',d.stories.length],['mhfCountImpact',d.impact.length]]){const e=document.getElementById(id);if(e)e.textContent=n;}
+  mhfList('posts','mhfListPosts',x=>`<div class="mhf-item"><div class="mhf-item-head"><b>${mhfEsc(x.title)}</b><span class="mhf-small">${mhfEsc(x.date||'')}</span></div><p>${mhfEsc(x.body)}</p>${mhfButtons('posts',x.id)}</div>`);
+  mhfList('media','mhfListMedia',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b>${x.file?.type?.startsWith('image/')?`<br><img class="mhf-thumb" src="${x.file.data}" alt="${mhfEsc(x.title)}">`:''}${x.file?`<div class="mhf-small">${mhfEsc(x.file.name)}</div>`:''}${mhfButtons('media',x.id,x.file?mhfOpenButton('media',x.id,'Open/Download'):'')}</div>`);
+  mhfList('videos','mhfListVideos',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><p class="mhf-small">${mhfEsc(x.url||x.file?.name||'')}</p>${mhfButtons('videos',x.id,x.file||x.url?mhfOpenButton('videos',x.id,'Open Video'):'')}</div>`);
+  mhfList('leadership','mhfListLeadership',x=>`<div class="mhf-item"><b>${mhfEsc(x.name)}</b> — ${mhfEsc(x.role)}<p>${mhfEsc(x.bio)}</p>${x.file?.type?.startsWith('image/')?`<img class="mhf-thumb" src="${x.file.data}" alt="${mhfEsc(x.name)}">`:''}${mhfButtons('leadership',x.id)}</div>`);
+  mhfList('projects','mhfListProjects',x=>`<div class="mhf-item"><b>${mhfEsc(x.name)}</b><p>${mhfEsc(x.description)}</p><div class="mhf-small">Location: ${mhfEsc(x.location)} · Budget: UGX ${mhfEsc(x.budget)} · Beneficiaries: ${mhfEsc(x.beneficiaries)}</div>${mhfButtons('projects',x.id)}</div>`);
+  mhfList('stories','mhfListStories',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><p>${mhfEsc(x.body)}</p>${x.file?.type?.startsWith('image/')?`<img class="mhf-thumb" src="${x.file.data}" alt="${mhfEsc(x.title)}">`:''}${mhfButtons('stories',x.id)}</div>`);
+  mhfList('impact','mhfListImpact',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><p>${mhfEsc(x.summary)}</p>${mhfButtons('impact',x.id,x.file?mhfOpenButton('impact',x.id,'Open Report'):'')}</div>`);
+  mhfList('finance','mhfListFinance',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><div>${mhfEsc(x.kind)} · UGX ${mhfEsc(x.amount)} · ${mhfEsc(x.date)}</div><p>${mhfEsc(x.note)}</p>${mhfButtons('finance',x.id)}</div>`);
+  mhfList('partnership','mhfListPartnership',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b><p>${mhfEsc(x.note)}</p>${mhfButtons('partnership',x.id,x.file?mhfOpenButton('partnership',x.id,'Open Proposal'):'')}</div>`);
+  mhfList('documents','mhfListDocuments',x=>`<div class="mhf-item"><b>${mhfEsc(x.title)}</b> <span class="mhf-small">${mhfEsc(x.kind)}</span>${mhfButtons('documents',x.id,x.file?mhfOpenButton('documents',x.id,'Open Document'):'')}</div>`);
+}
+
+
+async function loadAdminPosts(){
+  const el=document.getElementById('mhfListPosts');
+  if(!el || !initSupabase()) return;
+  const user=await getCurrentAdmin(); if(!user) return;
+  const {data,error}=await supabaseClient.from('mhf_posts')
+    .select('id,title,body,post_date,published,created_at,updated_at')
+    .order('post_date',{ascending:false}).order('created_at',{ascending:false});
+  if(error){el.innerHTML='<p class="muted">'+escapeHtml(error.message)+'</p>';return;}
+  el.innerHTML=(data||[]).map(p=>`
+    <div class="mhf-item" style="margin-top:12px">
+      <b>${escapeHtml(p.title)}</b>
+      <div class="mhf-small">${escapeHtml(p.post_date||'')} · ${p.published?'Published':'Hidden'}</div>
+      <p>${escapeHtml(p.body)}</p>
+      <div class="mhf-actions">
+        <button class="btn" onclick="editCloudPost('${p.id}')">Edit</button>
+        <button class="btn" onclick="toggleCloudPost('${p.id}',${!!p.published})">${p.published?'Hide':'Publish'}</button>
+        <button class="btn mhf-danger" onclick="deleteCloudPost('${p.id}')">Delete</button>
+      </div>
+    </div>`).join('') || '<p class="muted">No posts yet.</p>';
+}
+async function editCloudPost(id){
+  if(!initSupabase())return;
+  const user=await ensureAdminSession();if(!user)return;
+  const {data,error}=await supabaseClient.from('mhf_posts').select('*').eq('id',id).single();
+  if(error)return alert(error.message);
+  const title=prompt('Post title:',data.title); if(title===null)return;
+  const body=prompt('Post/update text:',data.body); if(body===null)return;
+  const date=prompt('Date (YYYY-MM-DD):',data.post_date||new Date().toISOString().slice(0,10)); if(date===null)return;
+  const {error:upErr}=await supabaseClient.from('mhf_posts').update({
+    title:title.trim(),body:body.trim(),post_date:date.trim(),updated_at:new Date().toISOString()
+  }).eq('id',id);
+  if(upErr)return alert(upErr.message);
+  await loadAdminPosts(); await renderPublicPosts();
+}
+async function toggleCloudPost(id,current){
+  if(!initSupabase())return;
+  const user=await ensureAdminSession();if(!user)return;
+  const {error}=await supabaseClient.from('mhf_posts').update({published:!current,updated_at:new Date().toISOString()}).eq('id',id);
+  if(error)return alert(error.message);
+  await loadAdminPosts(); await renderPublicPosts();
+}
+async function deleteCloudPost(id){
+  if(!initSupabase())return;
+  const user=await ensureAdminSession();if(!user)return;
+  if(!confirm('Delete this post permanently?'))return;
+  const {error}=await supabaseClient.from('mhf_posts').delete().eq('id',id);
+  if(error)return alert(error.message);
+  await loadAdminPosts(); await renderPublicPosts();
+}
+
+async function renderPublicPosts(){
+  const el=document.getElementById('publicPostsList'); if(!el)return;
+  if(!initSupabase()){el.innerHTML='<p class="muted">Posts are temporarily unavailable.</p>';return;}
+  const {data,error}=await supabaseClient.from('mhf_posts')
+    .select('id,title,body,post_date,created_at')
+    .eq('published',true)
+    .order('post_date',{ascending:false}).order('created_at',{ascending:false});
+  if(error){el.innerHTML='<p class="muted">Posts are temporarily unavailable.</p>';return;}
+  if(!data?.length){el.innerHTML='<p class="muted">No posts have been published yet.</p>';return;}
+  el.innerHTML=data.map(p=>`
+    <article class="card post-card" style="padding:20px" data-post-id="${escapeHtml(p.id)}">
+      <span class="status">Foundation Update</span>
+      <h3>${escapeHtml(p.title)}</h3>
+      <small class="muted">${escapeHtml(p.post_date||new Date(p.created_at).toLocaleDateString())}</small>
+      <p style="white-space:pre-wrap">${escapeHtml(p.body)}</p>
+      ${postEngagementHtml(p.id)}
+    </article>`).join('');
+  for(const p of data) loadPostEngagement(p.id);
+}
+
+function postEngagementHtml(id){
+  return `<div class="engage-box" style="margin-top:16px">
+    <div class="engage-actions" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button type="button" onclick="togglePostLike('${id}',this)">♥ Like <span id="postLikeCount_${id}">0</span></button>
+      <span class="muted">💬 <span id="postCommentCount_${id}">0</span> comments</span>
+    </div>
+    <div class="comment-box" style="margin-top:12px">
+      <input id="postCommentName_${id}" placeholder="Your name">
+      <input id="postCommentEmail_${id}" type="email" placeholder="Email (optional)">
+      <textarea id="postCommentBody_${id}" placeholder="Write a comment..."></textarea>
+      <button class="btn primary" type="button" onclick="submitPostComment('${id}')">Submit comment for approval</button>
+    </div>
+    <div class="comment-list" id="postCommentList_${id}" style="margin-top:10px"><span class="muted">Loading approved comments…</span></div>
+  </div>`;
+}
+
+async function togglePostLike(postId,button){
+  if(!initSupabase())return alert('The website is not connected to the cloud.');
+  const token=mhfVisitorToken();
+  const {error}=await supabaseClient.from('mhf_post_likes').insert({post_id:postId,visitor_token:token});
+  if(error && !/duplicate|unique/i.test(error.message||''))return alert('Like could not be saved: '+error.message);
+  button.classList.add('liked');button.innerHTML='♥ Liked <span id="postLikeCount_'+postId+'">0</span>';
+  await loadPostEngagement(postId);
+}
+
+async function submitPostComment(postId){
+  if(!initSupabase())return;
+  const name=document.getElementById('postCommentName_'+postId)?.value.trim();
+  const email=document.getElementById('postCommentEmail_'+postId)?.value.trim();
+  const body=document.getElementById('postCommentBody_'+postId)?.value.trim();
+  if(!name||!body)return alert('Enter your name and comment.');
+  const {error}=await supabaseClient.from('mhf_post_comments').insert({
+    post_id:postId,visitor_name:name,visitor_email:email||null,body,status:'pending'
+  });
+  if(error)return alert('Comment could not be submitted: '+error.message);
+  await queueAdminNotification('comment','New post comment awaiting approval','A new comment from '+name+' is waiting for administrator approval.');
+  document.getElementById('postCommentBody_'+postId).value='';
+  alert('Thank you. Your comment is waiting for administrator approval.');
+}
+
+async function loadPostEngagement(postId){
+  if(!initSupabase())return;
+  const [likes,comments]=await Promise.all([
+    supabaseClient.from('mhf_post_likes').select('id',{count:'exact',head:true}).eq('post_id',postId),
+    supabaseClient.from('mhf_post_comments').select('id,visitor_name,body,created_at').eq('post_id',postId).eq('status','approved').order('created_at',{ascending:false})
+  ]);
+  const lc=document.getElementById('postLikeCount_'+postId);
+  const cc=document.getElementById('postCommentCount_'+postId);
+  const cl=document.getElementById('postCommentList_'+postId);
+  if(lc)lc.textContent=likes.count||0;
+  if(cc)cc.textContent=(comments.data||[]).length;
+  if(cl)cl.innerHTML=(comments.data||[]).length
+    ? comments.data.map(c=>'<div class="comment-item"><b>'+escapeHtml(c.visitor_name)+'</b><div>'+escapeHtml(c.body)+'</div></div>').join('')
+    : '<span class="muted">No approved comments yet.</span>';
+}
+
+async function submitFoundationSubscription(e){
+  e.preventDefault();
+  if(!initSupabase())return alert('The website is not connected to the cloud.');
+  const email=document.getElementById('subscriberEmail').value.trim().toLowerCase();
+  const status=document.getElementById('subscribeStatus');
+  if(!email)return;
+  const {error}=await supabaseClient.from('mhf_subscribers').insert({email});
+  if(error && !/duplicate|unique/i.test(error.message||'')){
+    if(status)status.textContent='Subscription could not be saved: '+error.message;
+    return;
+  }
+  if(status)status.textContent='Thank you. You are subscribed to Mugerwa Hope Foundation updates.';
+  document.getElementById('subscriberEmail').value='';
+  await queueAdminNotification('subscriber','New website subscriber','A visitor subscribed with '+email);
+}
+
+async function loadAdminPostComments(){
+  const el=document.getElementById('mhfCommentsList'); if(!el||!initSupabase())return;
+  const user=await getCurrentAdmin();if(!user)return;
+  const {data,error}=await supabaseClient.from('mhf_post_comments')
+    .select('*').order('created_at',{ascending:false});
+  if(error)return;
+  const existing=el.innerHTML;
+  const rows=(data||[]).map(c=>`<div class="notification-row">
+    <b>${escapeHtml(c.visitor_name)}</b> <span class="mhf-small">Post comment · ${escapeHtml(c.status)}</span>
+    <p>${escapeHtml(c.body)}</p>
+    <div class="mhf-actions">
+      ${c.status==='pending'?`<button class="btn" onclick="moderatePostComment('${c.id}','approved')">Approve</button><button class="btn mhf-danger" onclick="moderatePostComment('${c.id}','rejected')">Reject</button>`:''}
+      <button class="btn mhf-danger" onclick="deletePostComment('${c.id}')">Delete</button>
+    </div></div>`).join('');
+  if(rows)el.innerHTML=rows+existing;
+}
+async function moderatePostComment(id,status){
+  const user=await ensureAdminSession();if(!user)return;
+  const {error}=await supabaseClient.from('mhf_post_comments').update({
+    status,approved_at:status==='approved'?new Date().toISOString():null,approved_by:status==='approved'?user.id:null
+  }).eq('id',id);
+  if(error)return alert(error.message);
+  await loadAdminPostComments();
+  await renderPublicPosts();
+}
+async function deletePostComment(id){
+  const user=await ensureAdminSession();if(!user||!confirm('Delete this post comment?'))return;
+  const {error}=await supabaseClient.from('mhf_post_comments').delete().eq('id',id);
+  if(error)return alert(error.message);
+  await loadAdminPostComments();
+  await renderPublicPosts();
+}
+
+async function mhfSaveSettings(){
+  const d=mhfData();
+  const emails=mhfContactArray(document.getElementById('mhfSettingEmail').value),phones=mhfContactArray(document.getElementById('mhfSettingPhone').value);
+  d.settings={name:document.getElementById('mhfSettingName').value.trim(),email:emails.join(', '),phone:phones.join(', '),announcement:document.getElementById('mhfSettingAnnouncement').value.trim()};
+  await mhfPersist();
+  if(!initSupabase())return alert('Saved on this device. Cloud settings require Supabase.');
+  const user=await ensureAdminSession();if(!user)return;
+  const row={foundation_name:d.settings.name||'Mugerwa Hope Foundation',public_emails:emails,public_phones:phones,announcement:d.settings.announcement,updated_by:user.id};
+  const notifyEmail=document.getElementById('mhfNotifyEmail').value.trim();
+  const notifyPhone=document.getElementById('mhfNotifyPhone').value.trim();
+  row.notification_email=notifyEmail;row.notification_phone=notifyPhone;
+  const {error}=await supabaseClient.from('mhf_site_settings').update(row).eq('id',true);
+  if(error)return alert('Cloud settings could not be saved: '+error.message);
+  const st=document.getElementById('mhfSettingsStatus');st.style.display='block';st.textContent='Settings, public contacts and notification recipients saved successfully.';
+  await renderPublicSettings();
+}
+
+async function mhfInit(){
+  await mhfLoad();
+  document.addEventListener('DOMContentLoaded',()=>{
+    const s=mhfData().settings;
+    const pairs=[['mhfSettingName',s.name],['mhfSettingEmail',s.email],['mhfSettingPhone',s.phone],['mhfNotifyEmail',s.notification_email],['mhfNotifyPhone',s.notification_phone],['mhfSettingAnnouncement',s.announcement]];
+    pairs.forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.value=v||'';});
+    mhfRender();
+  });
+  if(document.readyState!=='loading')mhfRender();
+}
+mhfInit();
+</script>
+
+
+<div id="resourceModal" class="admin-gate" style="z-index:1100">
+  <div class="admin-box">
+    <h2 id="resourceTitle">Fundraising Resource</h2>
+    <div id="resourceBody" class="muted"></div>
+    <div class="actions">
+      <a id="resourceLink" class="btn primary" href="#" target="_blank" rel="noopener" style="display:none">Open Resource</a>
+      <button class="btn" style="border:0;background:#eef5f0;cursor:pointer" onclick="closeResource()">Close</button>
+    </div>
+  </div>
+</div>
+
+<footer><div class="foot"><div><h3>Mugerwa Hope Foundation</h3><p>Supporting vulnerable people and communities with compassion, dignity and practical opportunities.</p></div><div><h3>Explore</h3><p><a href="#about">About</a><br><a href="#programs">Programs</a><br><a href="#impact">Impact</a><br><a href="#media">Media & Stories</a><br><a href="#partner">Partner</a></p></div><div><h3>Contact</h3><p>mugerwalouiscupa@gmail.com<br>+256 747 064 373<br>Uganda</p></div></div><div class="foot small">© 2026 Mugerwa Hope Foundation. This first website is a working prototype. Official registration and donation details should be published only after verification.</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ================= DONATION PAYMENT SETUP =================
+   SECURITY:
+   - Never place a Mastercard number, CVV, PIN, bank login, or payment API secret in this HTML.
+   - Card payments should open the foundation's verified hosted checkout/payment page.
+   - For Uganda, a provider such as Pesapal can provide a hosted payment page supporting
+     Mastercard/Visa and Mobile Money. The foundation must create/verify its merchant
+     account and obtain its own payment-page URL before publishing it here.
+================================================================ */
+const PAYMENT_FUNCTION_URL = 'https://eduousfgunznsdsbbrcu.supabase.co/functions/v1/create-donation';
+let selectedDonationMethod='mobile';
+function closePaymentSetup(){ document.getElementById('paymentSetupModal').style.display='none'; }
+function startDonation(method){
+  selectedDonationMethod=method;
+  const titles={mobile:'Mobile Money Donation',bank:'Bank Transfer Donation',card:'Mastercard / Visa Donation'};
+  document.getElementById('paymentMethodTitle').textContent=titles[method]||'Secure Donation';
+  document.getElementById('paymentSetupMessage').textContent=method==='mobile'
+    ? 'Enter the donor details and mobile-money number. The secure payment service will initiate the payment on Airtel or MTN.'
+    : 'Enter the donor details. You will be redirected to the secure payment provider to complete the payment.';
+  document.getElementById('networkLabel').style.display=method==='mobile'?'block':'none';
+  document.getElementById('donorNetwork').style.display=method==='mobile'?'block':'none';
+  document.getElementById('paymentSetupModal').style.display='flex';
+}
+async function submitDonation(e){
+  e.preventDefault();
+  const btn=document.getElementById('donationSubmitBtn'), status=document.getElementById('donationStatus');
+  const payload={
+    method:selectedDonationMethod, amount:Number(document.getElementById('donationAmount').value),
+    name:document.getElementById('donorName').value.trim(), email:document.getElementById('donorEmail').value.trim(),
+    phone:document.getElementById('donorPhone').value.trim(), network:document.getElementById('donorNetwork').value,
+    redirect_url:'https://mugerwalouiscupa-beep.github.io/Mugerwa-hope-foundation-/'
+  };
+  if(payload.amount<500) return alert('Minimum donation is UGX 500.');
+  btn.disabled=true; btn.textContent='Starting secure payment…'; status.style.display='block'; status.textContent='Connecting to the secure payment service…';
+  try{
+    const r=await fetch(PAYMENT_FUNCTION_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(data.error||data.message||'Payment service is not configured or is unavailable.');
+    if(data.redirect_url){ status.textContent='Payment started. Opening secure payment page…'; window.location.href=data.redirect_url; return; }
+    throw new Error('The payment service did not return a secure payment URL.');
+  }catch(err){
+    status.textContent=err.message;
+    alert('Payment could not be started: '+err.message);
+  }finally{btn.disabled=false;btn.textContent='Continue to secure payment';}
+}
+</script>
+
+<!-- CLIENT CHAT -->
+<div id="clientChat" style="position:fixed;right:18px;bottom:18px;z-index:50">
+  <button class="btn primary" onclick="toggleClientChat()">💬 Chat with Foundation</button>
+  <div id="clientChatBox" style="display:none;width:min(360px,calc(100vw - 36px));height:470px;background:#fff;border-radius:18px;box-shadow:0 15px 50px #0004;overflow:hidden;margin-bottom:10px">
+    <div style="background:#103b30;color:#fff;padding:14px;display:flex;justify-content:space-between"><b>Mugerwa Hope Foundation</b><button onclick="toggleClientChat()" style="background:none;color:#fff;border:0;font-size:20px">×</button></div>
+    <div id="clientMessages" style="height:350px;overflow:auto;padding:12px;background:#f7faf8"></div>
+    <form onsubmit="sendClientChat(event)" style="display:flex;gap:6px;padding:9px;border-top:1px solid #dce8e2">
+      <input id="clientName" required placeholder="Your name" style="width:35%;margin:0">
+      <input id="clientMessage" required placeholder="Message" style="width:45%;margin:0">
+      <button class="btn primary" style="padding:9px">Send</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function openAdminLogin(e){
+  if(e)e.preventDefault();
+  const gate=document.getElementById('adminGate');
+  if(gate){gate.style.display='flex'; document.body.style.overflow='hidden';}
+  setTimeout(()=>document.getElementById('adminPass')?.focus(),100);
+}
+function closeAdminLogin(){
+  const gate=document.getElementById('adminGate');
+  if(gate)gate.style.display='none';
+  if(!document.getElementById('adminDashboard') || document.getElementById('adminDashboard').style.display!=='block') document.body.style.overflow='';
+}
+async function adminLogin(e){
+  e.preventDefault();
+  const btn=e.submitter || e.target.querySelector('button[type="submit"]');
+  const emailEl=document.getElementById('adminUser');
+  const passEl=document.getElementById('adminPass');
+  const email=(emailEl?.value||'').trim().toLowerCase();
+  const password=passEl?.value||'';
+  if(!email || !password) return alert('Enter the administrator email and password.');
+  if(email!==ADMIN_EMAIL.toLowerCase()) return alert('Use the authorized administrator email: '+ADMIN_EMAIL);
+  if(typeof window.supabase==='undefined') return alert('The secure login service has not loaded. Check your internet connection, then refresh the website.');
+  if(!initSupabase()) return alert('Supabase is not configured correctly in this website.');
+  if(btn){btn.disabled=true;btn.textContent='Signing in…';}
+  try{
+    const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+    if(error){
+      let msg=error.message||'Login failed.';
+      if(/invalid login credentials/i.test(msg)) msg='Login failed: the administrator email or password is incorrect.';
+      else if(/email not confirmed/i.test(msg)) msg='Login failed: the administrator email has not been confirmed in Supabase Auth.';
+      alert(msg);
+      return;
+    }
+    if(!data?.user) return alert('Login did not return an administrator account.');
+    const admin=await getCurrentAdmin();
+    if(!admin){await supabaseClient.auth.signOut();return alert('This account is not authorized as the Mugerwa Hope Foundation administrator.');}
+    closeAdminLogin();
+    await openAdminDashboard();
+  }catch(err){
+    alert('Login error: '+(err?.message||err));
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Login securely';}
+  }
+}
+async function resetAdminPassword(){
+  if(!initSupabase()) return alert('Supabase is not configured.');
+  const {error}=await supabaseClient.auth.resetPasswordForEmail(ADMIN_EMAIL,{redirectTo:'https://mugerwalouiscupa-beep.github.io/Mugerwa-hope-foundation-/'});
+  if(error) return alert('Password reset could not be sent: '+error.message);
+  alert('Password-reset email requested. Open the newest email and use its link.');
+}
+function openPasswordReset(){ document.getElementById('passwordResetGate').style.display='flex'; }
+function closePasswordReset(){ document.getElementById('passwordResetGate').style.display='none'; }
+async function completeAdminPasswordReset(e){
+  e.preventDefault();
+  if(!initSupabase()) return alert('Supabase is not configured.');
+  const p=document.getElementById('newAdminPass').value, c=document.getElementById('confirmAdminPass').value;
+  if(p.length<8) return alert('Use at least 8 characters.');
+  if(p!==c) return alert('The passwords do not match.');
+  const st=document.getElementById('passwordResetStatus'); st.textContent='Saving…';
+  const {error}=await supabaseClient.auth.updateUser({password:p});
+  if(error){st.textContent=error.message;return;}
+  st.textContent='Password changed successfully.';
+  await supabaseClient.auth.signOut();
+  setTimeout(()=>{closePasswordReset();openAdminLogin();},800);
+}
+async function handlePasswordRecovery(){
+  if(!initSupabase()) return;
+  supabaseClient.auth.onAuthStateChange((event,session)=>{ if(event==='PASSWORD_RECOVERY' && session) openPasswordReset(); });
+  const hash=window.location.hash, query=new URLSearchParams(window.location.search);
+  const recovery=hash.includes('type=recovery') || query.has('code');
+  if(recovery){
+    setTimeout(async()=>{const {data:{session}}=await supabaseClient.auth.getSession(); if(session) openPasswordReset();},500);
+  }
+}
+async function openAdminDashboard(){
+  if(!initSupabase()) return;
+  const user=await getCurrentAdmin();
+  if(!user) return;
+  document.getElementById('adminDashboard').style.display='block';
+  document.body.style.overflow='hidden';
+  await renderAdminData(); await loadAdminPosts(); await loadAdminPostComments(); await renderFoundationResources(); await renderPublicResources(); await renderPublicPosts(); await renderPublicMedia(); await renderPublicSettings(); await renderPublicPaymentMethods(); await loadAdminPaymentMethods(); await loadAdminComments(); await loadAudienceStats(); await loadAdminNotifications(); showAdminPanel('overview');
+}
+function closeAdminDashboard(){document.getElementById('adminDashboard').style.display='none';document.body.style.overflow='';}
+async function adminLogout(){if(supabaseClient)await supabaseClient.auth.signOut();closeAdminDashboard();}
+function showAdminPanel(name){document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));const p=document.getElementById('panel-'+name);if(p)p.classList.add('active');renderAdminData();}
+
+function getData(key, fallback){ try{return JSON.parse(localStorage.getItem(key)) || fallback}catch(e){return fallback} }
+function setData(key,val){localStorage.setItem(key,JSON.stringify(val));}
+
+function savePost(){
+  const title=document.getElementById('postTitle').value.trim(), body=document.getElementById('postBody').value.trim();
+  if(!title||!body)return alert('Enter a title and post content.');
+  const posts=getData('mhfPosts',[]); posts.unshift({title,body,date:new Date().toLocaleString()}); setData('mhfPosts',posts);
+  document.getElementById('postTitle').value='';document.getElementById('postBody').value='';renderAdminData();alert('Post saved.');
+}
+async function saveMedia(){
+  alert('For secure cloud media, use Administrator → Documents & Resources, choose Photos, Videos or Documentaries, then upload and Publish.');
+}
+function saveSettings(){
+  const settings={
+    name:document.getElementById('settingFoundationName').value,
+    email:document.getElementById('settingEmail').value,
+    phone:document.getElementById('settingPhone').value,
+    announcement:document.getElementById('settingAnnouncement').value
+  };setData('mhfSettings',settings);alert('Settings saved in this browser.');
+}
+
+let selectedClient='';
+function sendClientChat(e){
+  e.preventDefault();
+  const name=document.getElementById('clientName').value.trim(), message=document.getElementById('clientMessage').value.trim();
+  if(!name||!message)return;
+  const chats=getData('mhfChats',[]);
+  let c=chats.find(x=>x.name===name);
+  if(!c){c={name,messages:[]};chats.push(c)}
+  c.messages.push({from:'client',text:message,date:new Date().toLocaleString()});setData('mhfChats',chats);
+  document.getElementById('clientMessage').value='';selectedClient=name;renderClientChat();renderAdminData();
+}
+function sendAdminChat(e){
+  e.preventDefault(); if(!selectedClient)return alert('Select a client first.');
+  const input=document.getElementById('adminChatInput'), text=input.value.trim();if(!text)return;
+  const chats=getData('mhfChats',[]),c=chats.find(x=>x.name===selectedClient);if(!c)return;
+  c.messages.push({from:'admin',text,date:new Date().toLocaleString()});setData('mhfChats',chats);input.value='';renderAdminData();
+}
+function renderClientChat(){
+  const el=document.getElementById('clientMessages'); if(!el)return;
+  const chats=getData('mhfChats',[]);const c=chats.find(x=>x.name===selectedClient);
+  el.innerHTML=c?(c.messages.map(m=>'<div class="chat-bubble '+(m.from==='admin'?'chat-admin':'chat-client')+'">'+escapeHtml(m.text)+'</div>').join('')):'<p class="muted">Send us a message and the administrator can reply here.</p>';
+  el.scrollTop=el.scrollHeight;
+}
+function renderAdminData(){
+  const posts=getData('mhfPosts',[]),media=getData('mhfMedia',[]),chats=getData('mhfChats',[]);
+  const pc=document.getElementById('postCount'),mc=document.getElementById('mediaCount'),msgc=document.getElementById('messageCount');
+  if(pc)pc.textContent=posts.length;if(mc)mc.textContent=media.length;if(msgc)msgc.textContent=chats.reduce((n,c)=>n+c.messages.length,0);
+  const pl=document.getElementById('postsList');if(pl)pl.innerHTML=posts.map((p,i)=>'<div class="panel" style="margin-top:10px"><b>'+escapeHtml(p.title)+'</b><small class="muted"> '+p.date+'</small><p>'+escapeHtml(p.body)+'</p><button class="btn" onclick="deletePost('+i+')">Delete</button></div>').join('')||'<p class="muted">No posts yet.</p>';
+  const ml=document.getElementById('mediaList');if(ml)ml.innerHTML=media.map((m,i)=>'<div class="panel" style="margin-top:10px"><b>'+escapeHtml(m.type)+': '+escapeHtml(m.title)+'</b><p><a href="'+encodeURI(m.url)+'" target="_blank" rel="noopener">'+escapeHtml(m.url)+'</a></p><button class="btn" onclick="deleteMedia('+i+')">Delete</button></div>').join('')||'<p class="muted">No media yet.</p>';
+  const cu=document.getElementById('chatUsers');if(cu)cu.innerHTML=chats.map(c=>'<div class="chat-user '+(c.name===selectedClient?'active':'')+'" onclick="selectClient('+JSON.stringify(c.name)+')"><b>'+escapeHtml(c.name)+'</b><br><small>'+c.messages.length+' messages</small></div>').join('')||'<p class="muted">No client chats yet.</p>';
+  const ct=document.getElementById('chatTitle'),cm=document.getElementById('chatMessages');if(ct)ct.textContent=selectedClient||'Select a client';
+  if(cm){const c=chats.find(x=>x.name===selectedClient);cm.innerHTML=c?c.messages.map(m=>'<div class="chat-bubble '+(m.from==='admin'?'chat-admin':'chat-client')+'">'+escapeHtml(m.text)+'</div>').join(''):'<p class="muted">Choose a client to view messages.</p>';cm.scrollTop=cm.scrollHeight;}
+  const s=getData('mhfSettings',{});const a=[['settingFoundationName',s.name||'Mugerwa Hope Foundation'],['settingEmail',s.email||'mugerwalouiscupa@gmail.com'],['settingPhone',s.phone||'+256 747 064 373'],['settingAnnouncement',s.announcement||'']];a.forEach(x=>{const el=document.getElementById(x[0]);if(el&&document.activeElement!==el)el.value=x[1]});
+}
+function selectClient(name){selectedClient=name;renderAdminData();renderClientChat();}
+function deletePost(i){const p=getData('mhfPosts',[]);p.splice(i,1);setData('mhfPosts',p);renderAdminData();}
+function deleteMedia(i){const m=getData('mhfMedia',[]);m.splice(i,1);setData('mhfMedia',m);renderAdminData();}
+function toggleClientChat(){const b=document.getElementById('clientChatBox');b.style.display=b.style.display==='none'?'block':'none';renderClientChat();}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+
+
+
+const FUNDRAISING_RESOURCES = {
+  registration:{title:'Registration Documents', body:'Upload your verified registration certificate and other official documents through the administrator area when file-upload storage is connected.'},
+  leadership:{title:'Board & Leadership', body:'Add board and leadership profiles, roles, professional backgrounds and responsibilities here.'},
+  mission:{title:'Mission & Vision', body:'Our current mission and vision are published in the About section. You can update them from the website content system when the live database is connected.'},
+  projects:{title:'Specific Projects', body:'Add project descriptions, objectives, beneficiaries, locations, timelines and progress reports here.'},
+  budgets:{title:'Project Budgets', body:'Add project budgets and funding targets here. Publish enough detail for partners to understand intended use of funds.'},
+  stories:{title:'Beneficiary Stories', body:'Add consent-based beneficiary stories. Do not publish sensitive personal information without appropriate permission.'},
+  impact:{title:'Impact Reports', body:'Upload verified impact and activity reports here.'},
+  finance:{title:'Financial Transparency', body:'Publish approved financial statements, project expenditure reports and accountability information here.'},
+  proposal:{title:'Partnership Proposal / Organizational Profile', body:'Upload a PDF organizational profile and partnership proposal here once prepared.'}
+};
+function openResource(e,key){
+  if(e)e.preventDefault();
+  const r=FUNDRAISING_RESOURCES[key]; if(!r)return;
+  document.getElementById('resourceTitle').textContent=r.title;
+  document.getElementById('resourceBody').textContent=r.body;
+  document.getElementById('resourceLink').style.display='none';
+  document.getElementById('resourceModal').style.display='flex';
+}
+function closeResource(){document.getElementById('resourceModal').style.display='none';}
+
+
+const RESOURCE_CATEGORIES = {
+  registration:'Registration Documents',
+  leadership:'Board & Leadership Profiles',
+  projects:'Project Proposals',
+  budgets:'Project Budgets',
+  impact:'Impact Reports',
+  stories:'Beneficiary Stories',
+  finance:'Financial Transparency',
+  profile:'Partnership Proposal / Organizational Profile',
+  photos:'Photos',
+  videos:'Videos',
+  documentaries:'Documentaries'
+};
+
+
+/* ================= REAL CLOUD DATABASE + STORAGE =================
+   Uses Supabase Auth + Postgres + Storage.
+   IMPORTANT: Put only the Supabase project URL and publishable key here.
+   Never put a service-role/secret key in this HTML.
+=================================================================== */
+const SUPABASE_URL = 'https://eduousfgunznsdsbbrcu.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_53ARIfW8TOQNkKXFj-FdOA_2Pd6PXpf';
+const ADMIN_EMAIL = 'mugerwalouiscupa@gmail.com';
+
+let supabaseClient = null;
+let cloudResources = [];
+
+function supabaseReady(){
+  return SUPABASE_URL.startsWith('https://') &&
+         SUPABASE_PUBLISHABLE_KEY &&
+         !SUPABASE_PUBLISHABLE_KEY.includes('PASTE_YOUR_');
+}
+
+function initSupabase(){
+  if(!supabaseReady()){
+    console.warn('Supabase is not configured yet.');
+    return false;
+  }
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  return true;
+}
+
+function adminNotice(message, type='info'){
+  const el=document.getElementById('resourceCloudStatus');
+  if(el){
+    el.textContent=message;
+    el.style.display='block';
+    el.style.background=type==='error'?'#fff1f1':'#eef7f2';
+    el.style.color=type==='error'?'#9b1c1c':'#103b30';
+  }
+}
+
+async function getCurrentAdmin(){
+  if(!supabaseClient) return null;
+  const {data:{user}}=await supabaseClient.auth.getUser();
+  if(!user) return null;
+  return user.email===ADMIN_EMAIL ? user : null;
+}
+
+async function ensureAdminSession(){
+  if(!initSupabase()) return null;
+  const user=await getCurrentAdmin();
+  if(user) return user;
+
+  // If the old prototype admin panel is still opened, do not expose cloud data.
+  adminNotice('Cloud storage is connected, but administrator authentication is required.', 'error');
+  return null;
+}
+
+async function adminLoginWithSupabase(){
+  if(!initSupabase()){
+    alert('First configure SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY in this file.');
+    return;
+  }
+  const email=(document.getElementById('adminEmail')?.value || ADMIN_EMAIL).trim();
+  const password=document.getElementById('adminPassword')?.value || '';
+  if(email!==ADMIN_EMAIL) return alert('This administrator account is not authorized.');
+  if(!password) return alert('Enter the administrator password.');
+
+  const {error}=await supabaseClient.auth.signInWithPassword({email,password});
+  if(error) return alert('Login failed: '+error.message);
+  alert('Secure administrator login successful.');
+  await loadCloudResources();
+}
+
+async function adminLogoutFromSupabase(){
+  if(supabaseClient) await supabaseClient.auth.signOut();
+  alert('Administrator signed out.');
+}
+
+async function uploadFoundationResource(){
+  const user=await ensureAdminSession();
+  if(!user) return;
+
+  const cat=document.getElementById('resourceCategory').value;
+  const title=document.getElementById('resourceTitleInput').value.trim();
+  const file=document.getElementById('resourceFile').files[0];
+  if(!title || !file) return alert('Enter a title and choose a file.');
+
+  const maxBytes=100*1024*1024;
+  if(file.size>maxBytes) return alert('Maximum file size is 100 MB.');
+
+  const allowed=[
+    'application/pdf','application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'text/csv','image/jpeg','image/png','image/webp',
+    'video/mp4','video/webm','video/quicktime','video/x-m4v'
+  ];
+  if(file.type && !allowed.includes(file.type))
+    return alert('Please upload a PDF, Word, Excel, CSV, JPG, PNG, WebP, MP4, WebM or MOV file.');
+
+  const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+  const objectPath=`${user.id}/${Date.now()}_${safeName}`;
+
+  adminNotice('Uploading to secure cloud storage…');
+  const {error:uploadError}=await supabaseClient
+    .storage.from('foundation-public')
+    .upload(objectPath,file,{contentType:file.type || 'application/octet-stream',upsert:false});
+
+  if(uploadError){
+    adminNotice('Upload failed: '+uploadError.message,'error');
+    return alert('Upload failed: '+uploadError.message);
+  }
+
+  const {data:inserted,error:dbError}=await supabaseClient
+    .from('foundation_resources')
+    .insert({
+      category:cat,
+      title:title,
+      file_name:file.name,
+      storage_path:objectPath,
+      mime_type:file.type || null,
+      file_size:file.size,
+      is_public:true,
+      uploaded_by:user.id
+    })
+    .select()
+    .single();
+
+  if(dbError){
+    await supabaseClient.storage.from('foundation-public').remove([objectPath]);
+    adminNotice('Database record failed; uploaded file was rolled back.','error');
+    return alert('Database error: '+dbError.message);
+  }
+
+  document.getElementById('resourceTitleInput').value='';
+  document.getElementById('resourceFile').value='';
+  adminNotice('Uploaded successfully to the real cloud database and storage.');
+  await loadCloudResources();
+  renderFoundationResources();
+  renderPublicResources();
+  renderPublicMedia();
+}
+
+async function loadCloudResources(){
+  if(!supabaseClient) return [];
+  const {data,error}=await supabaseClient
+    .from('foundation_resources')
+    .select('*')
+    .order('created_at',{ascending:false});
+
+  if(error){
+    adminNotice('Could not load cloud resources: '+error.message,'error');
+    return [];
+  }
+  cloudResources=data||[];
+  return cloudResources;
+}
+
+async function renderFoundationResources(){
+  const el=document.getElementById('resourceUploadList');
+  if(!el)return;
+
+  const user=await getCurrentAdmin();
+  if(!user){
+    el.innerHTML='<p class="muted">Secure administrator login required to manage cloud resources.</p>';
+    return;
+  }
+
+  const items=await loadCloudResources();
+  if(!items.length){
+    el.innerHTML='<p class="muted">No cloud resources uploaded yet.</p>';
+    return;
+  }
+
+  el.innerHTML=items.map(r=>`
+    <div class="panel resource-row">
+      <div class="resource-meta">
+        <b>${escapeHtml(RESOURCE_CATEGORIES[r.category]||r.category)} — ${escapeHtml(r.title)}</b>
+        <small>${escapeHtml(r.file_name)} · ${Math.round((r.file_size||0)/1024)} KB · ${new Date(r.created_at).toLocaleString()}</small>
+      </div>
+      <div class="resource-actions">
+        <button class="btn" onclick="openCloudResource('${r.id}')">Open</button>
+        <button class="btn" onclick="toggleResourcePublic('${r.id}')">${r.is_public?'Hide':'Publish'}</button>
+        <button class="btn" onclick="deleteFoundationResource('${r.id}')">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+async function openCloudResource(id){
+  const r=cloudResources.find(x=>x.id===id);
+  if(!r)return;
+  const {data,error}=await supabaseClient.storage.from('foundation-public').createSignedUrl(r.storage_path,300);
+  if(error)return alert('Could not create secure link: '+error.message);
+  window.open(data.signedUrl,'_blank','noopener');
+}
+
+async function renderPublicResources(){
+  const el=document.getElementById('publicResourceList');
+  if(!el)return;
+
+  if(!initSupabase()){
+    el.innerHTML='<p class="muted">Cloud resources are not configured yet.</p>';
+    return;
+  }
+
+  const {data:items,error}=await supabaseClient
+    .from('foundation_resources')
+    .select('id,category,title,file_name,storage_path,file_size,created_at')
+    .eq('is_public',true)
+    .order('created_at',{ascending:false});
+
+  if(error){
+    el.innerHTML='<p class="muted">Resources are temporarily unavailable.</p>';
+    return;
+  }
+
+  if(!items.length){
+    el.innerHTML='<p class="muted">No public resources uploaded yet.</p>';
+    return;
+  }
+
+  const rows=[];
+  for(const r of items){
+    const {data:signed}=await supabaseClient.storage
+      .from('foundation-public').createSignedUrl(r.storage_path,3600);
+    rows.push(`
+      <div class="resource-row">
+        <div class="resource-meta">
+          <b>${escapeHtml(RESOURCE_CATEGORIES[r.category]||r.category)} — ${escapeHtml(r.title)}</b>
+          <small>${escapeHtml(r.file_name)} · Published ${new Date(r.created_at).toLocaleDateString()}</small>
+        </div>
+        <div class="resource-actions">
+          ${signed?.signedUrl?`<a class="btn primary" href="${signed.signedUrl}" target="_blank" rel="noopener">Open / Download</a>`:''}
+        </div>
+      </div>`);
+  }
+  el.innerHTML=rows.join('');
+}
+
+async function toggleResourcePublic(id){
+  const user=await ensureAdminSession();
+  if(!user)return;
+  const r=cloudResources.find(x=>x.id===id);
+  if(!r)return;
+
+  const newValue=!r.is_public;
+  const {error}=await supabaseClient
+    .from('foundation_resources')
+    .update({is_public:newValue})
+    .eq('id',id);
+
+  if(error)return alert('Could not update publication status: '+error.message);
+
+  await loadCloudResources();
+  await renderFoundationResources();
+  await renderPublicResources();
+}
+
+async function deleteFoundationResource(id){
+  const user=await ensureAdminSession();
+  if(!user)return;
+  const r=cloudResources.find(x=>x.id===id);
+  if(!r)return;
+  if(!confirm('Delete this resource permanently from cloud storage and the database?'))return;
+
+  const {error:fileError}=await supabaseClient.storage
+    .from('foundation-public').remove([r.storage_path]);
+  if(fileError)return alert('File deletion failed: '+fileError.message);
+
+  const {error:dbError}=await supabaseClient
+    .from('foundation_resources').delete().eq('id',id);
+  if(dbError)return alert('Database deletion failed: '+dbError.message);
+
+  await loadCloudResources();
+  await renderFoundationResources();
+  await renderPublicResources();
+}
+
+
+
+/* ================= AUDIENCE / COMMENTS / DONATION METHODS ================= */
+const MHF_VISITOR_KEY='mhf_visitor_token_v1';
+function mhfVisitorToken(){
+  let t=localStorage.getItem(MHF_VISITOR_KEY);
+  if(!t){t=(crypto&&crypto.randomUUID)?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);localStorage.setItem(MHF_VISITOR_KEY,t)}
+  return t;
+}
+function mhfContactArray(v){return String(v||'').split(',').map(x=>x.trim()).filter(Boolean)}
+async function queueAdminNotification(type,subject,message){
+  if(!supabaseClient)return;
+  try{
+    const {data:s}=await supabaseClient.from('mhf_site_settings').select('public_emails,public_phones,notification_email,notification_phone').eq('id',true).maybeSingle();
+    const settings=s||{};
+    const email=settings.notification_email || mhfContactArray(settings.public_emails)[0] || ADMIN_EMAIL;
+    const phone=settings.notification_phone || mhfContactArray(settings.public_phones)[0] || '';
+    const {data:notificationId,error:queueError}=await supabaseClient.rpc('mhf_queue_notification',{p_type:type,p_subject:subject,p_message:message,p_email:email,p_phone:phone});
+    if(queueError) return console.warn('Notification queue failed',queueError);
+    if(notificationId) await supabaseClient.functions.invoke('notify-admin',{body:{notification_id:notificationId}});
+  }catch(e){console.warn('Notification queue failed',e)}
+}
+async function recordWebsiteView(){
+  if(!initSupabase())return;
+  const day=new Date().toISOString().slice(0,10), key='mhf_viewed_'+day;
+  if(localStorage.getItem(key))return;
+  const {error}=await supabaseClient.from('mhf_page_views').insert({visitor_token:mhfVisitorToken(),page_path:location.pathname});
+  if(!error)localStorage.setItem(key,'1');
+}
+async function recordResourceView(resourceId){
+  if(!initSupabase()||!resourceId)return;
+  const key='mhf_resource_viewed_'+resourceId+'_'+new Date().toISOString().slice(0,10);
+  if(localStorage.getItem(key))return;
+  const {error}=await supabaseClient.from('mhf_page_views').insert({resource_id:resourceId,visitor_token:mhfVisitorToken(),page_path:location.pathname});
+  if(!error)localStorage.setItem(key,'1');
+}
+async function toggleResourceLike(resourceId,button){
+  if(!initSupabase())return;
+  const token=mhfVisitorToken();
+  const {error}=await supabaseClient.from('mhf_reactions').insert({resource_id:resourceId,visitor_token:token,kind:'like'});
+  if(error && !/duplicate|unique/i.test(error.message||''))return alert('Like could not be saved: '+error.message);
+  button.classList.add('liked');button.textContent='♥ Liked';
+  await loadEngagement(resourceId);
+}
+async function submitResourceComment(resourceId){
+  if(!initSupabase())return;
+  const name=document.getElementById('commentName_'+resourceId)?.value.trim();
+  const email=document.getElementById('commentEmail_'+resourceId)?.value.trim();
+  const body=document.getElementById('commentBody_'+resourceId)?.value.trim();
+  if(!name||!body)return alert('Enter your name and comment.');
+  const {error}=await supabaseClient.from('mhf_comments').insert({resource_id:resourceId,visitor_name:name,visitor_email:email||null,body,status:'pending'});
+  if(error)return alert('Comment could not be submitted: '+error.message);
+  await queueAdminNotification('comment','New comment awaiting approval','A new comment from '+name+' is waiting for administrator approval.');
+  document.getElementById('commentBody_'+resourceId).value='';
+  alert('Thank you. Your comment has been submitted and is waiting for administrator approval.');
+}
+async function loadEngagement(resourceId){
+  if(!initSupabase()||!resourceId)return;
+  const [likes,comments,views]=await Promise.all([
+    supabaseClient.from('mhf_reactions').select('id',{count:'exact',head:true}).eq('resource_id',resourceId).eq('kind','like'),
+    supabaseClient.from('mhf_comments').select('id,visitor_name,body,created_at').eq('resource_id',resourceId).eq('status','approved').order('created_at',{ascending:false}),
+    supabaseClient.rpc('mhf_view_count',{p_resource_id:resourceId})
+  ]);
+  const lc=document.getElementById('likeCount_'+resourceId),vc=document.getElementById('viewCount_'+resourceId),cc=document.getElementById('commentList_'+resourceId);
+  if(lc)lc.textContent=likes.count||0;if(vc)vc.textContent=views.data||0;
+  if(cc)cc.innerHTML=(comments.data||[]).length?(comments.data||[]).map(c=>'<div class="comment-item"><b>'+escapeHtml(c.visitor_name)+'</b><div>'+escapeHtml(c.body)+'</div></div>').join(''):'<span class="muted">No approved comments yet.</span>';
+}
+function engagementHtml(r){
+  const id=r.id;
+  return '<div class="engage-box"><div class="engage-actions"><button type="button" onclick="toggleResourceLike(\''+id+'\',this)">♥ Like <span id="likeCount_'+id+'">0</span></button><span class="muted">👁 <span id="viewCount_'+id+'">0</span> views</span></div><div class="comment-box"><input id="commentName_'+id+'" placeholder="Your name"><input id="commentEmail_'+id+'" type="email" placeholder="Email (optional)"><textarea id="commentBody_'+id+'" placeholder="Write a comment..."></textarea><button class="btn primary" type="button" onclick="submitResourceComment(\''+id+'\')">Submit comment for approval</button></div><div class="comment-list" id="commentList_'+id+'"><span class="muted">Loading approved comments…</span></div></div>';
+}
+async function renderPublicSettings(){
+  if(!initSupabase())return;
+  const {data:s}=await supabaseClient.from('mhf_site_settings').select('*').eq('id',true).maybeSingle();
+  if(!s)return;
+  const emails=mhfContactArray(s.public_emails),phones=mhfContactArray(s.public_phones);
+  const ec=document.getElementById('publicContactEmails'),pc=document.getElementById('publicContactPhones');
+  if(ec)ec.innerHTML=emails.length?emails.map(e=>'<a href="mailto:'+encodeURIComponent(e)+'">'+escapeHtml(e)+'</a>').join(''): '<span class="muted">No public email published.</span>';
+  if(pc)pc.innerHTML=phones.length?phones.map(p=>'<a href="tel:'+encodeURIComponent(p.replace(/\s/g,''))+'">'+escapeHtml(p)+'</a>').join(''):'<span class="muted">No public phone published.</span>';
+}
+async function renderPublicPaymentMethods(){
+  const el=document.getElementById('publicPaymentMethods');if(!el||!initSupabase())return;
+  const {data,error}=await supabaseClient.from('mhf_payment_methods').select('*').eq('is_public',true).order('created_at',{ascending:false});
+  if(error){el.innerHTML='';return;}
+  if(!data?.length){el.innerHTML='';return;}
+  el.innerHTML='<h3 style="margin-top:0">Administrator-published donation methods</h3>'+data.map(x=>'<div class="public-payment"><b>'+escapeHtml(x.title)+'</b><div class="mhf-small">'+escapeHtml(x.method_type.replace('_',' '))+'</div>'+(x.account_name?'<div><b>Account name:</b> '+escapeHtml(x.account_name)+'</div>':'')+(x.account_number?'<div><b>Account / merchant:</b> '+escapeHtml(x.account_number)+'</div>':'')+(x.phone?'<div><b>Phone:</b> '+escapeHtml(x.phone)+'</div>':'')+(x.instructions?'<p class="muted">'+escapeHtml(x.instructions).replace(/\n/g,'<br>')+'</p>':'')+(x.provider_url?'<a class="btn primary" href="'+encodeURI(x.provider_url)+'" target="_blank" rel="noopener">Open secure payment page</a>':'')+'</div>').join('');
+}
+async function loadAdminPaymentMethods(){
+  const el=document.getElementById('mhfPaymentMethodsList');if(!el||!await getCurrentAdmin())return;
+  const {data,error}=await supabaseClient.from('mhf_payment_methods').select('*').order('created_at',{ascending:false});
+  if(error){el.innerHTML='<p class="muted">'+escapeHtml(error.message)+'</p>';return;}
+  el.innerHTML=(data||[]).map(x=>'<div class="payment-admin-row"><b>'+escapeHtml(x.title)+'</b><div class="mhf-small">'+escapeHtml(x.method_type)+' · '+(x.is_public?'Published':'Hidden')+'</div><p>'+escapeHtml(x.instructions||'')+'</p><div class="mhf-actions"><button class="btn" onclick="togglePaymentMethod(\''+x.id+'\')">'+(x.is_public?'Hide':'Publish')+'</button><button class="btn" onclick="editPaymentMethod(\''+x.id+'\')">Edit</button><button class="btn mhf-danger" onclick="deletePaymentMethod(\''+x.id+'\')">Delete</button></div></div>').join('')||'<p class="muted">No administrator donation methods added yet.</p>';
+}
+async function mhfSavePaymentMethod(){
+  const user=await ensureAdminSession();if(!user)return;
+  const row={method_type:document.getElementById('mhfPayType').value,title:document.getElementById('mhfPayTitle').value.trim(),account_name:document.getElementById('mhfPayAccountName').value.trim()||null,account_number:document.getElementById('mhfPayAccountNumber').value.trim()||null,phone:document.getElementById('mhfPayPhone').value.trim()||null,provider_url:document.getElementById('mhfPayProviderUrl').value.trim()||null,instructions:document.getElementById('mhfPayInstructions').value.trim(),is_public:true,created_by:user.id};
+  if(!row.title)return alert('Enter a title.');
+  const {error}=await supabaseClient.from('mhf_payment_methods').insert(row);if(error)return alert('Could not save donation method: '+error.message);
+  ['mhfPayTitle','mhfPayAccountName','mhfPayAccountNumber','mhfPayPhone','mhfPayProviderUrl','mhfPayInstructions'].forEach(id=>document.getElementById(id).value='');await loadAdminPaymentMethods();await renderPublicPaymentMethods();
+}
+async function togglePaymentMethod(id){const user=await ensureAdminSession();if(!user)return;const {data}=await supabaseClient.from('mhf_payment_methods').select('is_public').eq('id',id).single();if(!data)return;const {error}=await supabaseClient.from('mhf_payment_methods').update({is_public:!data.is_public}).eq('id',id);if(error)return alert(error.message);await loadAdminPaymentMethods();await renderPublicPaymentMethods();}
+async function editPaymentMethod(id){const user=await ensureAdminSession();if(!user)return;const {data}=await supabaseClient.from('mhf_payment_methods').select('*').eq('id',id).single();if(!data)return;const title=prompt('Donation method title:',data.title);if(title===null)return;const accountName=prompt('Account name:',data.account_name||'');if(accountName===null)return;const accountNumber=prompt('Account / merchant number:',data.account_number||'');if(accountNumber===null)return;const phone=prompt('Phone / Mobile Money number:',data.phone||'');if(phone===null)return;const providerUrl=prompt('Verified payment URL (optional):',data.provider_url||'');if(providerUrl===null)return;const instructions=prompt('Instructions:',data.instructions||'');if(instructions===null)return;const {error}=await supabaseClient.from('mhf_payment_methods').update({title:title.trim(),account_name:accountName.trim()||null,account_number:accountNumber.trim()||null,phone:phone.trim()||null,provider_url:providerUrl.trim()||null,instructions:instructions.trim()}).eq('id',id);if(error)return alert(error.message);await loadAdminPaymentMethods();await renderPublicPaymentMethods();}
+async function deletePaymentMethod(id){const user=await ensureAdminSession();if(!user||!confirm('Delete this donation method?'))return;const {error}=await supabaseClient.from('mhf_payment_methods').delete().eq('id',id);if(error)return alert(error.message);await loadAdminPaymentMethods();await renderPublicPaymentMethods();}
+async function loadAdminComments(){
+  const el=document.getElementById('mhfCommentsList');if(!el||!await getCurrentAdmin())return;
+  const {data,error}=await supabaseClient.from('mhf_comments').select('*').order('created_at',{ascending:false});
+  if(error){el.innerHTML='<p class="muted">'+escapeHtml(error.message)+'</p>';return;}
+  el.innerHTML=(data||[]).map(c=>'<div class="notification-row"><b>'+escapeHtml(c.visitor_name)+'</b> <span class="mhf-small">'+escapeHtml(c.status)+' · '+new Date(c.created_at).toLocaleString()+'</span><p>'+escapeHtml(c.body)+'</p>'+(c.visitor_email?'<div class="mhf-small">'+escapeHtml(c.visitor_email)+'</div>':'')+'<div class="mhf-actions">'+(c.status==='pending'?'<button class="btn" onclick="moderateComment(\''+c.id+'\',\'approved\')">Approve</button><button class="btn mhf-danger" onclick="moderateComment(\''+c.id+'\',\'rejected\')">Reject</button>':'')+'<button class="btn mhf-danger" onclick="deleteComment(\''+c.id+'\')">Delete</button></div></div>').join('')||'<p class="muted">No comments yet.</p>';
+}
+async function moderateComment(id,status){const user=await ensureAdminSession();if(!user)return;const {error}=await supabaseClient.from('mhf_comments').update({status,approved_at:status==='approved'?new Date().toISOString():null,approved_by:status==='approved'?user.id:null}).eq('id',id);if(error)return alert(error.message);await loadAdminComments();await loadAdminPostComments();await loadAudienceStats();await renderPublicMedia();}
+async function deleteComment(id){const user=await ensureAdminSession();if(!user||!confirm('Delete this comment?'))return;const {error}=await supabaseClient.from('mhf_comments').delete().eq('id',id);if(error)return alert(error.message);await loadAdminComments();await loadAudienceStats();}
+async function loadAudienceStats(){
+  if(!await getCurrentAdmin())return;
+  const [v,l,p,a]=await Promise.all([
+    supabaseClient.from('mhf_page_views').select('id',{count:'exact',head:true}),
+    supabaseClient.from('mhf_reactions').select('id',{count:'exact',head:true}),
+    supabaseClient.from('mhf_comments').select('id',{count:'exact',head:true}).eq('status','pending'),
+    supabaseClient.from('mhf_comments').select('id',{count:'exact',head:true}).eq('status','approved')
+  ]);
+  const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val??0};set('mhfTotalViews',v.count);set('mhfTotalLikes',l.count);set('mhfPendingComments',p.count);set('mhfApprovedComments',a.count);
+}
+async function loadAdminNotifications(){
+  const el=document.getElementById('mhfNotificationList');if(!el||!await getCurrentAdmin())return;
+  const {data,error}=await supabaseClient.from('mhf_notifications').select('*').order('created_at',{ascending:false}).limit(20);
+  if(error)return;el.innerHTML=(data||[]).map(n=>'<div class="notification-row"><b>'+escapeHtml(n.subject||n.notification_type)+'</b><div>'+escapeHtml(n.message)+'</div><small>'+escapeHtml(n.status)+' · '+new Date(n.created_at).toLocaleString()+'</small></div>').join('')||'<p class="muted">No notifications queued.</p>';
+}
+
+async function renderPublicMedia(){
+  const buckets={
+    photos:document.getElementById('publicPhotos'),
+    videos:document.getElementById('publicVideos'),
+    documentaries:document.getElementById('publicDocumentaries')
+  };
+  Object.values(buckets).forEach(el=>{if(el)el.innerHTML='<p class="muted">Loading…</p>';});
+  if(!initSupabase()){
+    Object.values(buckets).forEach(el=>{if(el)el.innerHTML='<p class="muted">Media is being prepared. Cloud storage is not configured yet.</p>';});
+    return;
+  }
+
+  const {data:items,error}=await supabaseClient
+    .from('foundation_resources')
+    .select('id,category,title,file_name,storage_path,file_size,created_at')
+    .eq('is_public',true)
+    .in('category',['photos','videos','documentaries'])
+    .order('created_at',{ascending:false});
+
+  if(error){
+    Object.values(buckets).forEach(el=>{if(el)el.innerHTML='<p class="muted">Media is temporarily unavailable.</p>';});
+    return;
+  }
+
+  for(const category of Object.keys(buckets)){
+    const el=buckets[category];
+    if(!el) continue;
+    const rows=(items||[]).filter(x=>x.category===category);
+    if(!rows.length){
+      el.innerHTML='<p class="muted">No '+RESOURCE_CATEGORIES[category].toLowerCase()+' published yet.</p>';
+      continue;
+    }
+    const cards=[];
+    for(const r of rows){
+      const {data:signed,error:signedError}=await supabaseClient.storage
+        .from('foundation-public').createSignedUrl(r.storage_path,3600);
+      if(signedError || !signed?.signedUrl) continue;
+      const u=signed.signedUrl;
+      let mediaHtml='';
+      if(category==='photos'){
+        mediaHtml='<img src="'+u+'" alt="'+escapeHtml(r.title)+'" loading="lazy" style="width:100%;height:220px;object-fit:cover;display:block">';
+      }else{
+        mediaHtml='<video controls preload="metadata" style="width:100%;height:220px;object-fit:cover;display:block" src="'+u+'"></video>';
+      }
+      cards.push('<article class="media-card" data-resource-id="'+escapeHtml(r.id)+'">'+mediaHtml+
+        '<div class="media-body"><span class="status">'+escapeHtml(RESOURCE_CATEGORIES[category])+'</span>'+
+        '<h3>'+escapeHtml(r.title)+'</h3><p class="muted">'+escapeHtml(r.file_name)+'</p>'+
+        '<a class="btn primary" href="'+u+'" target="_blank" rel="noopener">Open full '+escapeHtml(RESOURCE_CATEGORIES[category]).toLowerCase()+'</a>'+
+        engagementHtml(r)+
+        '</div></article>');
+    }
+    el.innerHTML=cards.join('') || '<p class="muted">No '+RESOURCE_CATEGORIES[category].toLowerCase()+' could be displayed.</p>';
+    for(const r of rows){recordResourceView(r.id);loadEngagement(r.id);}
+  }
+}
+
+async function initializeCloudResources(){
+  if(!initSupabase()){
+    adminNotice('Cloud mode is not configured. Create the Supabase project, run the SQL setup, then add the project URL and publishable key to this file.','error');
+    return;
+  }
+  await renderPublicPosts();
+  await renderPublicResources();
+  await renderFoundationResources();
+  await renderPublicMedia();
+  await renderPublicSettings();
+  await renderPublicPaymentMethods();
+  await recordWebsiteView();
+}
+
+window.addEventListener('load',async ()=>{
+  await initializeCloudResources();
+  await renderPublicPosts();
+  if(initSupabase()){
+    const user=await getCurrentAdmin();
+    if(user) await openAdminDashboard();
+  }
+});
+
+</script>
+<a class="float-support" href="https://wa.me/256747064373" target="_blank" rel="noopener" aria-label="Contact Mugerwa Hope Foundation on WhatsApp">💬 WhatsApp</a>
+
+<script>
+/* Mugerwa Hope Foundation — supporter button routing */
+document.addEventListener('DOMContentLoaded', function () {
+  const sectionMap = {
+    'Transparency-focused': 'resources',
+    'Open to partnerships': 'partner',
+    'Real stories & media': 'media',
+    'Community-centered': 'programs'
+  };
+
+  function findSectionId(label) {
+    const key = Object.keys(sectionMap).find(k =>
+      label.toLowerCase().includes(k.toLowerCase()) ||
+      k.toLowerCase().includes(label.toLowerCase())
+    );
+    return key ? sectionMap[key] : null;
+  }
+
+  document.querySelectorAll('button, a').forEach(function (el) {
+    const label = (el.innerText || el.textContent || '').trim();
+    if (!label) return;
+
+    const target = findSectionId(label);
+    if (target && !el.getAttribute('href') && !el.getAttribute('onclick')) {
+      el.type = 'button';
+      el.addEventListener('click', function () {
+        const section = document.getElementById(target);
+        if (section) section.scrollIntoView({behavior:'smooth', block:'start'});
+      });
+    }
+  });
+
+  // Make media category buttons route to their dedicated sections where available.
+  const mediaRoutes = {
+    'photos': 'photos',
+    'videos': 'videos',
+    'documentaries': 'documentaries',
+    'photo': 'photos',
+    'video': 'videos',
+    'documentary': 'documentaries'
+  };
+
+  document.querySelectorAll('button, a').forEach(function (el) {
+    const label = (el.innerText || el.textContent || '').trim().toLowerCase();
+    const target = mediaRoutes[label];
+    if (!target || el.getAttribute('onclick')) return;
+    const section = document.getElementById(target);
+    if (section) {
+      el.addEventListener('click', function () {
+        section.scrollIntoView({behavior:'smooth', block:'start'});
+      });
+    }
+  });
+});
+</script>
+
+
+<section id="board-management-panel" class="admin-panel" style="margin-top:24px;">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">Administrator</span>
+      <h2>Board &amp; Leadership Management</h2>
+      <p class="muted">Add and manage leadership roles such as Accounts, Procurement, Management, and other approved positions.</p>
+    </div>
+  </div>
+
+  <form id="boardMemberForm" style="display:grid;gap:12px;max-width:760px;">
+    <input type="hidden" id="boardEditId">
+    <label>Full name
+      <input id="boardName" required placeholder="e.g. John Doe">
+    </label>
+    <label>Position / Department
+      <input id="boardRole" required placeholder="e.g. Accounts / Procurement / Management">
+    </label>
+    <label>Short profile
+      <textarea id="boardBio" rows="3" placeholder="Brief leadership profile"></textarea>
+    </label>
+    <label>Photo
+      <input id="boardPhoto" type="file" accept="image/*">
+    </label>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn primary" type="submit">Save Board Member</button>
+      <button class="btn" type="button" id="boardCancelEdit">Cancel</button>
+    </div>
+    <p id="boardAdminStatus" class="muted"></p>
+  </form>
+
+  <div id="boardAdminList" style="display:grid;gap:12px;margin-top:20px;"></div>
+</section>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'mugerwa_board_members_v1';
+  const $ = id => document.getElementById(id);
+  let members = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+  function esc(v){
+    return String(v || '').replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+    }[c]));
+  }
+
+  function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(members)); render(); }
+
+  function render(){
+    const box = $('boardAdminList');
+    if(!box) return;
+    if(!members.length){
+      box.innerHTML = '<p class="muted">No board or leadership members have been added yet.</p>';
+      return;
+    }
+    box.innerHTML = members.map(m => `
+      <article style="display:flex;gap:14px;align-items:center;padding:14px;border:1px solid rgba(0,0,0,.1);border-radius:14px;">
+        ${m.photo ? `<img src="${m.photo}" alt="${esc(m.name)}" style="width:70px;height:70px;object-fit:cover;border-radius:50%;">` : '<div style="width:70px;height:70px;border-radius:50%;display:grid;place-items:center;background:#eee;font-size:28px;">👤</div>'}
+        <div style="flex:1">
+          <strong>${esc(m.name)}</strong>
+          <div>${esc(m.role)}</div>
+          <small class="muted">${esc(m.bio)}</small>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn" type="button" data-edit="${m.id}">Edit</button>
+          <button class="btn" type="button" data-delete="${m.id}">Delete</button>
+        </div>
+      </article>`).join('');
+  }
+
+  function reset(){
+    $('boardEditId').value='';
+    $('boardName').value='';
+    $('boardRole').value='';
+    $('boardBio').value='';
+    $('boardPhoto').value='';
+    $('boardAdminStatus').textContent='';
+  }
+
+  $('boardMemberForm')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const name=$('boardName').value.trim();
+    const role=$('boardRole').value.trim();
+    const bio=$('boardBio').value.trim();
+    const editId=$('boardEditId').value;
+    const file=$('boardPhoto').files[0];
+
+    let photo = '';
+    if(file){
+      if(!file.type.startsWith('image/')){
+        $('boardAdminStatus').textContent='Please select an image file.';
+        return;
+      }
+      if(file.size > 5*1024*1024){
+        $('boardAdminStatus').textContent='Please use a photo smaller than 5 MB.';
+        return;
+      }
+      photo = await new Promise(resolve=>{
+        const reader=new FileReader();
+        reader.onload=()=>resolve(reader.result);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    if(editId){
+      const i=members.findIndex(x=>x.id===editId);
+      if(i>=0){
+        members[i]={...members[i],name,role,bio, ...(photo?{photo}:{})};
+      }
+    } else {
+      members.push({id:crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),name,role,bio,photo});
+    }
+    save();
+    reset();
+    $('boardAdminStatus').textContent='Board/leadership member saved.';
+  });
+
+  $('boardAdminList')?.addEventListener('click', e=>{
+    const edit=e.target.closest('[data-edit]');
+    const del=e.target.closest('[data-delete]');
+    if(edit){
+      const m=members.find(x=>x.id===edit.dataset.edit);
+      if(!m) return;
+      $('boardEditId').value=m.id;
+      $('boardName').value=m.name;
+      $('boardRole').value=m.role;
+      $('boardBio').value=m.bio || '';
+      $('boardAdminStatus').textContent='Editing '+m.name;
+      window.scrollTo({top:$('board-management-panel').offsetTop-20,behavior:'smooth'});
+    }
+    if(del){
+      const m=members.find(x=>x.id===del.dataset.delete);
+      if(m && confirm('Remove '+m.name+' from the board/leadership list?')){
+        members=members.filter(x=>x.id!==m.id);
+        save();
+      }
+    }
+  });
+
+  $('boardCancelEdit')?.addEventListener('click', reset);
+  render();
+})();
+</script>
+
+
+<section id="public-board-leadership" style="margin-top:30px;">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">Leadership</span>
+      <h2>Board &amp; Leadership</h2>
+      <p class="muted">Meet the people responsible for guiding the foundation's work.</p>
+    </div>
+  </div>
+  <div id="publicBoardList" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;"></div>
+</section>
+<script>
+(function(){
+  const key='mugerwa_board_members_v1';
+  function esc(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+  function render(){
+    const box=document.getElementById('publicBoardList'); if(!box)return;
+    const members=JSON.parse(localStorage.getItem(key)||'[]');
+    if(!members.length){box.innerHTML='<p class="muted">Leadership profiles will appear here as they are published by the administrator.</p>';return;}
+    box.innerHTML=members.map(m=>`
+      <article class="card" style="padding:20px;">
+        ${m.photo?`<img src="${m.photo}" alt="${esc(m.name)}" style="width:100%;height:210px;object-fit:cover;border-radius:14px;">`:''}
+        <h3>${esc(m.name)}</h3><strong>${esc(m.role)}</strong>
+        <p class="muted">${esc(m.bio)}</p>
+      </article>`).join('');
+  }
+  render();
+  window.addEventListener('storage',render);
+})();
+</script>
+
+<script>
+window.addEventListener('load', async ()=>{
+  renderAdminData();
+  await handlePasswordRecovery();
+  if(initSupabase()){
+    const user=await getCurrentAdmin();
+    if(user) await openAdminDashboard();
+  }
+});
+</script>
+</body></html>
