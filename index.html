@@ -530,10 +530,14 @@ async function mhfLoad(){
     if(!initSupabase()) throw new Error('Supabase is not configured.');
     const {data,error}=await supabaseClient.from('mhf_site_content').select('content').eq('id','main').maybeSingle();
     if(error) throw error;
-    if(data?.content) mhfCache=mhfMergeData(data.content);
+    mhfCache=data?.content ? mhfMergeData(data.content) : mhfCloneEmpty();
     return mhfCache;
   }catch(e){
-    console.warn('Cloud content load failed; keeping current in-memory data.',e);
+    console.error('Cloud content load failed:',e);
+    // Do not silently replace cloud data with an old browser copy. This was one
+    // of the reasons the administrator appeared to save successfully while the
+    // public website remained empty.
+    mhfCache=mhfCloneEmpty();
     return mhfCache;
   }
 }
@@ -546,10 +550,13 @@ async function mhfPersist(){
     if(!user) throw new Error('Administrator login is required to save website content.');
     const {error}=await supabaseClient.from('mhf_site_content').upsert({id:'main',content:snapshot,updated_at:new Date().toISOString(),updated_by:user.id},{onConflict:'id'});
     if(error) throw error;
+    // Keep the in-memory copy synchronized with the exact data written to Supabase.
+    mhfCache=mhfMergeData(snapshot);
+    mhfRenderPublicContent();
     return true;
   }catch(e){
-    console.error(e);
-    alert('Could not save website content to the cloud: '+e.message);
+    console.error('MHF cloud save error:',e);
+    alert('Could not save website content to the cloud: '+(e.message||e));
     return false;
   }
 }
@@ -784,7 +791,14 @@ async function openAdminDashboard(){
   document.getElementById('adminDashboard').style.display='block';
   await renderAdminData(); await renderFoundationResources(); await renderPublicResources(); await renderPublicMedia(); showAdminPanel('overview');
 }
-function closeAdminDashboard(){document.getElementById('adminDashboard').style.display='none';}
+async function closeAdminDashboard(){
+  document.getElementById('adminDashboard').style.display='none';
+  // Refresh the public page immediately after the administrator closes the dashboard.
+  await mhfRefreshPublic();
+  await renderPublicBoardCloud();
+  await renderPublicResources();
+  await renderPublicMedia();
+}
 async function adminLogout(){if(supabaseClient)await supabaseClient.auth.signOut();closeAdminDashboard();}
 function showAdminPanel(name){document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));const p=document.getElementById('panel-'+name);if(p)p.classList.add('active');renderAdminData();}
 
@@ -792,21 +806,13 @@ function getData(key, fallback){ try{return JSON.parse(localStorage.getItem(key)
 function setData(key,val){localStorage.setItem(key,JSON.stringify(val));}
 
 function savePost(){
-  const title=document.getElementById('postTitle').value.trim(), body=document.getElementById('postBody').value.trim();
-  if(!title||!body)return alert('Enter a title and post content.');
-  const posts=getData('mhfPosts',[]); posts.unshift({title,body,date:new Date().toLocaleString()}); setData('mhfPosts',posts);
-  document.getElementById('postTitle').value='';document.getElementById('postBody').value='';renderAdminData();alert('Post saved.');
+  alert('Please use Administrator → Posts & Updates. That is the live cloud content manager.');
 }
 async function saveMedia(){
   alert('For secure cloud media, use Administrator → Documents & Resources, choose Photos, Videos or Documentaries, then upload and Publish.');
 }
 function saveSettings(){
-  const settings={
-    name:document.getElementById('settingFoundationName').value,
-    email:document.getElementById('settingEmail').value,
-    phone:document.getElementById('settingPhone').value,
-    announcement:document.getElementById('settingAnnouncement').value
-  };setData('mhfSettings',settings);alert('Settings saved in this browser.');
+  alert('Please use Administrator → Website Settings. Those settings are saved to the live cloud database.');
 }
 
 let selectedClient='';
