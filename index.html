@@ -1198,9 +1198,9 @@ async function renderFoundationResources(){
         <small>${escapeHtml(r.file_name)} · ${Math.round((r.file_size||0)/1024)} KB · ${new Date(r.created_at).toLocaleString()}</small>
       </div>
       <div class="resource-actions">
-        <button class="btn" onclick="openCloudResource('${r.id}')">Open</button>
-        <button class="btn" onclick="toggleResourcePublic('${r.id}')">${r.is_public?'Hide':'Publish'}</button>
-        <button class="btn" onclick="deleteFoundationResource('${r.id}')">Delete</button>
+        <button type="button" class="btn" onclick="openCloudResource('${r.id}')">Open</button>
+        <button type="button" class="btn" onclick="toggleResourcePublic('${r.id}')">${r.is_public?'Hide':'Publish'}</button>
+        <button type="button" class="btn" onclick="deleteFoundationResource('${r.id}')">Delete</button>
       </div>
     </div>`).join('');
 }
@@ -1280,19 +1280,37 @@ async function deleteFoundationResource(id){
   if(!user)return;
   const r=cloudResources.find(x=>x.id===id);
   if(!r)return;
-  if(!confirm('Delete this resource permanently from cloud storage and the database?'))return;
+  if(!confirm('Delete this media permanently from the administrator AND the public website?'))return;
 
-  const {error:fileError}=await supabaseClient.storage
-    .from('foundation-public').remove([r.storage_path]);
-  if(fileError)return alert('File deletion failed: '+fileError.message);
-
+  // Delete the database row first. The public website reads only published
+  // rows from foundation_resources, so removing this row immediately removes
+  // the media from the public gallery after the next refresh.
   const {error:dbError}=await supabaseClient
-    .from('foundation_resources').delete().eq('id',id);
-  if(dbError)return alert('Database deletion failed: '+dbError.message);
+    .from('foundation_resources')
+    .delete()
+    .eq('id',id);
+
+  if(dbError){
+    return alert('Database deletion failed: '+dbError.message);
+  }
+
+  // Then remove the physical file from the public Storage bucket.
+  if(r.storage_path){
+    const {error:fileError}=await supabaseClient
+      .storage.from('foundation-public')
+      .remove([r.storage_path]);
+
+    if(fileError){
+      console.warn('Storage file cleanup failed:',fileError.message);
+      alert('The media was removed from the website database, but the storage file could not be cleaned up: '+fileError.message);
+    }
+  }
 
   await loadCloudResources();
   await renderFoundationResources();
   await renderPublicResources();
+  await renderPublicMedia();
+  alert('Media deleted successfully. It is no longer published on the website.');
 }
 
 
