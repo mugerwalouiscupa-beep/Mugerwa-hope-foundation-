@@ -171,7 +171,11 @@ footer{background:#071f19}
     <div class="head">
       <div class="tag">Posts & Updates</div>
       <h2>Latest from Mugerwa Hope Foundation</h2>
-      <p class="muted">Follow our latest announcements, activities and foundation updates.</p>
+      <p class="muted">Follow our latest announcements, activities and foundation updates published by the administrator.</p>
+      <div class="actions" style="margin-top:16px">
+        <a class="btn primary" href="#publicPostsList">📝 View Updates</a>
+        <a class="btn" style="border:2px solid var(--g);color:var(--g)" href="#media">📷 View Media</a>
+      </div>
     </div>
     <div id="publicPostsList" class="media-grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
       <p class="muted">Loading posts…</p>
@@ -192,9 +196,9 @@ footer{background:#071f19}
     </div>
 
     <div class="actions" style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
-      <a class="btn primary" href="#photos">📷 Photos</a>
-      <a class="btn primary" href="#videos">▶️ Videos</a>
-      <a class="btn primary" href="#documentaries">🎬 Documentaries</a>
+      <a class="btn primary" href="#photos">📷 View Media</a>
+      <a class="btn primary" href="#videos">▶️ View Videos</a>
+      <a class="btn primary" href="#documentaries">🎬 View Documentaries</a>
     </div>
     <div id="publicMediaArea" style="margin-top:24px">
       <div id="photos"><h3>📷 Photos</h3><div id="publicPhotos" class="media-grid"></div></div>
@@ -202,24 +206,9 @@ footer{background:#071f19}
       <div id="documentaries" style="margin-top:32px"><h3>🎬 Documentaries</h3><div id="publicDocumentaries" class="media-grid"></div></div>
     </div>
 
-    <div class="panel media-publish">
-      <div class="tag">Foundation updates</div>
-      <h3>Keep supporters informed</h3>
-      <p class="muted">
-        New photos, videos and documentaries can be added here as the foundation
-        carries out activities. For videos and documentaries, we can connect this
-        section to the foundation's official YouTube channel so visitors can watch
-        them directly from the website.
-      </p>
-      <div class="actions">
-        <a class="btn primary" href="mailto:mugerwalouiscupa@gmail.com?subject=Media%20Update%20for%20Mugerwa%20Hope%20Foundation">Send a Media Update</a>
-        <a class="btn" style="border:2px solid var(--g);color:var(--g)" href="#contact">Contact Foundation</a>
-      </div>
-      <p class="muted" style="font-size:13px;margin-top:14px">
-        <b>Important:</b> Before publishing identifiable photos or videos of children,
-        vulnerable people or beneficiaries, obtain appropriate consent and avoid
-        publishing sensitive personal information.
-      </p>
+    <div class="actions" style="margin-top:28px;display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn primary" href="#posts">📝 View Updates</a>
+      <a class="btn" style="border:2px solid var(--g);color:var(--g)" href="#contact">Contact Foundation</a>
     </div>
   </div>
 </section>
@@ -431,11 +420,11 @@ footer{background:#071f19}
 
 <section class="admin-panel active" id="mhf-panel-overview"><h2>Administrator Dashboard</h2><p class="muted">Everything below can be added, edited and deleted from this control panel.</p><div class="mhf-card-grid"><div class="mhf-stat">Posts<b id="mhfCountPosts">0</b></div><div class="mhf-stat">Photos<b id="mhfCountMedia">0</b></div><div class="mhf-stat">Leadership<b id="mhfCountLeadership">0</b></div><div class="mhf-stat">Projects<b id="mhfCountProjects">0</b></div><div class="mhf-stat">Stories<b id="mhfCountStories">0</b></div><div class="mhf-stat">Reports<b id="mhfCountImpact">0</b></div></div></section>
 
-<section class="admin-panel" id="mhf-panel-posts"><h2>Posts & Updates</h2><div class="mhf-form-grid"><input id="mhfPostTitle" placeholder="Post title"><input id="mhfPostDate" type="date"></div><textarea id="mhfPostBody" placeholder="Write the update..."></textarea><button class="btn primary" onclick="mhfSave('posts')">Add Post</button><button class="btn" onclick="mhfClear('posts')">Clear</button><div id="mhfListPosts"></div></section>
+<section class="admin-panel" id="mhf-panel-posts"><h2>Posts & Updates</h2><p class="muted">Administrator only: create, edit, publish, hide or delete updates. Published updates appear on the public website under “View Updates”.</p><div class="mhf-form-grid"><input id="mhfPostTitle" placeholder="Post title"><input id="mhfPostDate" type="date"></div><textarea id="mhfPostBody" placeholder="Write the update..."></textarea><button class="btn primary" onclick="mhfSave('posts')">Add Post</button><button class="btn" onclick="mhfClear('posts')">Clear</button><div id="mhfListPosts"></div></section>
 
-<section class="admin-panel" id="mhf-panel-media"><h2>Photos</h2><p class="muted">Add a photo with a title. You can edit or delete it later.</p><div class="mhf-form-grid"><input id="mhfMediaTitle" placeholder="Photo title"><input id="mhfMediaFile" type="file" accept="image/*"></div><button class="btn primary" onclick="mhfSaveFile('media')">Add Photo</button><div id="mhfListMedia"></div></section>
+<section class="admin-panel" id="mhf-panel-media"><h2>Photos & Media</h2><p class="muted">Administrator only: upload, publish, hide or delete photos. Published media appears on the public website under “View Media”.</p><p class="muted">Add a photo with a title. You can edit or delete it later.</p><div class="mhf-form-grid"><input id="mhfMediaTitle" placeholder="Photo title"><input id="mhfMediaFile" type="file" accept="image/*"></div><button class="btn primary" onclick="mhfSaveFile('media')">Add Photo</button><div id="mhfListMedia"></div></section>
 
-<section class="admin-panel" id="mhf-panel-videos"><h2>Videos & Documentaries</h2><p class="muted">Add a video/documentary file or a public video URL.</p><div class="mhf-form-grid"><input id="mhfVideoTitle" placeholder="Video/documentary title"><input id="mhfVideoUrl" placeholder="YouTube or video URL (optional)"><input id="mhfVideoFile" type="file" accept="video/*"></div><button class="btn primary" onclick="mhfSaveFile('videos')">Add Video / Documentary</button><div id="mhfListVideos"></div></section>
+<section class="admin-panel" id="mhf-panel-videos"><h2>Videos & Documentaries</h2><p class="muted">Administrator only: add videos and documentaries. Published items appear on the public website for viewers.</p><p class="muted">Add a video/documentary file or a public video URL.</p><div class="mhf-form-grid"><input id="mhfVideoTitle" placeholder="Video/documentary title"><input id="mhfVideoUrl" placeholder="YouTube or video URL (optional)"><input id="mhfVideoFile" type="file" accept="video/*"></div><button class="btn primary" onclick="mhfSaveFile('videos')">Add Video / Documentary</button><div id="mhfListVideos"></div></section>
 
 <section class="admin-panel" id="mhf-panel-leadership"><h2>Board & Leadership</h2><div class="mhf-form-grid"><input id="mhfLeadName" placeholder="Full name"><input id="mhfLeadRole" placeholder="Position / role"><input id="mhfLeadPhoto" type="file" accept="image/*"></div><textarea id="mhfLeadBio" placeholder="Biography / responsibilities"></textarea><button class="btn primary" onclick="mhfSaveFile('leadership')">Add Leader</button><div id="mhfListLeadership"></div></section>
 
