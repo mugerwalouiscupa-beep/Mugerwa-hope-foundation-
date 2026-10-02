@@ -17,7 +17,7 @@ button:disabled{opacity:.55;cursor:not-allowed}.secondary{background:#162b48;col
 .danger{background:var(--danger);color:#fff}.hero{padding:55px 18px}.hero h1{font-size:clamp(35px,7vw,65px);margin:0}
 .tools{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
 input,select,textarea{background:#0b1728;color:#fff;border:1px solid #ffffff20;border-radius:9px;padding:12px;width:100%}
-.tools input{max-width:430px}.searchForm{display:flex;gap:8px;flex-wrap:wrap;align-items:center;width:100%}.searchForm input{flex:1;min-width:220px}.searchForm button{width:auto}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:15px}
+.tools input{max-width:430px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:15px}
 .card{background:var(--card);border-radius:14px;overflow:hidden;border:1px solid #ffffff10}
 .poster{height:240px;background:linear-gradient(135deg,#1a3355,#0b1626);display:grid;place-items:center;color:#70829b;text-align:center}
 .poster img{width:100%;height:100%;object-fit:cover}.body{padding:12px}
@@ -58,11 +58,7 @@ hr{border:0;border-top:1px solid #ffffff15;margin:18px 0}
 <section id="movies">
   <h2>🎬 Filimu</h2>
   <div class="tools">
-    <form id="searchForm" class="searchForm" onsubmit="searchMovies(event)">
-      <input id="q" placeholder="Search movies..." autocomplete="off">
-      <button type="submit">🔍 Search</button>
-      <button type="button" class="secondary" onclick="clearSearch()">Clear</button>
-    </form>
+    <input id="q" placeholder="Search movies..." oninput="render()">
     <select id="cat" onchange="render()">
       <option value="">All categories</option><option>Indian</option><option>Korean</option><option>Chinese</option>
       <option>Love Stories</option><option>Science Fiction</option><option>Action</option><option>Drama</option><option>Comedy</option><option>Horror</option>
@@ -80,8 +76,8 @@ hr{border:0;border-top:1px solid #ffffff15;margin:18px 0}
 <div class="modal" id="login"><div class="box">
 <button class="close" onclick="closeM('login')">×</button>
 <h2>Login / Create Account</h2>
-<p class="muted">This login is for viewers only. Administrators must use the separate Administrator Login.</p>
-<input id="ve" type="email" autocomplete="off" placeholder="Email address"><br><br>
+<p class="muted">Use your viewer account here. Administrator access is handled through the separate administrator login.</p>
+<input id="ve" type="email" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Email address"><br><br>
 <div style="display:flex;gap:7px"><input id="vp" type="password" autocomplete="new-password" placeholder="Password"><button class="secondary" onclick="togglePassword('vp',this)">Show</button></div><br>
 <button onclick="viewerLogin(false)">Login</button>
 <button class="secondary" onclick="viewerLogin(true)">Create account</button>
@@ -93,9 +89,9 @@ hr{border:0;border-top:1px solid #ffffff15;margin:18px 0}
 <button class="close" onclick="closeM('forgot')">×</button>
 <h2>Account / Password Recovery</h2>
 <p class="muted">Enter the email used for your viewer or administrator account. Supabase will send the password-reset link to that email.</p>
-<input id="fe" type="email" autocomplete="off" placeholder="Email address"><br><br>
+<input id="fe" type="email" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Email address"><br><br>
 <button onclick="requestReset()">Send password reset link</button>
-<p id="forgotMsg" class="muted"></p>
+<p id="forgotMsg" class="muted"></p><p class="muted" style="font-size:12px">For reliable public password recovery, the Supabase project must have email delivery configured. The website cannot send email by itself.</p>
 </div></div>
 
 <div class="modal" id="reset"><div class="box">
@@ -139,15 +135,13 @@ hr{border:0;border-top:1px solid #ffffff15;margin:18px 0}
 
 <div class="modal" id="adminLogin"><div class="box">
 <button class="close" onclick="closeM('adminLogin')">×</button>
-<h2>🛠 Administrator Login</h2>
-<p class="muted">Administrator access is separate from viewer accounts.</p>
-<form id="adminLoginForm" autocomplete="off" onsubmit="adminLogin(event)">
-<input id="ae" type="email" autocomplete="username" placeholder="Administrator email" required><br><br>
-<div style="display:flex;gap:7px"><input id="ap" type="password" autocomplete="new-password" placeholder="Administrator password" required><button type="button" class="secondary" onclick="togglePassword('ap',this)">Show</button></div><br>
-<button type="submit">Administrator Login</button>
-<button type="button" class="secondary" onclick="openAdminReset()">Forgot password?</button>
+<h2>Administrator Login</h2>
+<p class="muted">Administrator access is separate from viewer access. Your account must be linked to the LUGAFILM administrator table in Supabase.</p>
+<input id="ae" type="email" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Administrator email"><br><br>
+<div style="display:flex;gap:7px"><input id="ap" type="password" autocomplete="new-password" placeholder="Administrator password"><button class="secondary" onclick="togglePassword('ap',this)">Show</button></div><br>
+<button id="adminLoginBtn" onclick="adminLogin()">Administrator Login</button>
+<button class="secondary" onclick="closeM('adminLogin');openM('forgot')">Forgot password?</button>
 <p id="adminMsg" class="muted"></p>
-</form>
 </div></div>
 
 <div class="modal" id="admin"><div class="box">
@@ -169,7 +163,8 @@ hr{border:0;border-top:1px solid #ffffff15;margin:18px 0}
 <script>
 const SB_URL='https://tyamblbkvgdvztfkkzcc.supabase.co';
 const SB_KEY='sb_publishable_1qJsptD3PERCwspJxpk_EQ_h9mQZCX9';
-const db=supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false,autoRefreshToken:true,detectSessionInUrl:true}});
+const SITE_URL='https://mugerwalouiscupa-beep.github.io/lugafilm/';
+const db=supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false,autoRefreshToken:true,detectSessionInUrl:true,flowType:'implicit'}});
 let currentUser=null, currentIsAdmin=false;
 
 const $=id=>document.getElementById(id);
@@ -191,46 +186,26 @@ async function refreshAuth(){
 }
 
 function updateAuth(){
-  $('viewerAuthBtn').textContent=currentUser?'Viewer Logout':'Viewer Login / Register';
+  $('viewerAuthBtn').textContent=currentUser?(currentIsAdmin?'Dashboard / Logout':'Logout'):'Login / Register';
 }
 
 function authAction(){
   if(!currentUser){openM('login');return}
-  if(currentIsAdmin){
-    // An administrator should never be operating through the viewer button.
-    closeM('admin'); closeM('adminLogin');
-    alert('Administrator is signed in. Use Administrator Login to open the dashboard.');
-    return;
-  }
+  if(currentIsAdmin){openM('admin');adminTab('dash');return}
   logout();
 }
 
-async function adminLogin(e){
-  if(e)e.preventDefault();
+async function adminLogin(){
   const email=$('ae').value.trim(), pass=$('ap').value;
-  if(!email||!pass){$('adminMsg').textContent='Enter administrator email and password.';return}
+  if(!email||!pass)return $('adminMsg').textContent='Enter administrator email and password.';
   $('adminMsg').textContent='Signing in...';
   const r=await db.auth.signInWithPassword({email,password:pass});
   if(r.error){$('adminMsg').textContent=r.error.message;return}
   currentUser=r.data.user;
   currentIsAdmin=await isAdmin();
-  if(!currentIsAdmin){
-    await db.auth.signOut(); currentUser=null; currentIsAdmin=false; updateAuth();
-    $('adminMsg').textContent='This account is not registered as an administrator.';
-    return;
-  }
-  $('ae').value=''; $('ap').value='';
-  closeM('adminLogin'); updateAuth();
-  await render(); await notifications();
-  openM('admin'); await adminTab('dash');
+  if(!currentIsAdmin){await db.auth.signOut();currentUser=null;currentIsAdmin=false;$('adminMsg').textContent='This account is not an administrator.';return}
+  closeM('adminLogin');$('ae').value='';$('ap').value='';updateAuth();await render();await notifications();openM('admin');await adminTab('dash');
 }
-
-function openAdminReset(){
-  const email=$('ae').value.trim();
-  if(email)$('fe').value=email;
-  closeM('adminLogin'); openM('forgot');
-}
-
 
 async function viewerLogin(signup){
   const email=$('ve').value.trim(), pass=$('vp').value;
@@ -243,35 +218,55 @@ async function viewerLogin(signup){
     return;
   }
   currentUser=r.data.user; currentIsAdmin=await isAdmin();
-  if(currentIsAdmin){
-    await db.auth.signOut(); currentUser=null; currentIsAdmin=false; updateAuth();
-    $('authMsg').textContent='This is an administrator account. Please use Administrator Login.';
-    return;
-  }
-  closeM('login'); $('ve').value=''; $('vp').value=''; updateAuth(); await notifications();
+  closeM('login'); updateAuth(); await notifications();
+  if(currentIsAdmin){openM('admin');await adminTab('dash')}
 }
 
 function togglePassword(id,btn){const x=$(id);x.type=x.type==='password'?'text':'password';btn.textContent=x.type==='password'?'Show':'Hide'}
 
 async function requestReset(){
   const email=$('fe').value.trim();
-  if(!email)return $('forgotMsg').textContent='Enter your email address.';
-  const redirect=window.location.origin+window.location.pathname;
-  const r=await db.auth.resetPasswordForEmail(email,{redirectTo:redirect});
-  $('forgotMsg').textContent=r.error?r.error.message:'If an account exists for that email, a password-reset link has been requested. Check Inbox and Spam.';
+  const msg=$('forgotMsg'),btn=document.querySelector('#forgot button[onclick="requestReset()"]');
+  if(!email){msg.textContent='Enter your email address.';return}
+  if(!/^\S+@\S+\.\S+$/.test(email)){msg.textContent='Enter a valid email address.';return}
+  if(btn){btn.disabled=true;btn.textContent='Sending…'}
+  msg.textContent='Requesting password reset…';
+  try{
+    const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:SITE_URL});
+    if(error){msg.textContent='Could not request the reset: '+error.message;return}
+    msg.textContent='If this account exists, Supabase has requested a reset email. Check Inbox and Spam. If no email arrives, the Supabase project email service must be configured for production email delivery.';
+  }catch(e){msg.textContent='Could not request the reset: '+(e.message||e)}
+  finally{if(btn){btn.disabled=false;btn.textContent='Send password reset link'}}
 }
 
 async function setNewPassword(){
-  const a=$('np').value,b=$('np2').value;
-  if(a.length<8)return $('resetMsg').textContent='Password must be at least 8 characters.';
-  if(a!==b)return $('resetMsg').textContent='Passwords do not match.';
-  const r=await db.auth.updateUser({password:a});
-  $('resetMsg').textContent=r.error?r.error.message:'Password changed successfully.';
-  if(!r.error)setTimeout(()=>closeM('reset'),1200);
+  const a=$('np').value,b=$('np2').value,msg=$('resetMsg');
+  if(a.length<8){msg.textContent='Password must be at least 8 characters.';return}
+  if(a!==b){msg.textContent='Passwords do not match.';return}
+  msg.textContent='Saving your new password…';
+  const {error}=await db.auth.updateUser({password:a});
+  if(error){msg.textContent='Password update failed: '+error.message;return}
+  msg.textContent='Password changed successfully. You can now log in with the new password.';
+  $('np').value='';$('np2').value='';
+  setTimeout(async()=>{closeM('reset');await db.auth.signOut();clearCredentials();},1200);
 }
 
-async function logout(){
-  await db.auth.signOut();currentUser=null;currentIsAdmin=false;closeM('admin');closeM('adminLogin');closeM('login');$('ve').value='';$('vp').value='';$('ae').value='';$('ap').value='';updateAuth();await render();await notifications();
+function clearCredentials(){
+  ['ve','vp','fe','ae','ap','np','np2'].forEach(id=>{const e=$(id);if(e)e.value='';});
+}
+
+async function handlePasswordRecovery(){
+  const hash=window.location.hash||'';
+  const query=window.location.search||'';
+  const isRecovery=hash.includes('type=recovery') || query.includes('code=') || query.includes('type=recovery');
+  if(!isRecovery)return;
+  closeM('login');closeM('adminLogin');closeM('forgot');
+  setTimeout(async()=>{
+    const {data,error}=await db.auth.getSession();
+    if(error){$('resetMsg').textContent='This password-reset link is invalid or expired. Please request a new one.';openM('reset');return}
+    if(data.session){$('resetMsg').textContent='';openM('reset');}
+    else {$('resetMsg').textContent='The reset link could not be verified. Please request a new link.';openM('reset');}
+  },500);
 }
 
 async function activeSub(){
@@ -280,22 +275,10 @@ async function activeSub(){
   return !!r.data?.length;
 }
 
-async function searchMovies(e){
-  if(e)e.preventDefault();
-  await render();
-  $('movies').scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-function clearSearch(){
-  $('q').value='';
-  $('cat').value='';
-  render();
-}
-
 async function render(){
   const q=($('q')?.value||'').trim().toLowerCase(),cat=$('cat')?.value||'';
-  const r=await db.from('lugafilm_movies').select('*').eq('is_published',true).eq('is_series',false).order('uploaded_at',{ascending:false});
-  if(r.error){$('grid').innerHTML='<p class="muted">Could not load movies. Check the Supabase connection/table permissions.</p>';return}
+  const r=await db.from('lugafilm_movies').select('*').eq('is_published',true).order('uploaded_at',{ascending:false});
+  if(r.error){console.error('Movie list error:',r.error);$('grid').innerHTML='<p class="muted">Movies are temporarily unavailable. Please try again shortly.</p>';return}
   const a=(r.data||[]).filter(m=>(!cat||m.category===cat)&&(!q||String(m.title||'').toLowerCase().includes(q)));
   $('grid').innerHTML=a.length?a.map(m=>movieCard(m)).join(''):'<p class="muted">No movies found.</p>';
 
@@ -341,6 +324,7 @@ async function notifications(){
   const items=(latest.data||[]).map(m=>`<div class="notice">🆕 <b>NEW: ${esc(m.title)}</b> — ${m.is_premium?'Premium':'Free'}<br><small>${new Date(m.uploaded_at).toLocaleString()}</small></div>`);
   if(currentUser){
     const r=await db.from('lugafilm_notifications').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(10);
+    if(r.error) console.warn('Notifications unavailable:',r.error.message);
     items.push(...(r.data||[]).map(n=>`<div class="notice"><b>${esc(n.title)}</b><br>${esc(n.body)}<br><small>${new Date(n.created_at).toLocaleString()}</small></div>`));
   }
   $('notices').innerHTML=items.join('')||'<div class="muted">No new notifications.</div>';
@@ -371,24 +355,26 @@ async function adminTab(tab){
   if(!currentIsAdmin)return c.innerHTML='<div class="notice">Administrator session required.</div>';
 
   if(tab==='dash'){
-    const [m,s,g,msg,n,v]=await Promise.all([
+    const [m,s,g,msg,n,l,f]=await Promise.all([
       db.from('lugafilm_movies').select('id',{count:'exact',head:true}),
       db.from('lugafilm_subscriptions').select('id',{count:'exact',head:true}),
       db.from('lugafilm_watch_events').select('id',{count:'exact',head:true}),
       db.from('lugafilm_viewer_messages').select('id',{count:'exact',head:true}),
       db.from('lugafilm_notifications').select('id',{count:'exact',head:true}).eq('audience','admin').is('read_at',null),
-      db.from('lugafilm_viewers').select('id',{count:'exact',head:true})
+      db.from('lugafilm_likes').select('id',{count:'exact',head:true}),
+      db.from('lugafilm_followers').select('user_id',{count:'exact',head:true})
     ]);
     c.innerHTML=`<div class="stats">
       <div class="stat">Movies<b>${m.count||0}</b></div>
       <div class="stat">Subscribers<b>${s.count||0}</b></div>
-      <div class="stat">Viewers<b>${v.count??'—'}</b></div>
+      <div class="stat">Likes<b>${l.count||0}</b></div>
+      <div class="stat">Followers<b>${f.count||0}</b></div>
       <div class="stat">Watch events<b>${g.count||0}</b></div>
       <div class="stat">Messages<b>${msg.count||0}</b></div>
       <div class="stat">Unread alerts<b>${n.count||0}</b></div>
     </div>
-    <div class="notice">Movie storage is cloud-based and supports 50+ movies. The practical limit depends on your Supabase database/storage plan and storage capacity.</div>
-    <div class="notice">If the Viewers count shows —, create the optional <b>lugafilm_viewers</b> table/trigger described in the setup notes below.</div>`;
+    <div class="notice">Movie storage is cloud-based. There is no 70-movie code limit; the actual limit depends on your Supabase database/storage plan.</div>
+    `;
   }
 
   if(tab==='movies'){
@@ -503,18 +489,11 @@ async function followSite(){
 }
 
 async function refreshSite(){
-  const btn=document.querySelector('nav button[onclick*="refreshSite"]');
-  if(btn){btn.disabled=true;btn.textContent='↻ Refreshing...';}
-  try{
-    await refreshAuth();
-    await render();
-    await notifications();
-    if(currentIsAdmin && $('admin').classList.contains('open')) await adminTab('dash');
-  }catch(err){
-    alert('Refresh failed: '+(err?.message||err));
-  }finally{
-    if(btn){btn.disabled=false;btn.textContent='↻ Refresh';}
-  }
+  const btn=document.querySelector('nav button[onclick="refreshSite()"]');
+  if(btn){btn.disabled=true;btn.textContent='↻ Refreshing…'}
+  await refreshAuth();await render();await notifications();
+  if(currentIsAdmin && $('admin').classList.contains('open'))await adminTab('dash');
+  if(btn){btn.disabled=false;btn.textContent='↻ Refresh'}
 }
 async function shareSite(){
   const data={title:'LUGAFILM',text:'Watch movies on LUGAFILM',url:window.location.href};
@@ -522,10 +501,10 @@ async function shareSite(){
 }
 
 async function init(){
-  await refreshAuth();await render();await notifications();
+  await refreshAuth();await handlePasswordRecovery();await render();await notifications();
   db.auth.onAuthStateChange(async(event,s)=>{
     currentUser=s?.user||null;currentIsAdmin=await isAdmin();updateAuth();
-    if(event==='PASSWORD_RECOVERY')openM('reset');
+    if(event==='PASSWORD_RECOVERY'){closeM('login');closeM('adminLogin');closeM('forgot');openM('reset');}
     await render();await notifications();
     if(currentIsAdmin && event==='SIGNED_IN'){openM('admin');await adminTab('dash')}
   });
