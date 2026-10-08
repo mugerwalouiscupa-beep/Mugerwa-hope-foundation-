@@ -4,7 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LUGAFILM — All the latest movies in one place</title>
-<meta name="description" content="LUGAFILM — All the latest movies in one place.">
+<meta name="description" content="LUGAFILM — Watch and discover movies and series online. Free titles are available immediately and premium titles require an active subscription.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://mugerwalouiscupa-beep.github.io/lugafilm/">
+<meta property="og:title" content="LUGAFILM — All the latest movies in one place">
+<meta property="og:description" content="Watch and discover movies and series on LUGAFILM.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mugerwalouiscupa-beep.github.io/lugafilm/">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{
+  "@context":"https://schema.org",
+  "@type":"WebSite",
+  "name":"LUGAFILM",
+  "url":"https://mugerwalouiscupa-beep.github.io/lugafilm/",
+  "description":"LUGAFILM — All the latest movies in one place."
+}</script>
 <style>
 *{box-sizing:border-box}
 :root{--bg:#070b14;--panel:#101827;--panel2:#151f31;--text:#f5f7fb;--muted:#aeb8c8;--accent:#ffb703;--danger:#ef4444;--ok:#22c55e;--line:#263246}
@@ -19,6 +33,8 @@ button{cursor:pointer}
 .search{min-width:180px;flex:1;max-width:350px;background:#0d1524;border:1px solid var(--line);color:#fff;border-radius:10px;padding:10px 12px;outline:none}
 .nav button,.btn{border:1px solid var(--line);background:var(--panel2);color:#fff;border-radius:9px;padding:9px 12px}
 .nav button:hover,.btn:hover{border-color:#50617d}
+.viewerStatus{font-size:12px;color:var(--muted);padding:7px 9px;border:1px solid var(--line);border-radius:9px;background:#0a1321}
+.viewerStatus.logged{color:#bbf7d0;border-color:#166534}
 .primary{background:var(--accent)!important;color:#111!important;border-color:var(--accent)!important;font-weight:700}
 .danger{background:#35151a!important;border-color:#7f1d1d!important;color:#fecaca!important}
 main{max-width:1200px;margin:auto;padding:20px 16px 70px}
@@ -60,6 +76,8 @@ main{max-width:1200px;margin:auto;padding:20px 16px 70px}
 .listitem{border:1px solid var(--line);background:#0a1321;border-radius:10px;padding:11px}
 .player{width:100%;max-height:75vh;background:#000;border-radius:10px}
 .small{font-size:12px;color:var(--muted)}
+.statusBadge{display:inline-block;padding:3px 7px;border-radius:999px;border:1px solid var(--line);font-size:11px}
+.statusBadge.pending{color:#fde68a;border-color:#854d0e}.statusBadge.active{color:#bbf7d0;border-color:#166534}.statusBadge.locked,.statusBadge.cancelled{color:#fecaca;border-color:#7f1d1d}
 footer{text-align:center;color:var(--muted);padding:30px 15px;border-top:1px solid var(--line)}
 a{color:#ffd166}
 </style>
@@ -71,7 +89,9 @@ a{color:#ffd166}
     <div class="logo">LUGAFILM</div>
     <div class="tag">All the latest movies in one place.</div>
     <input id="search" class="search" type="search" placeholder="Search movies..." oninput="renderMovies()">
-    <button onclick="openViewerAuth()">Viewer Login</button>
+    <span id="viewerStatus" class="viewerStatus">Not logged in</span>
+    <button id="viewerBtn" onclick="openViewerAuth()">Viewer Login</button>
+    <button id="viewerLogoutBtn" class="danger hidden" onclick="viewerLogout()">Logout</button>
     <button onclick="openAdRequest()">Advertise</button>
     <button onclick="refreshSite()">↻ Refresh</button>
     <button onclick="shareSite()">Share</button>
@@ -181,8 +201,8 @@ a{color:#ffd166}
         <button class="btn primary" onclick="startPayment('Airtel Money')">Pay with Airtel Money</button>
         <button class="btn primary" onclick="startPayment('MTN Mobile Money')">Pay with MTN Mobile Money</button>
         <button class="btn primary" onclick="startPayment('Mastercard')">Pay with Mastercard</button>
-        <input id="paymentRef" placeholder="Payment transaction/reference (after payment)">
-        <button class="btn" onclick="requestSubscriptionOTP()">Generate subscription OTP</button>
+        <input id="paymentRef" autocomplete="off" placeholder="Payment transaction/reference (after payment)">
+        <button class="btn primary" onclick="submitPaymentReference()">Send payment reference</button>
       </div>
     </div>
     <div id="payMsg" class="msg" style="margin-top:12px">Choose a plan above.</div>
@@ -197,9 +217,17 @@ a{color:#ffd166}
     <p class="small">Only registered LUGAFILM members can submit advertisements. Your email is taken from your logged-in account.</p>
     <div class="form">
       <input id="adTitle" placeholder="Advertisement title / business name">
-      <input id="adDuration" placeholder="Advertisement period e.g. 7 days, 30 days">
+      <select id="adDuration" onchange="updateAdPrice()">
+        <option value="1 day" data-amount="2000">1 day — UGX 2,000</option>
+        <option value="1 week" data-amount="8000">1 week — UGX 8,000</option>
+        <option value="1 month" data-amount="28000">1 month — UGX 28,000</option>
+      </select>
+      <div id="adPrice" class="msg ok">Advertising price: UGX 2,000</div>
       <textarea id="adMessage" placeholder="Advertisement text / offer / contact details"></textarea>
+      <label class="small">Advertisement image or video</label>
+      <input id="adMedia" type="file" accept="image/*,video/*">
       <input id="adPaymentRef" placeholder="Payment transaction/reference">
+      <div class="msg">Payment number: <b>0747064373</b>. Pay only after confirming the number through your trusted payment service. Never enter your Mobile Money PIN or OTP on this website.</div>
       <button class="btn primary" onclick="submitAdRequest()">Send advertisement request</button>
       <div id="adMsg" class="msg">Complete the advertisement payment through the agreed payment channel, then enter the payment reference and send the request. The administrator verifies payment before publishing.</div>
     </div>
@@ -280,7 +308,7 @@ const SITE_URL='https://mugerwalouiscupa-beep.github.io/lugafilm/';
 
 const db=supabase.createClient(SB_URL,SB_KEY,{
   auth:{
-    persistSession:false,
+    persistSession:true,
     autoRefreshToken:true,
     detectSessionInUrl:true,
     flowType:'implicit'
@@ -340,6 +368,56 @@ function requireLogin(){
   return false;
 }
 
+async function ensureViewerAccount(user=currentUser){
+  if(!user)return null;
+  try{
+    // Create a viewer-control record for new/older users. Duplicate inserts are harmless.
+    await db.from('lugafilm_viewer_accounts').insert({
+      user_id:user.id,
+      email:(user.email||'').toLowerCase(),
+      status:'active'
+    });
+  }catch(e){
+    // Ignore duplicate-record errors; the read below determines the real status.
+    if(e?.code!=='23505') console.warn('Viewer account record:',e.message);
+  }
+
+  const {data,error}=await db.from('lugafilm_viewer_accounts')
+    .select('user_id,email,status,reason,updated_at')
+    .eq('user_id',user.id)
+    .maybeSingle();
+
+  if(error){
+    // If the optional control table has not yet been installed, do not block normal login.
+    console.warn('Viewer account controls:',error.message);
+    return null;
+  }
+  return data;
+}
+
+async function checkViewerAccess(user=currentUser){
+  const account=await ensureViewerAccount(user);
+  if(!account)return true;
+
+  if(account.status==='locked' || account.status==='cancelled'){
+    const reason=account.reason ? ' Reason: '+account.reason : '';
+    try{await db.auth.signOut()}catch(e){}
+    currentUser=null;
+    currentIsAdmin=false;
+    updateViewerUI();
+    clearCredentials();
+    msg('viewerMsg',
+      account.status==='locked'
+        ? 'This viewer account is locked by the administrator.'+reason
+        : 'This viewer account has been cancelled by the administrator.'+reason,
+      'err'
+    );
+    openModal('viewerAuth');
+    return false;
+  }
+  return true;
+}
+
 async function safeQuery(fn,fallback=null){
   try{
     const result=await fn();
@@ -367,11 +445,32 @@ async function isAdmin(user=currentUser){
   return !!data;
 }
 
+function updateViewerUI(){
+  const status=$('viewerStatus');
+  const login=$('viewerBtn');
+  const logout=$('viewerLogoutBtn');
+  if(!status||!login||!logout)return;
+  if(currentUser){
+    status.textContent='Logged in';
+    status.className='viewerStatus logged';
+    login.textContent='My Account';
+    logout.classList.remove('hidden');
+  }else{
+    status.textContent='Not logged in';
+    status.className='viewerStatus';
+    login.textContent='Viewer Login';
+    logout.classList.add('hidden');
+  }
+}
+
 async function refreshAuth(){
   try{
     const {data}=await db.auth.getSession();
     currentUser=data?.session?.user||null;
     currentIsAdmin=await isAdmin(currentUser);
+    updateViewerUI();
+
+    if(currentUser && !(await checkViewerAccess(currentUser)))return;
 
     if(currentUser && currentIsAdmin){
       $('adminWho').textContent='Signed in as administrator: '+(currentUser.email||'');
@@ -397,9 +496,8 @@ function openForgot(source='viewer'){
 
 function openViewerAuth(){
   closeModal('viewerSignupModal');
-  $('viewerTitle').textContent='Viewer Login';
   if(currentUser){
-    $('viewerMsg').textContent='You are signed in as '+(currentUser.email||'')+'.';
+    $('viewerMsg').textContent='You are signed in. Your account is active.';
   }else{
     $('viewerMsg').textContent='Your email and password are not saved by this page after logout.';
   }
@@ -471,6 +569,9 @@ async function viewerLogin(signup=false){
 
     currentUser=result.data.user||null;
     currentIsAdmin=await isAdmin(currentUser);
+    updateViewerUI();
+
+    if(!(await checkViewerAccess(currentUser)))return;
 
     if(signup && !result.data.session){
       msg('viewerMsg','Account created. If email confirmation is enabled, check your email before logging in.','ok');
@@ -493,6 +594,7 @@ async function viewerLogout(){
   try{await db.auth.signOut()}catch(e){console.warn(e)}
   currentUser=null;
   currentIsAdmin=false;
+  updateViewerUI();
   clearCredentials();
   closeModal('viewerAuth');
   closeModal('adminDash');
@@ -549,6 +651,7 @@ async function adminLogout(){
   try{await db.auth.signOut()}catch(e){}
   currentUser=null;
   currentIsAdmin=false;
+  updateViewerUI();
   clearCredentials();
   closeModal('adminDash');
   await renderMovies();
@@ -708,7 +811,7 @@ async function loadMovies(){
   const {data,error}=await db
     .from('lugafilm_movies')
     .select('*')
-    .eq('published',true)
+    .eq('is_published',true)
     .order('created_at',{ascending:false});
 
   if(error){
@@ -793,6 +896,8 @@ async function watch(id){
   const m=allMovies.find(x=>String(x.id)===String(id));
   if(!m)return;
 
+  if(currentUser && !(await checkViewerAccess(currentUser)))return;
+
   if(m.is_premium){
     if(!requireLogin())return;
     const sub=await activeSub();
@@ -861,23 +966,79 @@ function startPayment(method){
   msg('payMsg',`${method} selected for UGX ${Number(selectedPlan.amount).toLocaleString()}. The secure payment gateway must be connected to LUGAFILM before this button can collect real money. Do not send money to an unverified number shown on the website.`);
 }
 
-async function requestSubscriptionOTP(){
+async function submitPaymentReference(){
   if(!requireLogin())return;
-  if(!selectedPlan){msg('payMsg','Select a subscription plan first.','err');return;}
+  if(!selectedPlan){
+    msg('payMsg','Select a subscription plan first.','err');
+    return;
+  }
+
   const reference=$('paymentRef').value.trim();
-  if(!reference){msg('payMsg','Enter the payment transaction/reference after completing payment.','err');return;}
-  // A client-side OTP is NOT used to prove payment. This records a pending request only.
+  if(!reference){
+    msg('payMsg','Enter the payment transaction/reference after completing payment.','err');
+    return;
+  }
+  if(reference.length<3){
+    msg('payMsg','The payment reference looks too short. Check it and try again.','err');
+    return;
+  }
+
+  const btn=[...$('paymentChoices').querySelectorAll('button')].find(b=>b.textContent.includes('Send payment reference'));
+  if(btn){btn.disabled=true;btn.textContent='Sending...';}
+  msg('payMsg','Sending your payment reference...');
+
   try{
-    const {error}=await db.from('lugafilm_subscriptions').insert({
-      user_id:currentUser.id,
-      plan:selectedPlan.plan,
-      status:'pending',
-      expires_at:null
-    });
+    // Store the reference itself. The old version omitted this field, so the
+    // administrator could not verify which transaction belonged to the request.
+    const {data:existing,error:findError}=await db.from('lugafilm_subscriptions')
+      .select('id,status')
+      .eq('user_id',currentUser.id)
+      .eq('status','pending')
+      .order('created_at',{ascending:false})
+      .limit(1)
+      .maybeSingle();
+
+    if(findError)throw findError;
+
+    let error=null;
+    if(existing?.id){
+      const result=await db.from('lugafilm_subscriptions').update({
+        email:(currentUser.email||'').toLowerCase(),
+        plan:selectedPlan.plan,
+        payment_reference:reference,
+        status:'pending',
+        expires_at:null
+      }).eq('id',existing.id);
+      error=result.error;
+    }else{
+      const result=await db.from('lugafilm_subscriptions').insert({
+        user_id:currentUser.id,
+        email:(currentUser.email||'').toLowerCase(),
+        plan:selectedPlan.plan,
+        status:'pending',
+        payment_reference:reference,
+        expires_at:null
+      });
+      error=result.error;
+    }
+
     if(error)throw error;
-    msg('payMsg','Payment reference received. Your subscription is pending verification. A secure OTP should be sent only after the payment gateway verifies the transaction.','ok');
+
+    $('paymentRef').value='';
+    msg('payMsg',
+      'Payment reference sent successfully. Your request is now PENDING. The administrator will verify the payment and grant access.',
+      'ok'
+    );
   }catch(e){
-    msg('payMsg','Could not submit the subscription request: '+(e.message||String(e)),'err');
+    console.error('Payment reference submission:',e);
+    const detail=e?.message||String(e);
+    msg('payMsg',
+      'Could not send the payment reference. '+detail+
+      ' If this says a column/policy is missing, run the LUGAFILM database update supplied with this version.',
+      'err'
+    );
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Send payment reference';}
   }
 }
 
@@ -890,25 +1051,35 @@ async function openAdRequest(){
   openModal('adRequest');
 }
 
+function updateAdPrice(){
+  const el=$('adDuration');
+  const opt=el?.selectedOptions?.[0];
+  const amount=Number(opt?.dataset?.amount||2000);
+  if($('adPrice'))$('adPrice').textContent=`Advertising price: UGX ${amount.toLocaleString()}`;
+}
+
 async function submitAdRequest(){
   if(!requireLogin())return;
   const title=$('adTitle').value.trim();
-  const duration=$('adDuration').value.trim();
+  const duration=$('adDuration').value;
+  const amount=Number($('adDuration').selectedOptions?.[0]?.dataset?.amount||2000);
   const message=$('adMessage').value.trim();
   const paymentRef=$('adPaymentRef').value.trim();
-  if(!title||!message||!paymentRef){msg('adMsg','Enter the advertisement title, advertisement details and payment transaction/reference.','err');return;}
+  const media=$('adMedia').files?.[0]||null;
+  if(!title||!message||!paymentRef){msg('adMsg','Enter the advertisement title, details and payment transaction/reference.','err');return;}
   msg('adMsg','Sending advertisement request...');
-  const fullMessage=`${message}\n\nAdvertisement period: ${duration||'Not specified'}\nPayment reference: ${paymentRef}\nAdvertiser email: ${currentUser.email||''}`;
   try{
+    let mediaUrl=null;
+    if(media)mediaUrl=await uploadFile(media);
+    const fullMessage=`${message}\n\nAdvertisement period: ${duration}\nAmount: UGX ${amount.toLocaleString()}\nPayment reference: ${paymentRef}\nAdvertiser email: ${currentUser.email||''}`;
     const {error}=await db.from('lugafilm_ads').insert({
-      user_id:currentUser.id,
-      title,
-      message:fullMessage,
-      status:'pending'
+      user_id:currentUser.id,title,message:fullMessage,status:'pending',duration,amount,payment_reference:paymentRef,media_url:mediaUrl
     });
     if(error)throw error;
-    msg('adMsg','Request sent successfully. The administrator will verify the payment and approve the advertisement before it appears publicly.','ok');
-    $('adTitle').value='';$('adDuration').value='';$('adMessage').value='';$('adPaymentRef').value='';
+    msg('adMsg','Request sent. The administrator must verify the payment before approving and publishing the advertisement.','ok');
+    ['adTitle','adMessage','adPaymentRef'].forEach(id=>$(id).value='');
+    $('adMedia').value='';
+    updateAdPrice();
   }catch(e){
     msg('adMsg','Could not send advertisement request: '+(e.message||String(e)),'err');
   }
@@ -918,17 +1089,17 @@ async function loadPublicAds(){
   const box=$('adGrid');
   if(!box)return;
   const {data,error}=await db.from('lugafilm_ads')
-    .select('id,title,message,created_at')
+    .select('id,title,message,duration,amount,media_url,expires_at,created_at')
     .eq('status','approved')
     .order('created_at',{ascending:false})
     .limit(50);
-  if(error){
-    box.innerHTML='<div class="empty">Advertisements are not available yet.</div>';
-    return;
-  }
-  box.innerHTML=(data||[]).map(a=>{
-    const clean=String(a.message||'').replace(/\n+/g,'<br>');
-    return `<article class="card"><div class="cardbody"><div class="title">${esc(a.title||'Advertisement')}</div><div class="meta">Sponsored advertisement</div><div>${esc(clean).replace(/&lt;br&gt;/g,'<br>')}</div></div></article>`;
+  if(error){box.innerHTML='<div class="empty">Advertisements are not available yet.</div>';return;}
+  const now=Date.now();
+  const ads=(data||[]).filter(a=>!a.expires_at||new Date(a.expires_at).getTime()>now);
+  box.innerHTML=ads.map(a=>{
+    const clean=esc(a.message||'').replace(/\n/g,'<br>');
+    const media=a.media_url?`<p><a href="${esc(a.media_url)}" target="_blank" rel="noopener">View advertisement media</a></p>`:'';
+    return `<article class="card"><div class="cardbody"><div class="title">${esc(a.title||'Advertisement')}</div><div class="meta">Sponsored • ${esc(a.duration||'')} ${a.amount?'• UGX '+Number(a.amount).toLocaleString():''}</div><div>${clean}</div>${media}</div></article>`;
   }).join('')||'<div class="empty">No approved advertisements yet.</div>';
 }
 
@@ -1108,7 +1279,7 @@ async function adminDashboard(){
 
   $('adminContent').innerHTML=`
     <div class="msg ok">
-      Administrator access is active. Use the tabs above to manage movies, series, subscribers, analytics, messages and advertising requests.
+      Administrator access is active. Use the tabs above to manage movies, series, payment references/subscriptions, viewer access, analytics, messages and advertising requests.
     </div>`;
 }
 
@@ -1183,12 +1354,12 @@ async function uploadFile(file){
   const path=`${Date.now()}_${Math.random().toString(36).slice(2)}_${safeName}`;
 
   const {error}=await db.storage
-    .from('lugafilm-media')
+    .from('lugafilms')
     .upload(path,file,{upsert:false,contentType:file.type||undefined});
 
   if(error)throw error;
 
-  const {data}=db.storage.from('lugafilm-media').getPublicUrl(path);
+  const {data}=db.storage.from('lugafilms').getPublicUrl(path);
   return data.publicUrl;
 }
 
@@ -1233,7 +1404,7 @@ async function saveMovie(isSeries=false){
       video_url:video,
       is_premium,
       is_series:isSeries,
-      published:true,
+      is_published:true,
       created_by:currentUser.id
     };
 
@@ -1275,9 +1446,9 @@ async function loadAdminMovies(){
   box.innerHTML=adminMovieList.map(m=>`
     <div class="listitem">
       <b>${esc(m.title)}</b>
-      <div class="small">${esc(m.genre||'')} • ${m.published?'Published':'Hidden'} • ${m.is_premium?'Premium':'Free'} • ${Number(m.views||0)} views</div>
+      <div class="small">${esc(m.genre||'')} • ${m.is_published?'Published':'Hidden'} • ${m.is_premium?'Premium':'Free'} • ${Number(m.views||0)} views</div>
       <div class="actions" style="margin-top:7px">
-        <button class="btn" onclick="toggleMovie('${esc(m.id)}',${!m.published})">${m.published?'Hide':'Publish'}</button>
+        <button class="btn" onclick="toggleMovie('${esc(m.id)}',${!m.is_published})">${m.is_published?'Hide':'Publish'}</button>
         <button class="btn danger" onclick="deleteMovie('${esc(m.id)}')">Delete</button>
       </div>
     </div>`).join('')||'<div class="empty">No movies yet.</div>';
@@ -1365,7 +1536,7 @@ async function deleteEpisode(id){
 
 async function toggleMovie(id,published){
   if(!currentIsAdmin)return;
-  const {error}=await db.from('lugafilm_movies').update({published}).eq('id',id);
+  const {error}=await db.from('lugafilm_movies').update({is_published:published}).eq('id',id);
   if(error){alert(error.message);return}
   await loadAdminMovies();
   await renderMovies();
@@ -1405,19 +1576,131 @@ async function adminSubscribers(){
     .limit(200);
 
   $('adminContent').innerHTML=`
-    <h3>Subscribers</h3>
+    <h3>Subscribers / Payment References</h3>
+    <div class="msg">
+      Review each payment reference. <b>Confirm & Grant Access</b> activates the plan.
+      You can also lock or cancel a viewer account when necessary.
+    </div>
     ${error
       ? `<div class="empty">${esc(error.message)}</div>`
-      : `<div class="list">${(data||[]).map(s=>`
+      : `<div class="list" style="margin-top:12px">${(data||[]).map(s=>`
           <div class="listitem">
-            <b>${esc(s.plan||'Plan')}</b>
-            <div class="small">User: ${esc(s.user_id||'')} • Status: ${esc(s.status||'')} • Expires: ${esc(s.expires_at||'')}</div>
-          </div>`).join('')||'<div class="empty">No subscriptions found.</div>'}</div>`}`;
+            <b>${esc(s.email||s.viewer_email||'Viewer email not recorded')}</b>
+            <div class="small">
+              Plan: ${esc(s.plan||'Plan')} •
+              Status: <b>${esc(
+                (s.status==='active' && s.expires_at && new Date(s.expires_at)<=new Date())
+                  ? 'expired' : (s.status||'pending')
+              )}</b> •
+              Payment reference: <b>${esc(s.payment_reference||'Not supplied')}</b> •
+              Expires: ${esc(s.expires_at||'Pending verification')}
+            </div>
+            <div class="small">User ID: ${esc(s.user_id||'')} • Submitted: ${esc(s.created_at||'')}</div>
+            <div class="actions" style="margin-top:8px">
+              <button class="btn primary" onclick="confirmSubscription('${esc(s.id)}')">Confirm & Grant Access</button>
+              <button class="btn" onclick="extendSubscription('${esc(s.id)}')">Extend 30 Days</button>
+              <button class="btn danger" onclick="expireSubscription('${esc(s.id)}')">End Subscription</button>
+              <button class="btn danger" onclick="lockViewer('${esc(s.user_id)}')">Lock Viewer</button>
+              <button class="btn danger" onclick="cancelViewer('${esc(s.user_id)}')">Cancel Viewer</button>
+              <button class="btn" onclick="unlockViewer('${esc(s.user_id)}')">Unlock</button>
+            </div>
+          </div>`).join('')||'<div class="empty">No subscription requests found.</div>'}</div>`}`;
+}
+
+function planDays(plan){
+  if(plan==='daily')return 1;
+  if(plan==='weekly')return 7;
+  if(plan==='monthly')return 30;
+  return 30;
+}
+
+async function confirmSubscription(id){
+  if(!currentIsAdmin)return;
+  const {data,error}=await db.from('lugafilm_subscriptions')
+    .select('*').eq('id',id).maybeSingle();
+  if(error){alert('Could not read subscription: '+error.message);return;}
+  if(!data){alert('Subscription request not found.');return;}
+
+  if(!confirm(
+    'Confirm that payment reference '+(data.payment_reference||'not supplied')+
+    ' has been received and grant '+(data.plan||'subscription')+' access to this viewer?'
+  ))return;
+
+  const base=new Date();
+  const expires=new Date(base.getTime()+planDays(data.plan)*24*60*60*1000).toISOString();
+
+  const {error:updateError}=await db.from('lugafilm_subscriptions').update({
+    status:'active',
+    expires_at:expires
+  }).eq('id',id);
+
+  if(updateError){alert('Could not grant access: '+updateError.message);return;}
+
+  alert('Subscription confirmed and access granted until '+new Date(expires).toLocaleString()+'.');
+  await adminSubscribers();
+}
+
+async function extendSubscription(id){
+  if(!currentIsAdmin)return;
+  const {data,error}=await db.from('lugafilm_subscriptions')
+    .select('id,plan,expires_at').eq('id',id).maybeSingle();
+  if(error||!data){alert('Could not read subscription: '+(error?.message||'Not found'));return;}
+  const current=(data.expires_at && new Date(data.expires_at)>new Date())
+    ? new Date(data.expires_at) : new Date();
+  current.setDate(current.getDate()+planDays(data.plan));
+  const {error:updateError}=await db.from('lugafilm_subscriptions')
+    .update({status:'active',expires_at:current.toISOString()}).eq('id',id);
+  if(updateError){alert('Could not extend subscription: '+updateError.message);return;}
+  await adminSubscribers();
+}
+
+async function expireSubscription(id){
+  if(!currentIsAdmin)return;
+  if(!confirm('End this subscription now? The viewer will lose premium access.'))return;
+  const {error}=await db.from('lugafilm_subscriptions')
+    .update({status:'expired',expires_at:new Date().toISOString()})
+    .eq('id',id);
+  if(error){alert('Could not end subscription: '+error.message);return;}
+  await adminSubscribers();
+}
+
+async function lockViewer(userId){
+  if(!currentIsAdmin||!userId)return;
+  const reason=prompt('Reason for locking this viewer (optional):','Subscription out of date');
+  if(reason===null)return;
+  const {error}=await db.from('lugafilm_viewer_accounts').upsert({
+    user_id:userId,status:'locked',reason:reason||'Locked by administrator'
+  },{onConflict:'user_id'});
+  if(error){alert('Could not lock viewer: '+error.message);return;}
+  if(currentUser?.id===userId)await viewerLogout();
+  await adminSubscribers();
+}
+
+async function cancelViewer(userId){
+  if(!currentIsAdmin||!userId)return;
+  const reason=prompt('Reason for cancelling this viewer account (optional):','Subscription out of date');
+  if(reason===null)return;
+  if(!confirm('Cancel this viewer account? The viewer will be signed out and blocked from using LUGAFILM until restored.'))return;
+  const {error}=await db.from('lugafilm_viewer_accounts').upsert({
+    user_id:userId,status:'cancelled',reason:reason||'Cancelled by administrator'
+  },{onConflict:'user_id'});
+  if(error){alert('Could not cancel viewer: '+error.message);return;}
+  if(currentUser?.id===userId)await viewerLogout();
+  await adminSubscribers();
+}
+
+async function unlockViewer(userId){
+  if(!currentIsAdmin||!userId)return;
+  const {error}=await db.from('lugafilm_viewer_accounts').upsert({
+    user_id:userId,status:'active',reason:null
+  },{onConflict:'user_id'});
+  if(error){alert('Could not unlock viewer: '+error.message);return;}
+  await adminSubscribers();
 }
 
 async function adminAnalytics(){
   const {data,error}=await db.from('lugafilm_movies')
-    .select('id,title,views,is_premium,published,is_series')
+    .select('id,title,views,is_premium,is_published,is_series')
     .order('views',{ascending:false});
 
   $('adminContent').innerHTML=`
@@ -1428,7 +1711,7 @@ async function adminAnalytics(){
         <div class="listitem">
           <b>${esc(m.title||'Untitled')}</b>
           <div class="small">
-            ${Number(m.views||0)} views • ${m.is_premium?'Premium':'Free'} • ${m.is_series?'Series':'Movie'} • ${m.published?'Published':'Hidden'}
+            ${Number(m.views||0)} views • ${m.is_premium?'Premium':'Free'} • ${m.is_series?'Series':'Movie'} • ${m.is_published?'Published':'Hidden'}
           </div>
         </div>`).join('')||'<div class="empty">No data.</div>'}</div>`}`;
 }
@@ -1466,7 +1749,7 @@ async function adminAds(){
         <div class="listitem">
           <b>${esc(a.title||'Advertising request')}</b>
           <div>${esc(a.message||'')}</div>
-          <div class="small">User: ${esc(a.user_id||'')} • Status: ${esc(a.status||'pending')} • ${esc(a.created_at||'')}</div>
+          <div class="small">User: ${esc(a.user_id||'')} • Status: ${esc(a.status||'pending')} • ${esc(a.duration||'')} • UGX ${Number(a.amount||0).toLocaleString()} • Ref: ${esc(a.payment_reference||'not supplied')} • ${esc(a.created_at||'')}</div>
           <div class="actions" style="margin-top:8px">
             <button class="btn primary" onclick="approveAd('${esc(a.id)}')">Approve & Publish</button>
             <button class="btn danger" onclick="rejectAd('${esc(a.id)}')">Reject</button>
@@ -1537,6 +1820,8 @@ async function shareSite(){
    ========================= */
 async function init(){
   buildFilters();
+  updateAdPrice();
+  updateViewerUI();
 
   await refreshAuth();
   await handlePasswordRecovery();
@@ -1553,6 +1838,9 @@ async function init(){
     setTimeout(async()=>{
       currentUser=session?.user||null;
       currentIsAdmin=await isAdmin(currentUser);
+      updateViewerUI();
+
+      if(currentUser && !(await checkViewerAccess(currentUser)))return;
 
       if(event==='SIGNED_OUT'){
         clearCredentials();
